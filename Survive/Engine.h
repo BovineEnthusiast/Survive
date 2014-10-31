@@ -13,7 +13,7 @@ public:
     void draw();
     
 private:
-    sf::RenderWindow window;
+    sf::RenderWindow _window;
 };
 
 #endif	

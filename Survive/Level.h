@@ -5,15 +5,17 @@ class Level
 {
 public:
     Level();
-    Level(const Level& orig);
-    virtual ~Level();
     
     void update();
-    void generateLevel(); //Fills the tiles vector with, well... tiles
+    void generateLevel(const int width, const int height); //Fills the tiles vector with, well... tiles
 private:
-    sf::Texture tileSpriteSheet;
-    std::map<std::string, sf::IntRect> tileSprites;
-    std::vector<std::vector<Tile>> tiles;
+    sf::Texture _tileSpriteSheet;
+    
+    //A map of IntRect locations on the sprite that take a name key.
+    //i.e setting a tile sprite:
+    //sprite.setTextureRect(tileSprites["grass"])
+    std::map<std::string, sf::IntRect> _tileSprites; 
+    std::vector<std::vector<Tile>> _tiles;
 };
 
 #endif

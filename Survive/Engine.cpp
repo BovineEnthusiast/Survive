@@ -8,9 +8,9 @@ Engine::Engine()
 
 bool Engine::initialize()
 {
-    window = sf::RenderWindow(sf::VideoMode(500, 500), "Survive");
+    _window = sf::RenderWindow(sf::VideoMode(500, 500), "Survive");
     
-    if(!window)
+    if(!_window)
         return false;
     else
         return true;
