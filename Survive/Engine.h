@@ -7,13 +7,14 @@ public:
     Engine();
     
     bool initialize();
-    int run();
-    void handleInput();
-    void update();
-    void draw();
+    int run();  
     
 private:
     sf::RenderWindow _window;
+    
+    void handleInput();
+    void update();
+    void draw();
 };
 
 #endif	

@@ -1,6 +1,9 @@
 #ifndef LEVEL_H
 #define	LEVEL_H
-#include <memory>
+#include <vector>
+#include <map>
+#include <SFML/Graphics.hpp>
+#include "Tile.h"
 class Level 
 {
 public:

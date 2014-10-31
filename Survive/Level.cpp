@@ -29,12 +29,6 @@ void Level::generateLevel(const int width, const int height) //Generates the lev
     {
         for(size_t heightPos = 0; heightPos < height; ++heightPos)
         {
-            //Stores gradient values(TopLeft, TopRight, etc.)
-            float gradientTL;
-            float gradientTR;
-            float gradientBL;
-            float gradientBR;
-            
             //Randomized point in a "cell" with corners containing vectors
             //[widthPos][heightPos]  [widthPos + 1][heightPos]
             //
@@ -44,28 +38,24 @@ void Level::generateLevel(const int width, const int height) //Generates the lev
             sf::Vector2i point(std::rand() % 100, std::rand() % 100);
             
             //Stores vectors that are between the point and corners
-            sf::Vector2i gradientTLVec = perlinVectorGrid[widthPos][heightPos] - point;
-            sf::Vector2i gradientTRVec = perlinVectorGrid[widthPos + 1][heightPos] - point;
-            sf::Vector2i gradientBLVec = perlinVectorGrid[widthPos][heightPos + 1] - point;
-            sf::Vector2i gradientBRVec = perlinVectorGrid[widthPos + 1][heightPos + 1] - point;
+            sf::Vector2i gradientTLVec = sf::Vector2i(0,0) - point;
+            sf::Vector2i gradientTRVec = sf::Vector2i(100, 0) - point;
+            sf::Vector2i gradientBLVec = sf::Vector2i(0, 100) - point;
+            sf::Vector2i gradientBRVec = sf::Vector2i(100, 100) - point;
             
             //Calculates the gradient values by getting the dot products of the
             //vectors associated with each corner 
-            gradientTL = perlinVectorGrid[widthPos][heightPos].x * gradientTLVec.x + perlinVectorGrid[widthPos][heightPos].y * gradientTLVec.y;
-            gradientTR = perlinVectorGrid[widthPos + 1][heightPos].x * gradientTRVec.x + perlinVectorGrid[widthPos + 1][heightPos].y * gradientTRVec.y;
-            gradientBL = perlinVectorGrid[widthPos][heightPos + 1].x * gradientBLVec.x + perlinVectorGrid[widthPos][heightPos + 1].y * gradientBLVec.y;
-            gradientBR = perlinVectorGrid[widthPos + 1][heightPos + 1].x * gradientBRVec.x + perlinVectorGrid[widthPos + 1][heightPos + 1].y * gradientBRVec.y;
+            float gradientTL = perlinVectorGrid[widthPos][heightPos].x * gradientTLVec.x + perlinVectorGrid[widthPos][heightPos].y * gradientTLVec.y;
+            float gradientTR = perlinVectorGrid[widthPos + 1][heightPos].x * gradientTRVec.x + perlinVectorGrid[widthPos + 1][heightPos].y * gradientTRVec.y;
+            float gradientBL = perlinVectorGrid[widthPos][heightPos + 1].x * gradientBLVec.x + perlinVectorGrid[widthPos][heightPos + 1].y * gradientBLVec.y;
+            float gradientBR = perlinVectorGrid[widthPos + 1][heightPos + 1].x * gradientBRVec.x + perlinVectorGrid[widthPos + 1][heightPos + 1].y * gradientBRVec.y;
             
-            //Stores the lerp(linear interpolation) values used next
-            float topLerp;
-            float bottomLerp;
-            float finalLerp;
-            
+
             //Bi-linearly interpolates between the gradient values to get the
             //gradient(height) value at the point
-            topLerp = (gradientTL + gradientTR) * ((float)point.x / 100f);
-            bottomLerp = (gradientBL + gradientBR) * ((float)point.x / 100f);
-            finalLerp = (topLerp + bottomLerp) * ((float)point.y / 100f);
+            float topLerp = (gradientTL + gradientTR) * ((float)point.x / 100.0f);
+            float bottomLerp = (gradientBL + gradientBR) * ((float)point.x / 100.0f);
+            float finalLerp = (topLerp + bottomLerp) * ((float)point.y / 100.0f);
             
             //Set the final result(finalLerp) to the appropriate position
             perlinGradientGrid[width][height] = finalLerp;           
