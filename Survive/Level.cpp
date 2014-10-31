@@ -1,19 +1,19 @@
 #include "Level.h"
 #include <SFML/System.hpp>
+#include <cmath>
 Level::Level() 
 {
 }
 
 void Level::generateLevel(const int width, const int height) //Generates the level based on perlin noise with size width and height
 {
+    //Stores the values gained from subtracting the circleGradientValues from the perlinGradientGrid
+    float finalGradientValues[width][height];
+    
     //Stores the random vectors that fill the grid.
     //+1 because of "fence post problem" 
     //perlin value = fence | rand vector = post
     sf::Vector2i perlinVectorGrid[width + 1][height + 1]; 
-    
-    //Stores the gradient values calculated from the dot-product of
-    //the random vectors and the vectors of a random point in a cell then LERP'd
-    float perlinGradientGrid[width][height]; 
     
     //Initializes the grid with random vectors(0 to 99)
     for(size_t widthPos = 0; widthPos < width + 1; ++widthPos)
@@ -24,7 +24,7 @@ void Level::generateLevel(const int width, const int height) //Generates the lev
         }
     }
     
-    //Assigns gradient values
+    //Assigns gradient values to grid and circle gradient grid
      for(size_t widthPos = 0; widthPos < width; ++widthPos)
     {
         for(size_t heightPos = 0; heightPos < height; ++heightPos)
@@ -57,9 +57,12 @@ void Level::generateLevel(const int width, const int height) //Generates the lev
             float bottomLerp = (gradientBL + gradientBR) * ((float)point.x / 100.0f);
             float finalLerp = (topLerp + bottomLerp) * ((float)point.y / 100.0f);
             
-            //Set the final result(finalLerp) to the appropriate position
-            perlinGradientGrid[width][height] = finalLerp;           
+         
+            //------------------------------------------------------------------------
+            //Assign value by calculating distance from center and dividing by width
+            //Subtract the circle gradient from the perlin values
+            finalGradientValues[width][height] = finalLerp - ((sqrt(pow(floor(width / 2) - widthPos, 2) + pow(floor(height / 2) - heightPos, 2))) / width);
         }
-    }
+    }   
 }
 
