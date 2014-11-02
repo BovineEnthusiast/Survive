@@ -1,68 +1,79 @@
 #include "Level.h"
-#include <SFML/System.hpp>
 #include <cmath>
+#include <iostream>
+#include <SFML/System.hpp>
 Level::Level() 
 {
 }
 
-void Level::generateLevel(const int width, const int height) //Generates the level based on perlin noise with size width and height
+//Generates the level with the diamond-square algorithm
+void Level::generateLevel(const int width, const int height) 
 {
-    //Stores the values gained from subtracting the circleGradientValues from the perlinGradientGrid
-    float finalGradientValues[width][height];
+    //A heightmap array that will end up being between -1 to 1
+    //Initialized to 10 to find "empty" areas
+    float heightmap[width][height] = {10};
     
-    //Stores the random vectors that fill the grid.
-    //+1 because of "fence post problem" 
-    //perlin value = fence | rand vector = post
-    sf::Vector2i perlinVectorGrid[width + 1][height + 1]; 
+    //Initial fill of four corners -1 to 0.99
+    float initialCornerValue = (rand() % 100 - 50) / 50f;
     
-    //Initializes the grid with random vectors(0 to 99)
-    for(size_t widthPos = 0; widthPos < width + 1; ++widthPos)
+    
+    //Used to finalize the array to be -1 to 1
+    float highestValue = initialCornerValue;
+    float lowestValue = initialCornerValue;
+    
+    //The amount to multipy the displacement iteration
+    float displacementMultiplier = 0.5f;
+    
+    for(int iteration = 1; heightmap[width + 1][height] == 10; ++iteration)
     {
-        for(size_t heightPos = 0; heightPos < height + 1; ++heightPos)
+        //-----------------------------Diamond step-----------------------------
+        int squareSize =  (width  -1) / iteration;
+        
+        //Used in order to reset x pos after reaching last square
+        int modNumber = 0;
+        for(int square = 0; square < iteration * iteration; ++square)
         {
-            perlinVectorGrid[widthPos][heightPos] = sf::Vector2i(std::rand() % 100 - 50, std::rand() % 100 - 50);
+            float squareValueAverage = 0;
+            
+            //First row of squares
+            if(square < iteration)
+            {
+                //Adds the values of the four corners to the average, then divides
+                squareValueAverage += heightmap[square * squareSize][0]; //Top-left
+                squareValueAverage += heightmap[square + square * squareSize][0]; //Top-right
+                squareValueAverage += heightmap[square * squareSize][squareSize]; //Bottom-left
+                squareValueAverage += heightmap[square + square * squareSize][squareSize]; //Bottom-right
+                squareValueAverage /= 4;
+                
+                //Assigns midpoint and adds a random variance that is reduced every iteration
+                heightmap[square * squareSize - (square / 2)][squareSize / 2] = squareValueAverage + (rand() % 100 - 50 / 50) * pow(0.5, iteration);
+                
+                
+            }
+            else
+            {
+                //Increases the modNumber every time the final square on the x axis is evaluated.
+                if(square % iteration == 0)
+                    modNumber += iteration;
+                
+                //Adds the values of the four corners to the average, then divides
+                squareValueAverage += heightmap[(square % modNumber) * squareSize][floor(square / iteration) * squareSize]; //Top-left
+                squareValueAverage += heightmap[square + (square % modNumber) * squareSize][floor(square / iteration) * squareSize]; //Top-right
+                squareValueAverage += heightmap[(square % modNumber) * squareSize][floor(square / iteration) * squareSize + squareSize]; //Bottom-left
+                squareValueAverage += heightmap[square + (square % modNumber) * squareSize][floor(square / iteration) * squareSize + squareSize]; //Top-left
+                squareValueAverage /= 4;       
+                
+                //Assigns midpoint and adds a random variance that is reduced every iteration
+                heightmap[(square % modNumber) * squareSize - (square / 2)][floor(square / iteration) * squareSize + squareSize / 2] = squareValueAverage  + (rand() % 100 - 50 / 50) * pow(0.5, iteration);
+            }
+            
+        //-----------------------------Square step-----------------------------
+            
+            
+
         }
     }
+    //Diamond step
     
-    //Assigns gradient values to grid and circle gradient grid
-     for(size_t widthPos = 0; widthPos < width; ++widthPos)
-    {
-        for(size_t heightPos = 0; heightPos < height; ++heightPos)
-        {
-            //Randomized point in a "cell" with corners containing vectors
-            //[widthPos][heightPos]  [widthPos + 1][heightPos]
-            //
-            //      <rand, rand> <=(random point)
-            //
-            //[widthPos][heightPos + 1] [widthPos + 1][heightPos + 1]
-            sf::Vector2i point(std::rand() % 100, std::rand() % 100);
-            
-            //Stores vectors that are between the point and corners
-            sf::Vector2i gradientTLVec = sf::Vector2i(0,0) - point;
-            sf::Vector2i gradientTRVec = sf::Vector2i(100, 0) - point;
-            sf::Vector2i gradientBLVec = sf::Vector2i(0, 100) - point;
-            sf::Vector2i gradientBRVec = sf::Vector2i(100, 100) - point;
-            
-            //Calculates the gradient values by getting the dot products of the
-            //vectors associated with each corner 
-            float gradientTL = perlinVectorGrid[widthPos][heightPos].x * gradientTLVec.x + perlinVectorGrid[widthPos][heightPos].y * gradientTLVec.y;
-            float gradientTR = perlinVectorGrid[widthPos + 1][heightPos].x * gradientTRVec.x + perlinVectorGrid[widthPos + 1][heightPos].y * gradientTRVec.y;
-            float gradientBL = perlinVectorGrid[widthPos][heightPos + 1].x * gradientBLVec.x + perlinVectorGrid[widthPos][heightPos + 1].y * gradientBLVec.y;
-            float gradientBR = perlinVectorGrid[widthPos + 1][heightPos + 1].x * gradientBRVec.x + perlinVectorGrid[widthPos + 1][heightPos + 1].y * gradientBRVec.y;
-            
-
-            //Bi-linearly interpolates between the gradient values to get the
-            //gradient(height) value at the point
-            float topLerp = (gradientTL + gradientTR) * ((float)point.x / 100.0f);
-            float bottomLerp = (gradientBL + gradientBR) * ((float)point.x / 100.0f);
-            float finalLerp = (topLerp + bottomLerp) * ((float)point.y / 100.0f);
-            
-         
-            //------------------------------------------------------------------------
-            //Assign value by calculating distance from center and dividing by width
-            //Subtract the circle gradient from the perlin values
-            finalGradientValues[width][height] = finalLerp - ((sqrt(pow(floor(width / 2) - widthPos, 2) + pow(floor(height / 2) - heightPos, 2))) / width);
-        }
-    }   
+    
 }
-
