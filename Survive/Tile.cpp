@@ -3,3 +3,7 @@
 Tile::Tile() 
 {
 }
+Tile::Tile(const float gradient)
+{
+    
+}

@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Level.h"
 Engine::Engine() 
 {
     
@@ -26,6 +27,8 @@ void Engine::draw()
 }
 int Engine::run()
 {
+    Level testLevel;
+    testLevel.generateLevel(513, 513);
     while(_window.isOpen())
     {
         sf::Event event;

@@ -5,7 +5,7 @@ class Tile
 {
 public:
     Tile();
-    
+    Tile(const float);
     //Getters
     sf::Sprite getSprite();
     
