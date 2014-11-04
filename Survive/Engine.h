@@ -11,7 +11,7 @@ public:
     
 private:
     sf::RenderWindow _window;
-    
+    Camera _camera;
     void handleInput();
     void update();
     void draw();

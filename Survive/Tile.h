@@ -5,11 +5,13 @@ class Tile
 {
 public:
     Tile();
-    Tile(const float);
+    Tile(const sf::Texture&, const sf::IntRect&);
     //Getters
     sf::Sprite getSprite();
     
     //Setters
+    void setSpritePos(const sf::Vector2f&);
+    
     void setTileTexture();
     void setTileTextureRect();
 private:
