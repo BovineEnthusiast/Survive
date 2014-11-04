@@ -25,11 +25,18 @@ void Engine::update()
 
 void Engine::draw()
 {
-    
+    //Draws Tiles first
+    for(Tile tile : _tiles)
+    	_window.draw(tile.getSprite());
 }
 int Engine::run()
 {
+	//Sets the viewport to the camera
     _window.setView(_camera.getView());
+    
+    //Generates a level by filling the tiles
+    Level _level;
+    _level.generateLevel(257, 257);
     
     //Game Loop
     while(_window.isOpen())
