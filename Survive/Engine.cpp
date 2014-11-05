@@ -50,8 +50,10 @@ void Engine::draw()
 }
 int Engine::run()
 {
+	//Sets the viewport to the camera
     _window.setView(_camera.getView());
     _level.generateLevel(129, 129);
+
     //Game Loop
     while(_window.isOpen())
     {
