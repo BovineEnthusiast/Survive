@@ -31,22 +31,42 @@ void Level::generateLevel(const int width, const int height)
     
     float rangeDeepWater = -0.3;
     float rangeShallowWater = 0;
-    float rangeSand = 0.1;
-    float rangeDirt = 0.2;
+    float rangeSand = 0.05;
+    float rangeDirt = 0.1;
     float rangeGrass = 0.9;
     float rangeHill = 1;
     //A heightmap array that will (hopefully) end up being between -1 to 1
     float heightmap[width][height];
     
     //Initial fill of four corners -1 to 0.99
-    heightmap[0][0] = (std::rand() % 200 - 100) / 100.0f;
-    heightmap[width - 1][0] = (std::rand() % 200 - 100) / 100.0f;
-    heightmap[0][height - 1] = (std::rand() % 200 - 100) / 100.0f;
-    heightmap[width - 1][height - 1] = (std::rand() % 200 - 100) / 100.0f;
+    for(int xPos = 0; xPos < width; ++xPos)
+        for(int yPos = 0; yPos < height; ++yPos)
+            heightmap[xPos][yPos] = -10;
     
-    //Used to finalize the array to be -1 to 1
-   // float highestValue = initialCornerValue;
-   // float lowestValue = initialCornerValue;
+    //Initial circle of deep water to guarantee island
+    heightmap[0][0] = (std::rand() % 100) / 100 * -1;
+    heightmap[width - 1][0] = (std::rand() % 100) / 100 * -1;
+    heightmap[0][height - 1] = (std::rand() % 100) / 100 * -1;
+    heightmap[width - 1][height - 1] = (std::rand() % 100) / 100 * -1;
+    heightmap[(width - 1) / 2][0] = (std::rand() % 100) / 100 * -1;
+    heightmap[(width - 1) / 2][height - 1] = (std::rand() % 100) / 100 * -1;
+    heightmap[0][(height - 1) / 2] = (std::rand() % 100) / 100 * -1;
+    heightmap[width - 1][(height - 1) / 2] = (std::rand() % 100) / 100 * -1;
+    
+    //Island seeds
+    heightmap[(width - 1) / 2][(height - 1) / 2] = .8f;
+    
+    heightmap[(width - 1) / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
+    heightmap[(width - 1) * 3 / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
+    heightmap[(width - 1) / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
+    heightmap[(width - 1) * 3 / 4][(height - 1) * 3 / 4] = ((std::rand() % 200) - 100) / 100;
+
+
+   
+    
+
+        
+    
     
     //The amount to multiply the displacement iteration
     float displacementMultiplier = 0.5f;
@@ -68,14 +88,9 @@ void Level::generateLevel(const int width, const int height)
         {
             float squareValueAverage = 0;
             
-            //Forces a high center point in order to guarantee an island
-            if(iteration == 1)
-            {
-                heightmap[(width - 1) / 2][(height - 1) / 2] = (std::rand() % 50) / 50.0f + 0.2f;
-                squareMidpoints[square] = sf::Vector2i((width - 1) / 2, (width - 1) / 2);
-            }
+           
             //First row of squares separate because X % 0 = :(
-            else if(square < pow(2, iteration - 1))
+            if(square < pow(2, iteration - 1))
             {
                 //Adds the values of the four corners to the average, then divides
                 squareValueAverage += heightmap[square * shapeSize][0]; //Top-left
@@ -85,13 +100,15 @@ void Level::generateLevel(const int width, const int height)
                 squareValueAverage /= 4;
                 
                 //Assigns midpoint and adds a std::random variance that is reduced every iteration
-                heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = squareValueAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.55, iteration);  
+                if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] == -10)
+                    heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = squareValueAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);  
                
                 if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] > 1)
                     heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = 1;
                 else if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] < -1)
                     heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = -1;
                 //Stores the midpoint position
+                
                 squareMidpoints[square] = sf::Vector2i(square * shapeSize + (shapeSize / 2), shapeSize / 2);
             }
             else
@@ -109,7 +126,8 @@ void Level::generateLevel(const int width, const int height)
                 
 
                 //Assigns midpoint and adds a std::random variance that is reduced every iteration
-                heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] = squareValueAverage  + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.55, iteration);
+                if(heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] == -10)
+                    heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] = squareValueAverage  + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
                 
                 //Clamps to -1 to 1
                 if(heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] > 1)
@@ -151,7 +169,8 @@ void Level::generateLevel(const int width, const int height)
             }
                         
             //Assigns the average +- std::random to the midpoint of the diamond
-            heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] = leftPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.55, iteration);
+            if(heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] == -10)
+                heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] = leftPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
             
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] > 1)
@@ -184,7 +203,8 @@ void Level::generateLevel(const int width, const int height)
             }
             
             //Assigns the average +- std::random to the midpoint of the diamond
-            heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] = rightPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.55, iteration);
+            if(heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] == -10)
+                heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] = rightPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
             
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] > 1)
@@ -216,7 +236,8 @@ void Level::generateLevel(const int width, const int height)
             }
             
             //Assigns the average +- std::random to the midpoint of the diamond
-            heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] = topPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.55, iteration);
+            if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] == -10)
+                heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] = topPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
            
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] > 1)
@@ -247,7 +268,8 @@ void Level::generateLevel(const int width, const int height)
             }
             
             //Assigns the average +- std::random to the midpoint of the diamond
-            heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] = bottomPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.55, iteration);
+            if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] == -10)
+                heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] = bottomPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
             
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] > 1)
@@ -258,7 +280,7 @@ void Level::generateLevel(const int width, const int height)
     }
     
     //Initializes gradientArray to 1's
-    /*float gradientArray[width][height];
+    float gradientArray[width][height];
     for(int xPos = 0; xPos < width; ++xPos)
         {
             for(int yPos = 0; yPos < height; ++yPos)
@@ -267,23 +289,23 @@ void Level::generateLevel(const int width, const int height)
             }
         }
     //Fills gradientArray array with (5-7) circle gradients
-    for(int circle = 0; circle < 5; ++ circle)
+    for(int circle = 0; circle < 9; ++ circle)
     {
-        int xCenter = std::rand() % (int)(width / 2.0f) + (int)(width / 4.0f);
-        int yCenter = std::rand() % (int)(width / 2.0f) + (int)(width / 4.0f);
-        int radius = std::rand() % (int)(width / 5.0f) + width / 10.0f;
+        int xCenter = std::rand() % (int)(width / 4.0f) + (int)(width / 8.0f);
+        int yCenter = std::rand() % (int)(width / 4.0f) + (int)(width / 8.0f);
+        int radius = std::rand() % (int)(width / 10.0f) + width / 10.0f;
         
         for(int xPos = 0; xPos < width; ++xPos)
         {
             for(int yPos = 0; yPos < height; ++yPos)
             {
                 if(sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) <= radius)
-                    gradientArray[xPos][yPos] -= (1 - (sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) / radius)) * 2;
+                    gradientArray[xPos][yPos] -= (1 - (sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) / radius));
                 if(gradientArray[xPos][yPos] < 0)
                     gradientArray[xPos][yPos] = 0;
             }
         }
-    }*/
+    }
     //Adds tiles to tile array
     int xCenter = (width - 1) / 2;
     int yCenter = xCenter;
@@ -291,8 +313,8 @@ void Level::generateLevel(const int width, const int height)
     {
        for(int yPos = 0; yPos < height; ++yPos)
         {    
-            //heightmap[xPos][yPos] -= gradientArray[xPos][yPos];
-            heightmap[xPos][yPos] -= sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) / width * 2;
+            heightmap[xPos][yPos] -= gradientArray[xPos][yPos] * 0.1;
+            //heightmap[xPos][yPos] -= sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) / width * 0.75f;
             //Assigns tiles based on height
             float height = heightmap[xPos][yPos];
             if(height < rangeDeepWater)

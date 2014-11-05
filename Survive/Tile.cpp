@@ -7,7 +7,7 @@ Tile::Tile(const sf::Texture& texture, const sf::IntRect& intRect)
 {
     _sprite.setTexture(texture);
     _sprite.setTextureRect(intRect);
-    _sprite.setScale(0.04, 0.04);
+    _sprite.setScale(0.1, 0.1);
 }
 
 //Getters
