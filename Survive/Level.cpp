@@ -5,16 +5,22 @@
 Level::Level() 
 {
     //Loads the tile sheet then assigns their locations to a map
-    if(!_tileSpriteSheet.loadFromFile("TileSpritesheet.png"))
+    if(!tileSpriteSheet_.loadFromFile("TileSpritesheet.png"))
         std::cout << "failed to load from file" << std::endl;
-    _tileSprites["deepWater"] = sf::IntRect(0, 0, 50, 50);
-    _tileSprites["shallowWater"] = sf::IntRect(50, 0, 100, 100);
-    _tileSprites["sand"] = sf::IntRect(100, 0, 150, 150);
-    _tileSprites["dirt"] = sf::IntRect(150, 0, 200, 200);
-    _tileSprites["grass"] = sf::IntRect(200, 0, 250, 250);
-    _tileSprites["hill"] = sf::IntRect(250, 0, 300, 300);
+    tileSprites_["deepWater"] = sf::IntRect(0, 0, 50, 50);
+    tileSprites_["shallowWater"] = sf::IntRect(50, 0, 100, 100);
+    tileSprites_["sand"] = sf::IntRect(100, 0, 150, 150);
+    tileSprites_["dirt"] = sf::IntRect(150, 0, 200, 200);
+    tileSprites_["grass"] = sf::IntRect(200, 0, 250, 250);
+    tileSprites_["hill"] = sf::IntRect(250, 0, 300, 300);
 }
 
+void Level::update(const sf::Time& dT)
+{
+    //NOTE: change this loop to something better
+    for(int i = 0; i < gameObjects_.size(); ++i)
+        gameObjects_[i].update(dT);
+}
 //Getters
 //Setters
 
@@ -44,17 +50,17 @@ void Level::generateLevel(const int width, const int height)
             heightmap[xPos][yPos] = -10;
     
     //Initial circle of deep water to guarantee island
-    heightmap[0][0] = (std::rand() % 100) / 100 * -1;
-    heightmap[width - 1][0] = (std::rand() % 100) / 100 * -1;
-    heightmap[0][height - 1] = (std::rand() % 100) / 100 * -1;
-    heightmap[width - 1][height - 1] = (std::rand() % 100) / 100 * -1;
-    heightmap[(width - 1) / 2][0] = (std::rand() % 100) / 100 * -1;
-    heightmap[(width - 1) / 2][height - 1] = (std::rand() % 100) / 100 * -1;
-    heightmap[0][(height - 1) / 2] = (std::rand() % 100) / 100 * -1;
-    heightmap[width - 1][(height - 1) / 2] = (std::rand() % 100) / 100 * -1;
+    heightmap[0][0] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[width - 1][0] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[0][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[width - 1][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[(width - 1) / 2][0] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[(width - 1) / 2][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[0][(height - 1) / 2] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[width - 1][(height - 1) / 2] = (std::rand() % 80) / 100 * - 0.2f;
     
     //Island seeds
-    heightmap[(width - 1) / 2][(height - 1) / 2] = .8f;
+    heightmap[(width - 1) / 2][(height - 1) / 2] = 0.8f;
     
     heightmap[(width - 1) / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
     heightmap[(width - 1) * 3 / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
@@ -318,17 +324,17 @@ void Level::generateLevel(const int width, const int height)
             //Assigns tiles based on height
             float height = heightmap[xPos][yPos];
             if(height < rangeDeepWater)
-                tiles[xPos][yPos] = Tile(_tileSpriteSheet, _tileSprites["deepWater"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["deepWater"]);
             else if(height < rangeShallowWater)
-                tiles[xPos][yPos] = Tile(_tileSpriteSheet, _tileSprites["shallowWater"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["shallowWater"]);
             else if(height < rangeSand)
-                tiles[xPos][yPos] = Tile(_tileSpriteSheet, _tileSprites["sand"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["sand"]);
             else if(height < rangeDirt)
-                tiles[xPos][yPos] = Tile(_tileSpriteSheet, _tileSprites["dirt"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirt"]);
             else if(height < rangeGrass)
-                tiles[xPos][yPos] = Tile(_tileSpriteSheet, _tileSprites["grass"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"]);
             else
-                tiles[xPos][yPos] = Tile(_tileSpriteSheet, _tileSprites["hill"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["hill"]);
         }
     }
        

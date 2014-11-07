@@ -49,8 +49,8 @@ void Engine::draw()
         }
 }
 int Engine::run()
-{
-	//Sets the viewport to the camera
+{ 
+    //Sets the viewport to the camera
     _window.setView(_camera.getView());
     _level.generateLevel(129, 129);
 
@@ -59,6 +59,9 @@ int Engine::run()
     {
         //delta time
         _dT = _dTClock.restart();
+        
+         //Updates Level
+        _level.update(_dT);
         
         //update cam
         _camera.update(_window.getSize());
