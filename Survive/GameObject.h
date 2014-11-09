@@ -9,22 +9,9 @@ class GameObject
 public:
     GameObject();
     
-    void update(const sf::Time&);
+    void virtual update(const sf::Time&) = 0;
     void assignParent(const GameObject&);
     void removeParent();
-    
-    //Template function that will return a desired component type else throw an exception
-    template <typename Type>
-    Type& getComponent()
-    {
-        for(size_t component = 0; component < components_.size(); ++component)
-        { 
-            if(Type &componentRef = dynamic_cast<Type>(components_[component].get()))
-                return componentRef;
-            //else
-            //throw an exception
-        }
-    }
     
     //Getters
     sf::Vector2f getPositionGlobal() const;
@@ -33,9 +20,7 @@ public:
     
  
 private:
-    //Holds derived components in a base container. Needs dynamic casting
-    std::vector<std::unique_ptr<Component>> components_;
-    
+ 
     //Transform values all GameObjects will contain
     //GameObject parentGameObject_;
     bool hasParent_ = false;

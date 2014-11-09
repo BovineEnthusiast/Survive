@@ -18,11 +18,9 @@ Level::Level()
 void Level::update(const sf::Time& dT)
 {
     //NOTE: change this loop to something better
-    for(int i = 0; i < gameObjects_.size(); ++i)
-        gameObjects_[i].update(dT);
+    //for(int i = 0; i < gameObjects_.size(); ++i)
+        //gameObjects_[i].update(dT);
 }
-//Getters
-//Setters
 
 //Generates the level with the diamond-square algorithm
 void Level::generateLevel(const int width, const int height) 
@@ -339,3 +337,11 @@ void Level::generateLevel(const int width, const int height)
     }
        
 }
+//Camera
+void Level::moveCamera(const sf::Vector2f& move) {camera_.move(move);}
+void Level::zoomCamera(const int zoom) {camera_.changeSize(zoom);}
+void Level::resizeCamera(const sf::Vector2u& size) {camera_.resizeView(size);}
+//Getters
+bool Level::isMenu() {return menu_;}
+sf::View Level::getCameraView() {return camera_.getView();}
+//Setters

@@ -16,20 +16,23 @@ void Engine::handleInput()
 {
     if(_windowFocused)
     {
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            _camera.move(sf::Vector2f(100,0) * _dT.asSeconds());
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            _camera.move(sf::Vector2f(-100,0) * _dT.asSeconds());
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-            _camera.move(sf::Vector2f(0,-100) * _dT.asSeconds());
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-            _camera.move(sf::Vector2f(0,100) * _dT.asSeconds());
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-            _camera.changeSize(1);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-            _camera.changeSize(-1);
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-            _level.generateLevel(129,129);
+        if(!level_.isMenu())
+        {
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+                level_.moveCamera(sf::Vector2f(100,0) * _dT.asSeconds());
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+               level_.moveCamera(sf::Vector2f(-100,0) * _dT.asSeconds());
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+                level_.moveCamera(sf::Vector2f(0,-100) * _dT.asSeconds());
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+                level_.moveCamera(sf::Vector2f(0,100) * _dT.asSeconds());
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+                level_.zoomCamera(1);
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+                level_.zoomCamera(-1);
+            if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+                level_.generateLevel(129,129);
+        }
     }
 }
 
@@ -41,18 +44,18 @@ void Engine::update()
 void Engine::draw()
 {
     //Draws Tiles first
-    for(size_t vTile = 0; vTile < _level.tiles.size(); ++vTile)
-    	for(size_t tile = 0; tile < _level.tiles[vTile].size(); ++tile)
+    for(size_t vTile = 0; vTile < level_.tiles.size(); ++vTile)
+    	for(size_t tile = 0; tile < level_.tiles[vTile].size(); ++tile)
         {
-            _level.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * 5, (float)tile * 5));
-            _window.draw(_level.tiles[vTile][tile].getSprite());
+            level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * 5, (float)tile * 5));
+            _window.draw(level_.tiles[vTile][tile].getSprite());
         }
 }
 int Engine::run()
 { 
     //Sets the viewport to the camera
-    _window.setView(_camera.getView());
-    _level.generateLevel(129, 129);
+    _window.setView(level_.getCameraView());
+    level_.generateLevel(129, 129);
 
     //Game Loop
     while(_window.isOpen())
@@ -61,11 +64,11 @@ int Engine::run()
         _dT = _dTClock.restart();
         
          //Updates Level
-        _level.update(_dT);
+        level_.update(_dT);
         
         //update cam
-        _camera.update(_window.getSize());
-        _window.setView(_camera.getView());
+        level_.resizeCamera(_window.getSize());
+        _window.setView(level_.getCameraView());
         
         sf::Event event;
         while(_window.pollEvent(event))
@@ -78,8 +81,8 @@ int Engine::run()
             else if(event.type == sf::Event::Resized)
             {
                 //Resets viewport
-                _camera.update(_window.getSize());
-                _window.setView(_camera.getView());
+                level_.resizeCamera(_window.getSize());
+                _window.setView(level_.getCameraView());
             }
             else if(event.type == sf::Event::LostFocus)
                 _windowFocused = false;

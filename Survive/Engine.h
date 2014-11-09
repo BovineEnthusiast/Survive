@@ -14,8 +14,9 @@ public:
     
 private:
     sf::RenderWindow _window;
-    Camera _camera;
-    Level _level;
+    Level mainMenu_;
+    Level gameLevel_;
+    Level level_;
     sf::Time _dT;
     sf::Clock _dTClock;
     bool _windowFocused = true;
