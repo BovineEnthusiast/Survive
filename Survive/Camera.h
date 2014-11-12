@@ -18,7 +18,7 @@ public:
     
 private:
     //Size in game units, of the viewport's smaller side
-    unsigned int _size = 100;
+    unsigned int _size = 750;
     
     //Size of the actual view
     sf::Vector2f viewSize_ = sf::Vector2f(_size, _size);

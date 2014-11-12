@@ -6,8 +6,9 @@ class Humanoid : public GameObject
 {
 public:
     Humanoid();
-    void animate();
-private:
+    void animate(const sf::Time&); 
+ 
+protected:
 
     //Body sprite sheet
     sf::Texture bodySpriteSheet_;
@@ -25,6 +26,11 @@ private:
     sf::Vector2f armRightTarget_;
     sf::Clock legAnimClock_;
     float legAnimLength_;
+    
+private:
+    
+    sf::Clock sinClock;
+        
 };
 
 #endif	

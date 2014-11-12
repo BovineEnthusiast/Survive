@@ -6,6 +6,7 @@
 #include "Tile.h"
 #include "GameObject.h"
 #include "Camera.h"
+#include "Player.h"
 class Level 
 {
 public:
@@ -22,8 +23,10 @@ public:
     //Getters
     bool isMenu();
     sf::View getCameraView();
+    Player getPlayer();
     
     //Setters
+    void setCameraPosition(const sf::Vector2f&);
 private:
     sf::Texture tileSpriteSheet_;
         
@@ -31,7 +34,7 @@ private:
         
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
-    
+    Player player_;
     //Will only be one at most
     //std::vector<Player> players_;
     

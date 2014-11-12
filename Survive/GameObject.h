@@ -19,12 +19,12 @@ public:
     float getRotationGlobal() const;
     
  
-private:
+protected:
  
     //Transform values all GameObjects will contain
     //GameObject parentGameObject_;
     bool hasParent_ = false;
-    sf::Vector2f positionGlobal_ = sf::Vector2f(0, 0);
+    sf::Vector2f positionGlobal_ = sf::Vector2f(350, 350);
     sf::Vector2f positionLocal_ = sf::Vector2f(0,0);
     sf::Vector2f scaleGlobal_ = sf::Vector2f(1, 1);
     sf::Vector2f scaleLocal_ = sf::Vector2f(1,1);

@@ -13,14 +13,13 @@ public:
     int run();  
     
 private:
-    sf::RenderWindow _window;
-    Level mainMenu_;
-    Level gameLevel_;
+    sf::RenderWindow window_;
+   // Level mainMenu_;
+    //Level gameLevel_;
     Level level_;
     sf::Time _dT;
     sf::Clock _dTClock;
-    bool _windowFocused = true;
-    void handleInput();
+    bool windowFocused_ = true;
     void update();
     void draw();
 };
