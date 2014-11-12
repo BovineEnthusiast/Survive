@@ -20,13 +20,30 @@ void Engine::update()
 
 void Engine::draw()
 {
-    //Draws Tiles first
-    for(size_t vTile = 0; vTile < level_.tiles.size(); ++vTile)
-    	for(size_t tile = 0; tile < level_.tiles[vTile].size(); ++tile)
+    //Temporary
+    int tileSize = 50;
+    
+    //Camera view for easier reference
+    sf::View camView = level_.getCameraView();
+    
+    //Thhe top left and bottom right camera view boundry positions
+    sf::Vector2f camTopLeft = sf::Vector2f(camView.getCenter().x - camView.getSize().x / 2, camView.getCenter().y - camView.getSize().y / 2); 
+    sf::Vector2f camBottomRight = sf::Vector2f(camView.getCenter().x + camView.getSize().x / 2, camView.getCenter().y + camView.getSize().y / 2);
+    
+    //Vector positions of tiles to render
+    int topLeftX = (camTopLeft.x - camTopLeft.x % tileSize) / tileSize;
+    int topLeftY = (camTopLeft.y - camTopLeft.y % tileSize) / tileSize;
+    int bottomRightX = (camBottomRight.x + camBottomRight.x % tileSize) / tileSize;
+    int bottomRightY = (camBottomRight.y + camBottomRight.y % tileSize) / tileSize;
+
+    //Draws Tiles inside the range of the camera first
+    for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
+    	for(size_t tile = topLeftY; tile <= bottomRightY; ++tile)
         {
             level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * 50, (float)tile * 50));
             window_.draw(level_.tiles[vTile][tile].getSprite());
         }
+    
     window_.draw(level_.getPlayer().getArmLeftSprite());
     window_.draw(level_.getPlayer().getArmRightSprite());
     window_.draw(level_.getPlayer().getLegLeftSprite());
