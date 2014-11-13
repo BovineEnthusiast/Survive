@@ -26,7 +26,7 @@ void Player::update(const sf::Time& dT)
     velocity_ *= (float)10;
     
     //TEMPORARY - 322.5 should be half width!!!!!!
-    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - 322.5, sf::Mouse::getPosition(*window).x - 322.5) * 180 / 3.14159265358 + 90);
+    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - window->getSize().y / 2, sf::Mouse::getPosition(*window).x - window->getSize().x / 2) * 180 / 3.14159265358 + 90);
                 
 }
 //Getters
