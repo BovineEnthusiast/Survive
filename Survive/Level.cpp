@@ -348,3 +348,4 @@ sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() {return player_;}
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}
+void Level::setPlayerWindow(sf::RenderWindow& renderWindow) {player_.window = &renderWindow;}

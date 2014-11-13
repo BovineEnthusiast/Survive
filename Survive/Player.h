@@ -8,6 +8,8 @@ public:
     Player();
     void update(const sf::Time&);
     bool windowFocus;
+    sf::RenderWindow* window;
+    
     //Getters
     sf::Sprite getLegLeftSprite();
     sf::Sprite getLegRightSprite();
@@ -15,6 +17,7 @@ public:
     sf::Sprite getArmRightSprite();
     sf::Sprite getHeadSprite();
     sf::Vector2f getVelocity();
+    
     //Setters
     void setVelocity(const sf::Vector2f&);
 private:

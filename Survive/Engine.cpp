@@ -31,10 +31,10 @@ void Engine::draw()
     sf::Vector2f camBottomRight = sf::Vector2f(camView.getCenter().x + camView.getSize().x / 2, camView.getCenter().y + camView.getSize().y / 2);
     
     //Vector positions of tiles to render
-    int topLeftX = (camTopLeft.x - camTopLeft.x % tileSize) / tileSize;
-    int topLeftY = (camTopLeft.y - camTopLeft.y % tileSize) / tileSize;
-    int bottomRightX = (camBottomRight.x + camBottomRight.x % tileSize) / tileSize;
-    int bottomRightY = (camBottomRight.y + camBottomRight.y % tileSize) / tileSize;
+    int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize)) / tileSize;
+    int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize)) / tileSize;
+    int bottomRightX = (camBottomRight.x + fmod(camBottomRight.x, tileSize)) / tileSize;
+    int bottomRightY = (camBottomRight.y + fmod(camBottomRight.y, tileSize)) / tileSize;
 
     //Draws Tiles inside the range of the camera first
     for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
@@ -55,7 +55,10 @@ int Engine::run()
     //Sets the viewport to the camera
     window_.setView(level_.getCameraView());
     level_.generateLevel(129, 129);
-
+    
+    //TEMPORARY
+    level_.setPlayerWindow(window_);
+    
     //Game Loop
     while(window_.isOpen())
     {

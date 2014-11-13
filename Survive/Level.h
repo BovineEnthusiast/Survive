@@ -20,6 +20,7 @@ public:
     void moveCamera(const sf::Vector2f&);
     void zoomCamera(const int);
     void resizeCamera(const sf::Vector2u&);
+    
     //Getters
     bool isMenu();
     sf::View getCameraView();
@@ -27,6 +28,7 @@ public:
     
     //Setters
     void setCameraPosition(const sf::Vector2f&);
+    void setPlayerWindow(sf::RenderWindow&);
 private:
     sf::Texture tileSpriteSheet_;
         

@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "Humanoid.h"
-#include <iostream>
+#include <math.h>
 Player::Player() 
 {
     velocity_ = sf::Vector2f(1,0);
@@ -25,6 +25,8 @@ void Player::update(const sf::Time& dT)
     
     velocity_ *= (float)10;
     
+    //TEMPORARY - 322.5 should be half width!!!!!!
+    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - 322.5, sf::Mouse::getPosition(*window).x - 322.5) * 180 / 3.14159265358 + 90);
                 
 }
 //Getters
