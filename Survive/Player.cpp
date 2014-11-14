@@ -1,9 +1,10 @@
 #include "Player.h"
 #include "Humanoid.h"
 #include <math.h>
+#include <iostream>
 Player::Player() 
 {
-    velocity_ = sf::Vector2f(1,0);
+    positionGlobal_ = sf::Vector2f(1000.0f, 1000.0f);
 }
 
 void Player::update(const sf::Time& dT)
@@ -26,8 +27,8 @@ void Player::update(const sf::Time& dT)
     velocity_ *= (float)10;
     
     //TEMPORARY - 322.5 should be half width!!!!!!
-    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - window->getSize().y / 2, sf::Mouse::getPosition(*window).x - window->getSize().x / 2) * 180 / 3.14159265358 + 90);
-                
+    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
+    std::cout << window->getSize().y / 2 << std::endl;
 }
 //Getters
 sf::Sprite Player::getLegLeftSprite() {return legLeftSprite_;}

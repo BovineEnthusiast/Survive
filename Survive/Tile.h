@@ -5,9 +5,10 @@ class Tile
 {
 public:
     Tile();
-    Tile(const sf::Texture&, const sf::IntRect&);
+    Tile(const sf::Texture&, const sf::IntRect&, const std::string&);
     //Getters
     sf::Sprite getSprite();
+    std::string getType();
     
     //Setters
     void setSpritePos(const sf::Vector2f&);
@@ -16,7 +17,7 @@ public:
     void setTileTextureRect();
 private:
     sf::Sprite _sprite;
-
+    std::string type_ = "";
 };
 
 #endif

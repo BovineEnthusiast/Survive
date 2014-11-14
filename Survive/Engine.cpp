@@ -9,7 +9,7 @@ Engine::Engine()
 
 bool Engine::initialize()
 {
-    window_.create(sf::VideoMode(645, 645), "Survive");
+    window_.create(sf::VideoMode(645, 645), "Survive", sf::Style::Default, sf::ContextSettings(24,8,8));
     return true;
 }
 

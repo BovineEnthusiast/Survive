@@ -1,12 +1,17 @@
 #ifndef HUMANOID_H
 #define	HUMANOID_H
-#include <SFML/Graphics.hpp>
 #include "GameObject.h"
+#include <vector>
+#include <SFML/Graphics.hpp>
+#include "Tile.h"
+
+
 class Humanoid : public GameObject
 {
 public:
     Humanoid();
     void animate(const sf::Time&); 
+    std::vector<std::vector<Tile>>* pTiles;
  
 protected:
 

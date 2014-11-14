@@ -13,6 +13,8 @@ Level::Level()
     tileSprites_["dirt"] = sf::IntRect(150, 0, 200, 200);
     tileSprites_["grass"] = sf::IntRect(200, 0, 250, 250);
     tileSprites_["hill"] = sf::IntRect(250, 0, 300, 300);
+    
+    player_.pTiles = &tiles;
 }
 
 void Level::update(const sf::Time& dT)
@@ -323,17 +325,17 @@ void Level::generateLevel(const int width, const int height)
             //Assigns tiles based on height
             float height = heightmap[xPos][yPos];
             if(height < rangeDeepWater)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["deepWater"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["deepWater"], "deepWater");
             else if(height < rangeShallowWater)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["shallowWater"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["shallowWater"], "shallowWater");
             else if(height < rangeSand)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["sand"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["sand"], "sand");
             else if(height < rangeDirt)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirt"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirt"], "dirt");
             else if(height < rangeGrass)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"], "grass");
             else
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["hill"]);
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["hill"], "hill");
         }
     }
        
