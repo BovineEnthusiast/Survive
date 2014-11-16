@@ -5,12 +5,16 @@
 Player::Player() 
 {
     positionGlobal_ = sf::Vector2f(1000.0f, 1000.0f);
+    
+    //Default gun
+    vGuns_.push_back(Gun("pistol"));
+    vGuns_[0].setLocalPosition(sf::Vector2f(19,23));
 }
 
 void Player::update(const sf::Time& dT)
 { 
     animate(dT);
-    //velocity_ = sf::Vector2f((float)cos(rotation.getElapsedTime().asSeconds()) * 10, (float)sin(rotation.getElapsedTime().asSeconds()) * 10);
+    
     velocity_ = sf::Vector2f(0,0);
     
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
@@ -26,9 +30,12 @@ void Player::update(const sf::Time& dT)
     
     velocity_ *= (float)10;
     
-    //TEMPORARY - 322.5 should be half width!!!!!!
     headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
-    std::cout << window->getSize().y / 2 << std::endl;
+
+    //Updates current gun
+    vGuns_[0].setPlayerHeadRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
+    vGuns_[0].setPlayerPosition(positionGlobal_);
+    vGuns_[0].update(dT);
 }
 //Getters
 sf::Sprite Player::getLegLeftSprite() {return legLeftSprite_;}
@@ -37,6 +44,7 @@ sf::Sprite Player::getArmLeftSprite() {return armLeftSprite_;}
 sf::Sprite Player::getArmRightSprite() {return armRightSprite_;}
 sf::Sprite Player::getHeadSprite() {return headSprite_;}
 sf::Vector2f Player::getVelocity() {return velocity_;}
+std::vector<Gun> Player::getGuns() {return vGuns_;}
 
 //Setters 
 void Player::setVelocity(const sf::Vector2f& velocity) {velocity_ = velocity;}

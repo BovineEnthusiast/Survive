@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define	PLAYER_H
 #include "Humanoid.h"
+#include "Gun.h"
 #include <SFML/Graphics.hpp>
 class Player : public Humanoid
 {
@@ -17,11 +18,12 @@ public:
     sf::Sprite getArmRightSprite();
     sf::Sprite getHeadSprite();
     sf::Vector2f getVelocity();
+    std::vector<Gun> getGuns();
     
     //Setters
     void setVelocity(const sf::Vector2f&);
 private:
-    sf::Clock rotation;
+    std::vector<Gun> vGuns_;
     
 };
 

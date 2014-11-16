@@ -9,7 +9,7 @@ Engine::Engine()
 
 bool Engine::initialize()
 {
-    window_.create(sf::VideoMode(645, 645), "Survive", sf::Style::Default, sf::ContextSettings(24,8,8));
+    window_.create(sf::VideoMode(645, 645), "Survive");
     return true;
 }
 
@@ -44,11 +44,17 @@ void Engine::draw()
             window_.draw(level_.tiles[vTile][tile].getSprite());
         }
     
+    //The player and current gun
     window_.draw(level_.getPlayer().getArmLeftSprite());
     window_.draw(level_.getPlayer().getArmRightSprite());
     window_.draw(level_.getPlayer().getLegLeftSprite());
     window_.draw(level_.getPlayer().getLegRightSprite());
     window_.draw(level_.getPlayer().getHeadSprite());
+    window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
+    
+    std::vector<Bullet> vBullets = level_.getPlayer().getGuns().at(0).getBullets();
+    for(size_t bullet = 0; bullet < vBullets.size(); ++bullet)
+        window_.draw(vBullets.at(bullet).getSprite());
 }
 int Engine::run()
 { 

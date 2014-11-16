@@ -7,12 +7,12 @@ Level::Level()
     //Loads the tile sheet then assigns their locations to a map
     if(!tileSpriteSheet_.loadFromFile("TileSpritesheet.png"))
         std::cout << "failed to load from file" << std::endl;
-    tileSprites_["deepWater"] = sf::IntRect(0, 0, 50, 50);
-    tileSprites_["shallowWater"] = sf::IntRect(50, 0, 100, 100);
-    tileSprites_["sand"] = sf::IntRect(100, 0, 150, 150);
-    tileSprites_["dirt"] = sf::IntRect(150, 0, 200, 200);
-    tileSprites_["grass"] = sf::IntRect(200, 0, 250, 250);
-    tileSprites_["hill"] = sf::IntRect(250, 0, 300, 300);
+    tileSprites_["deepWater"] = sf::IntRect(0, 0, 54, 54);
+    tileSprites_["shallowWater"] = sf::IntRect(54, 0, 54, 54);
+    tileSprites_["sand"] = sf::IntRect(108, 0, 54, 54);
+    tileSprites_["dirt"] = sf::IntRect(162, 0, 54, 54);
+    tileSprites_["grass"] = sf::IntRect(216, 0, 54, 54);
+    tileSprites_["hill"] = sf::IntRect(270, 0, 54, 54);
     
     player_.pTiles = &tiles;
 }
