@@ -19,6 +19,7 @@ private:
     Level level_;
     sf::Time _dT;
     sf::Clock _dTClock;
+    int tileSize_ = 50;
     bool windowFocused_ = true;
     void update();
     void draw();

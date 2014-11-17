@@ -22,6 +22,7 @@ public:
     
     //Setters
     void setVelocity(const sf::Vector2f&);
+    void setPosition(const sf::Vector2f&);
 private:
     std::vector<Gun> vGuns_;
     

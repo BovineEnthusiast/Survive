@@ -21,7 +21,7 @@ void Engine::update()
 void Engine::draw()
 {
     //Temporary
-    int tileSize = 50;
+ 
     
     //Camera view for easier reference
     sf::View camView = level_.getCameraView();
@@ -31,16 +31,16 @@ void Engine::draw()
     sf::Vector2f camBottomRight = sf::Vector2f(camView.getCenter().x + camView.getSize().x / 2, camView.getCenter().y + camView.getSize().y / 2);
     
     //Vector positions of tiles to render
-    int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize)) / tileSize;
-    int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize)) / tileSize;
-    int bottomRightX = (camBottomRight.x + fmod(camBottomRight.x, tileSize)) / tileSize;
-    int bottomRightY = (camBottomRight.y + fmod(camBottomRight.y, tileSize)) / tileSize;
+    int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_;
+    int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_;
+    int bottomRightX = (camBottomRight.x + fmod(camBottomRight.x, tileSize_)) / tileSize_;
+    int bottomRightY = (camBottomRight.y + fmod(camBottomRight.y, tileSize_)) / tileSize_;
 
     //Draws Tiles inside the range of the camera first
     for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
     	for(size_t tile = topLeftY; tile <= bottomRightY; ++tile)
         {
-            level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * 50, (float)tile * 50));
+            level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_, (float)tile * tileSize_));
             window_.draw(level_.tiles[vTile][tile].getSprite());
         }
     
@@ -61,7 +61,7 @@ int Engine::run()
     //Sets the viewport to the camera
     window_.setView(level_.getCameraView());
     level_.generateLevel(129, 129);
-    
+
     //TEMPORARY
     level_.setPlayerWindow(window_);
     
@@ -76,6 +76,17 @@ int Engine::run()
         
         //update cam
         level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
+        
+        //Clamps the camera to edges
+        if(level_.getCameraView().getCenter().x - level_.getCameraView().getSize().x / 2 < 0)
+            level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getSize().x / 2, level_.getCameraView().getCenter().y));
+        if(level_.getCameraView().getCenter().y - level_.getCameraView().getSize().y / 2 < 0)
+            level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getCenter().x, level_.getCameraView().getSize().y / 2));
+        if(level_.getCameraView().getCenter().x + level_.getCameraView().getSize().x / 2 > level_.tiles.size() * tileSize_)
+            level_.setCameraPosition(sf::Vector2f(level_.tiles.size() * tileSize_ - level_.getCameraView().getSize().x / 2, level_.getCameraView().getCenter().y));
+        if(level_.getCameraView().getCenter().y + level_.getCameraView().getSize().y / 2 > level_.tiles.size() * tileSize_)
+            level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getCenter().x, level_.tiles.size() * tileSize_ - level_.getCameraView().getSize().y / 2));
+        
         level_.resizeCamera(window_.getSize());
         window_.setView(level_.getCameraView());
         

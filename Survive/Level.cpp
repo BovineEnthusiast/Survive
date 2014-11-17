@@ -51,7 +51,8 @@ void Level::generateLevel(const int width, const int height)
             heightmap[xPos][yPos] = -10;
     
     //Initial circle of deep water to guarantee island
-    heightmap[0][0] = (std::rand() % 80) / 100 * - 0.2f;
+   
+   heightmap[0][0] = (std::rand() % 80) / 100 * - 0.2f;
     heightmap[width - 1][0] = (std::rand() % 80) / 100 * - 0.2f;
     heightmap[0][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
     heightmap[width - 1][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
@@ -59,7 +60,7 @@ void Level::generateLevel(const int width, const int height)
     heightmap[(width - 1) / 2][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
     heightmap[0][(height - 1) / 2] = (std::rand() % 80) / 100 * - 0.2f;
     heightmap[width - 1][(height - 1) / 2] = (std::rand() % 80) / 100 * - 0.2f;
-    
+   
     //Island seeds
     heightmap[(width - 1) / 2][(height - 1) / 2] = 0.8f;
     
@@ -316,6 +317,8 @@ void Level::generateLevel(const int width, const int height)
     //Adds tiles to tile array
     int xCenter = (width - 1) / 2;
     int yCenter = xCenter;
+    //Used to place player on a green tile
+    bool playerSet = false; 
     for(int xPos = 0; xPos < width; ++xPos)
     {
        for(int yPos = 0; yPos < height; ++yPos)
@@ -333,7 +336,12 @@ void Level::generateLevel(const int width, const int height)
             else if(height < rangeDirt)
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirt"], "dirt");
             else if(height < rangeGrass)
+            {
+                if(!playerSet)
+                    player_.setPosition(sf::Vector2f(xPos * 50, yPos * 50));
+                playerSet = true;
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"], "grass");
+            }
             else
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["hill"], "hill");
         }

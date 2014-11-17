@@ -11,6 +11,8 @@ Gun::Gun(const std::string& type)
     {
         gun_.setTextureRect(sf::IntRect(0, 0, 26, 9));
         gun_.setOrigin(0, 5);     
+        armRightPos_ = sf::Vector2f(5, 5);
+        armLeftPos_ = sf::Vector2f(5, 5);
     }
 }
 void Gun::update(const sf::Time& dT)
@@ -21,6 +23,8 @@ void Gun::update(const sf::Time& dT)
     //Updates position + rotation
     float rotateBy = (playerRotation_ - atan2(positionLocal_.y, positionLocal_.x)) * 3.14159265358 / 180;
     positionGlobal_ = playerPos_ + sf::Vector2f(positionLocal_.x * cos(rotateBy) - positionLocal_.y * sin(rotateBy), positionLocal_.x * sin(rotateBy) + positionLocal_.y * cos(rotateBy));
+    armLeftPos_ = armLeftPos_ + sf::Vector2f(armLeftPos_.x * cos(rotateBy) - armLeftPos_.y * sin(rotateBy), armLeftPos_.x * sin(rotateBy) + armLeftPos_.y * cos(rotateBy));
+    armRightPos_ = armRightPos_ + sf::Vector2f(armRightPos_.x * cos(rotateBy) - armRightPos_.y * sin(rotateBy), armRightPos_.x * sin(rotateBy) + armRightPos_.y * cos(rotateBy));
     rotationGlobal_ = playerRotation_;        
     gun_.setPosition(positionGlobal_);
     gun_.setRotation(rotationGlobal_);
@@ -36,7 +40,6 @@ void Gun::update(const sf::Time& dT)
         bulletSpawnPos_ = positionGlobal_ + gun_.getLocalBounds().height * sf::Vector2f(cos(playerRotation_ * 3.14159265358 / 180), sin(playerRotation_  * 3.14159265358 / 180));
         if(fireRateClock_.getElapsedTime().asSeconds() >= fireRate_ && currentBullets_ > 0 && !reloading_ && (auto_ || !clicked_))
         {
-            std::cout << "fire" << std::endl;
             //Converts the rotation to a vector, times it by bulletSpeed_, and creates a bullet
             sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180), sin(rotationGlobal_ * 3.14159265358 / 180)) * bulletSpeed_; 
             vBullets_.push_back(Bullet(bulletSpawnPos_, bulletVelocity, bulletDamage_));

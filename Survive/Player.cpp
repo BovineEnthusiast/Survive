@@ -30,12 +30,32 @@ void Player::update(const sf::Time& dT)
     
     velocity_ *= (float)10;
     
-    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
+    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - ((float)window->getSize().y / 2.0f ), sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
 
+   
+    
     //Updates current gun
     vGuns_[0].setPlayerHeadRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
     vGuns_[0].setPlayerPosition(positionGlobal_);
     vGuns_[0].update(dT);
+    
+    float rotationRadians = headSprite_.getRotation() * 3.14159265358 / 180;
+    sf::Vector2f rotationVector = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
+    sf::Vector2f perpVec;
+    if(rotationVector.x != 0)
+        perpVec = sf::Vector2f((rotationVector.y / rotationVector.x), -1);
+    else
+        perpVec = sf::Vector2f(1, 0);
+    
+    perpVec /= (float)sqrt(1 + perpVec.x * perpVec.x);
+    
+    sf::Vector2f positionLeft = sf::Vector2f(perpVec * -23.0f);
+    sf::Vector2f positionRight = sf::Vector2f(perpVec * 23.0f);
+    armLeftSprite_.setPosition(vGuns_[0].getArmLeftPos());
+    armLeftSprite_.setRotation(atan2((positionLeft - vGuns_[0].getArmLeftPos()).y, (positionLeft - vGuns_[0].getArmLeftPos()).x));
+    armRightSprite_.setPosition(vGuns_[0].getArmLeftPos());
+    armRightSprite_.setRotation(atan2((positionRight - vGuns_[0].getArmLeftPos()).y, (positionRight - vGuns_[0].getArmLeftPos()).x));
+    std::cout << "Arm Right: " << armLeftSprite_.getPosition().x << " " << armLeftSprite_.getPosition().y << std::endl;
 }
 //Getters
 sf::Sprite Player::getLegLeftSprite() {return legLeftSprite_;}
@@ -48,3 +68,4 @@ std::vector<Gun> Player::getGuns() {return vGuns_;}
 
 //Setters 
 void Player::setVelocity(const sf::Vector2f& velocity) {velocity_ = velocity;}
+void Player::setPosition(const sf::Vector2f& position) {positionGlobal_ = position;}
