@@ -10,21 +10,22 @@ Gun::Gun(const std::string& type)
     if(type == "pistol")
     {
         gun_.setTextureRect(sf::IntRect(0, 0, 26, 9));
-        gun_.setOrigin(0, 5);     
-        armRightPos_ = sf::Vector2f(5, 5);
-        armLeftPos_ = sf::Vector2f(5, 5);
+        gun_.setOrigin(0, 4.5);     
+        armRightPosLocal_ = sf::Vector2f(5, 0);
+        armLeftPosLocal_ = sf::Vector2f(5, 0);
     }
 }
 void Gun::update(const sf::Time& dT)
 {
     if(clicked_ && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
         clicked_ = false;
-    
+    //Animated the local position
+    positionLocal_ += sf::Vector2f(sin(animationClock_.getElapsedTime().asSeconds() * 5) * 0.0025f, cos(animationClock_.getElapsedTime().asSeconds() * 10) * 0.02f);
     //Updates position + rotation
-    float rotateBy = (playerRotation_ - atan2(positionLocal_.y, positionLocal_.x)) * 3.14159265358 / 180;
+    float rotateBy = playerRotation_ * 3.14159265358 / 180;
     positionGlobal_ = playerPos_ + sf::Vector2f(positionLocal_.x * cos(rotateBy) - positionLocal_.y * sin(rotateBy), positionLocal_.x * sin(rotateBy) + positionLocal_.y * cos(rotateBy));
-    armLeftPos_ = armLeftPos_ + sf::Vector2f(armLeftPos_.x * cos(rotateBy) - armLeftPos_.y * sin(rotateBy), armLeftPos_.x * sin(rotateBy) + armLeftPos_.y * cos(rotateBy));
-    armRightPos_ = armRightPos_ + sf::Vector2f(armRightPos_.x * cos(rotateBy) - armRightPos_.y * sin(rotateBy), armRightPos_.x * sin(rotateBy) + armRightPos_.y * cos(rotateBy));
+    armLeftPosGlobal_ = sf::Vector2f(armLeftPosLocal_.x * cos(rotateBy) - armLeftPosLocal_.y * sin(rotateBy), armLeftPosLocal_.x * sin(rotateBy) + armLeftPosLocal_.y * cos(rotateBy));
+    armRightPosGlobal_ = sf::Vector2f(armRightPosLocal_.x * cos(rotateBy) - armRightPosLocal_.y * sin(rotateBy), armRightPosLocal_.x * sin(rotateBy) + armRightPosLocal_.y * cos(rotateBy));
     rotationGlobal_ = playerRotation_;        
     gun_.setPosition(positionGlobal_);
     gun_.setRotation(rotationGlobal_);
@@ -74,15 +75,13 @@ void Gun::update(const sf::Time& dT)
     for(size_t bullet = 0; bullet < vBullets_.size(); bullet++)
         vBullets_[bullet].update(dT);
    
-    std::cout << "Current Bullets: " << currentBullets_ << std::endl;
-    std::cout << "Fire Rate Clock: " << fireRateClock_.getElapsedTime().asSeconds() << std::endl;
-    std::cout << "Reload Clock: " << reloadClock_.getElapsedTime().asSeconds() << std::endl;
+  
 }
 
 
 //Getters
-sf::Vector2f Gun::getArmLeftPos() {return armLeftPos_;}
-sf::Vector2f Gun::getArmRightPos() {return armRightPos_;}
+sf::Vector2f Gun::getArmLeftPos() {return armLeftPosGlobal_;}
+sf::Vector2f Gun::getArmRightPos() {return armRightPosGlobal_;}
 std::vector<Bullet> Gun::getBullets() {return vBullets_;}
 sf::Sprite Gun::getSprite() {return gun_;}
 

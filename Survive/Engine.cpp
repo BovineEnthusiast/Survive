@@ -45,10 +45,11 @@ void Engine::draw()
         }
     
     //The player and current gun
-    window_.draw(level_.getPlayer().getArmLeftSprite());
-    window_.draw(level_.getPlayer().getArmRightSprite());
+    
     window_.draw(level_.getPlayer().getLegLeftSprite());
     window_.draw(level_.getPlayer().getLegRightSprite());
+    window_.draw(level_.getPlayer().getArmLeftSprite());
+    window_.draw(level_.getPlayer().getArmRightSprite());
     window_.draw(level_.getPlayer().getHeadSprite());
     window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
     

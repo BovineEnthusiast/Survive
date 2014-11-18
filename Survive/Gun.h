@@ -29,8 +29,10 @@ private:
     float playerRotation_;
     
     //The position on the gun that the left/right arm is touching
-    sf::Vector2f armRightPos_;
-    sf::Vector2f armLeftPos_;
+    sf::Vector2f armRightPosGlobal_;
+    sf::Vector2f armLeftPosGlobal_;
+    sf::Vector2f armRightPosLocal_;
+    sf::Vector2f armLeftPosLocal_;
     
     //The position that the bullet spawns
     sf::Vector2f bulletSpawnPos_ = sf::Vector2f(2.5, 0);
@@ -54,6 +56,7 @@ private:
     //Clocks
     sf::Clock fireRateClock_;
     sf::Clock reloadClock_;
+    sf::Clock animationClock_;
 
 };
 

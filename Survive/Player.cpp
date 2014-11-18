@@ -8,7 +8,10 @@ Player::Player()
     
     //Default gun
     vGuns_.push_back(Gun("pistol"));
-    vGuns_[0].setLocalPosition(sf::Vector2f(19,23));
+    vGuns_[0].setLocalPosition(sf::Vector2f(30, 10));
+    
+    armLeftSprite_.setOrigin(armLeftSprite_.getLocalBounds().width / 2, 0);
+    armRightSprite_.setOrigin(armLeftSprite_.getLocalBounds().width / 2, 0);
 }
 
 void Player::update(const sf::Time& dT)
@@ -39,22 +42,15 @@ void Player::update(const sf::Time& dT)
     vGuns_[0].setPlayerPosition(positionGlobal_);
     vGuns_[0].update(dT);
     
-    float rotationRadians = headSprite_.getRotation() * 3.14159265358 / 180;
-    sf::Vector2f rotationVector = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
-    sf::Vector2f perpVec;
-    if(rotationVector.x != 0)
-        perpVec = sf::Vector2f((rotationVector.y / rotationVector.x), -1);
-    else
-        perpVec = sf::Vector2f(1, 0);
+    float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358 / 180;
+    sf::Vector2f perpVec = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
     
-    perpVec /= (float)sqrt(1 + perpVec.x * perpVec.x);
-    
-    sf::Vector2f positionLeft = sf::Vector2f(perpVec * -23.0f);
-    sf::Vector2f positionRight = sf::Vector2f(perpVec * 23.0f);
-    armLeftSprite_.setPosition(vGuns_[0].getArmLeftPos());
-    armLeftSprite_.setRotation(atan2((positionLeft - vGuns_[0].getArmLeftPos()).y, (positionLeft - vGuns_[0].getArmLeftPos()).x));
-    armRightSprite_.setPosition(vGuns_[0].getArmLeftPos());
-    armRightSprite_.setRotation(atan2((positionRight - vGuns_[0].getArmLeftPos()).y, (positionRight - vGuns_[0].getArmLeftPos()).x));
+    sf::Vector2f armRotationVecLeft = (positionGlobal_ + sf::Vector2f(perpVec * 11.5f)) - (vGuns_[0].getArmLeftPos() + vGuns_[0].getPositionGlobal());
+    sf::Vector2f armRotationVecRight = (positionGlobal_ - sf::Vector2f(perpVec * 11.5f)) - (vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
+    armLeftSprite_.setPosition(vGuns_[0].getArmLeftPos() + vGuns_[0].getPositionGlobal());
+    armRightSprite_.setPosition(vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
+    armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 -90);
+    armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 -90);
     std::cout << "Arm Right: " << armLeftSprite_.getPosition().x << " " << armLeftSprite_.getPosition().y << std::endl;
 }
 //Getters
