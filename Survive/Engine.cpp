@@ -34,9 +34,17 @@ void Engine::draw()
     int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_;
     int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_;
     int bottomRightX = (camBottomRight.x + fmod(camBottomRight.x, tileSize_)) / tileSize_;
-    int bottomRightY = (camBottomRight.y + fmod(camBottomRight.y, tileSize_)) / tileSize_;
+    int bottomRightY = (camBottomRight.y - fmod(camBottomRight.y, tileSize_)) / tileSize_;
 
     //Draws Tiles inside the range of the camera first
+    for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
+    	for(size_t tile = topLeftY; tile <= bottomRightY; ++tile)
+        {
+            level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_, (float)tile * tileSize_));
+            window_.draw(level_.tiles[vTile][tile].getSprite());
+        }
+    
+    //Draws tile items. Separate because tile items have to be drawn on top to prevent being clipped(at least for now)
     for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
     	for(size_t tile = topLeftY; tile <= bottomRightY; ++tile)
         {

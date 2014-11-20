@@ -18,6 +18,7 @@ public:
 private:
     sf::Sprite _sprite;
     std::string type_ = "";
+    bool hasItem_ = false;
 };
 
 #endif

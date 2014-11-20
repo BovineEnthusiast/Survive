@@ -16,6 +16,7 @@ Player::Player()
 
 void Player::update(const sf::Time& dT)
 { 
+    vGuns_[0].window = window;
     animate(dT);
     
     velocity_ = sf::Vector2f(0,0);
@@ -33,13 +34,14 @@ void Player::update(const sf::Time& dT)
     
     velocity_ *= (float)10;
     
-    headSprite_.setRotation(atan2(sf::Mouse::getPosition(*window).y - ((float)window->getSize().y / 2.0f ), sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
+    headSprite_.setRotation(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358);
 
    
     
     //Updates current gun
     vGuns_[0].setPlayerHeadRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
     vGuns_[0].setPlayerPosition(positionGlobal_);
+    vGuns_[0].setPlayerVelocity(velocity_);
     vGuns_[0].update(dT);
     
     float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358 / 180;
@@ -51,7 +53,6 @@ void Player::update(const sf::Time& dT)
     armRightSprite_.setPosition(vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
     armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 -90);
     armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 -90);
-    std::cout << "Arm Right: " << armLeftSprite_.getPosition().x << " " << armLeftSprite_.getPosition().y << std::endl;
 }
 //Getters
 sf::Sprite Player::getLegLeftSprite() {return legLeftSprite_;}
