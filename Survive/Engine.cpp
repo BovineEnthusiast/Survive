@@ -61,6 +61,16 @@ void Engine::draw()
     window_.draw(level_.getPlayer().getHeadSprite());
     window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
     
+    std::vector<Zombie> vZombies = level_.getZombies();
+    for(Zombie zombie : vZombies)
+    {
+        std::cout << "Drawing Zombie" << std::endl;
+        window_.draw(zombie.getArmLeftSprite());
+        window_.draw(zombie.getArmRightSprite());
+        window_.draw(zombie.getHeadSprite());
+        window_.draw(zombie.getLegLeftSprite());
+        window_.draw(zombie.getLegRightSprite());
+    }
     std::vector<Bullet> vBullets = level_.getPlayer().getGuns().at(0).getBullets();
     for(size_t bullet = 0; bullet < vBullets.size(); ++bullet)
         window_.draw(vBullets.at(bullet).getSprite());

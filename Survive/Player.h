@@ -12,11 +12,7 @@ public:
     sf::RenderWindow* window;
     
     //Getters
-    sf::Sprite getLegLeftSprite();
-    sf::Sprite getLegRightSprite();
-    sf::Sprite getArmLeftSprite();
-    sf::Sprite getArmRightSprite();
-    sf::Sprite getHeadSprite();
+    
     sf::Vector2f getVelocity();
     std::vector<Gun> getGuns();
     

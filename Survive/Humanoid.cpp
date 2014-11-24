@@ -61,3 +61,8 @@ void Humanoid::animate(const sf::Time& dT)
 }
 
 //Getters
+sf::Sprite Humanoid::getLegLeftSprite() {return legLeftSprite_;}
+sf::Sprite Humanoid::getLegRightSprite() {return legRightSprite_;}
+sf::Sprite Humanoid::getArmLeftSprite() {return armLeftSprite_;}
+sf::Sprite Humanoid::getArmRightSprite() {return armRightSprite_;}
+sf::Sprite Humanoid::getHeadSprite() {return headSprite_;}

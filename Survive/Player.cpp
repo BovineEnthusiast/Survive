@@ -55,11 +55,7 @@ void Player::update(const sf::Time& dT)
     armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 -90);
 }
 //Getters
-sf::Sprite Player::getLegLeftSprite() {return legLeftSprite_;}
-sf::Sprite Player::getLegRightSprite() {return legRightSprite_;}
-sf::Sprite Player::getArmLeftSprite() {return armLeftSprite_;}
-sf::Sprite Player::getArmRightSprite() {return armRightSprite_;}
-sf::Sprite Player::getHeadSprite() {return headSprite_;}
+
 sf::Vector2f Player::getVelocity() {return velocity_;}
 std::vector<Gun> Player::getGuns() {return vGuns_;}
 

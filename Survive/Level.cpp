@@ -1,4 +1,5 @@
 #include "Level.h"
+#include "Zombie.h"
 #include <cmath>
 #include <iostream>
 #include <SFML/System.hpp>
@@ -23,6 +24,8 @@ void Level::update(const sf::Time& dT)
     //for(int i = 0; i < gameObjects_.size(); ++i)
         //gameObjects_[i].update(dT);
     player_.update(dT);
+    for(size_t zombie = 0; zombie < vZombies_.size(); ++zombie)
+        vZombies_.at(zombie).update(dT);
 }
 
 //Generates the level with the diamond-square algorithm
@@ -338,8 +341,13 @@ void Level::generateLevel(const int width, const int height)
             else if(height < rangeGrass)
             {
                 if(!playerSet)
+                {
                     player_.setPosition(sf::Vector2f(xPos * 50, yPos * 50));
-                playerSet = true;
+                    vZombies_.push_back(Zombie(&player_));
+                    vZombies_.at(0).setPosition(sf::Vector2f(xPos * 50 + 50, yPos * 50 + 50));
+                    
+                    playerSet = true;
+                }
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"], "grass");
             }
             else
@@ -356,6 +364,7 @@ void Level::resizeCamera(const sf::Vector2u& size) {camera_.resizeView(size);}
 bool Level::isMenu() {return menu_;}
 sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() {return player_;}
+std::vector<Zombie> Level::getZombies() {return vZombies_;}
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}
 void Level::setPlayerWindow(sf::RenderWindow& renderWindow) {player_.window = &renderWindow;}

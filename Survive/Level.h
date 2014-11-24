@@ -7,6 +7,7 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Player.h"
+#include "Zombie.h"
 class Level 
 {
 public:
@@ -25,6 +26,7 @@ public:
     bool isMenu();
     sf::View getCameraView();
     Player getPlayer();
+    std::vector<Zombie> getZombies();
     
     //Setters
     void setCameraPosition(const sf::Vector2f&);
@@ -40,6 +42,8 @@ private:
     //Will only be one at most
     //std::vector<Player> players_;
     
+    //Stores all the zombies
+    std::vector<Zombie> vZombies_;
 
     
     //Used to tell whether level is a menu

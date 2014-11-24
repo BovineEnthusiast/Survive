@@ -13,6 +13,12 @@ public:
     void animate(const sf::Time&); 
     std::vector<std::vector<Tile>>* pTiles;
  
+    //Getters
+    sf::Sprite getLegLeftSprite();
+    sf::Sprite getLegRightSprite();
+    sf::Sprite getArmLeftSprite();
+    sf::Sprite getArmRightSprite();
+    sf::Sprite getHeadSprite();
 protected:
 
     //Body sprite sheet
