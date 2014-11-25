@@ -44,15 +44,16 @@ void Player::update(const sf::Time& dT)
     vGuns_[0].setPlayerVelocity(velocity_);
     vGuns_[0].update(dT);
     
-    float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358 / 180;
+    float rotationRadians = (headSprite_.getRotation() ) * 3.14159265358 / 180;
     sf::Vector2f perpVec = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
     
     sf::Vector2f armRotationVecLeft = (positionGlobal_ + sf::Vector2f(perpVec * 11.5f)) - (vGuns_[0].getArmLeftPos() + vGuns_[0].getPositionGlobal());
     sf::Vector2f armRotationVecRight = (positionGlobal_ - sf::Vector2f(perpVec * 11.5f)) - (vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
     armLeftSprite_.setPosition(vGuns_[0].getArmLeftPos() + vGuns_[0].getPositionGlobal());
     armRightSprite_.setPosition(vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
-    armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 -90);
-    armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 -90);
+    armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180);
+    armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180);
+
 }
 //Getters
 

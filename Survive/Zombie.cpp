@@ -1,4 +1,5 @@
 #include "Zombie.h"
+#include <iostream>
 
 Zombie::Zombie(Player* player)
 : pPlayer_(player)
@@ -11,6 +12,8 @@ void Zombie::update(const sf::Time& dT)
     targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
     
     velocity_ = targetVector_;
+    animate(dT);
+   
 }
 
 //Setters

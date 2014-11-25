@@ -4,24 +4,24 @@
 Humanoid::Humanoid() 
 {
     velocity_ = sf::Vector2f(1.0f, 0);
-    bodySpriteSheet_.loadFromFile("player.png");
+    bodySpriteSheet_.loadFromFile("zombie.png");
     //Assigns the texture and the texture rects
     legLeftSprite_.setTexture(bodySpriteSheet_);
-    legLeftSprite_.setTextureRect(sf::IntRect(43, 19, 11, 15));
+    legLeftSprite_.setTextureRect(sf::IntRect(34, 14, 15, 11));
     legRightSprite_.setTexture(bodySpriteSheet_);
-    legRightSprite_.setTextureRect(sf::IntRect(43, 19, 11, 15));
+    legRightSprite_.setTextureRect(sf::IntRect(34, 14, 15, 11));
     armLeftSprite_.setTexture(bodySpriteSheet_);
-    armLeftSprite_.setTextureRect(sf::IntRect(34, 7, 9, 27));
+    armLeftSprite_.setTextureRect(sf::IntRect(34, 25, 27, 9));
     armRightSprite_.setTexture(bodySpriteSheet_);
-    armRightSprite_.setTextureRect(sf::IntRect(34, 7, 9, 27));
+    armRightSprite_.setTextureRect(sf::IntRect(34, 25, 27, 9));
     headSprite_.setTexture(bodySpriteSheet_);
     headSprite_.setTextureRect(sf::IntRect(0, 0, 34, 34));
     
     //Assigns their origins
-    legLeftSprite_.setOrigin(5.5f, 7.5f);
-    legRightSprite_.setOrigin(5.5f, 7.5f);
-    armLeftSprite_.setOrigin(4.5f, 27.0f);
-    armRightSprite_.setOrigin(4.5f, 27.0f);
+    legLeftSprite_.setOrigin(7.5f, 5.5f);
+    legRightSprite_.setOrigin(7.5f, 5.5f);
+    armLeftSprite_.setOrigin(27.0f, 4.5f);
+    armRightSprite_.setOrigin(27.0f, 4.5f);
     headSprite_.setOrigin(17.0f, 16.0f);
 }
 
@@ -39,7 +39,7 @@ void Humanoid::animate(const sf::Time& dT)
         positionGlobal_ -= velocity_ * dT.asSeconds() * 20.0f;
  
     
-    rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358 + 90;
+    rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358;
     
     //REMEMBER: normalized -1/(y/x)
     sf::Vector2f perpVec;

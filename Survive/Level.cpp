@@ -345,6 +345,7 @@ void Level::generateLevel(const int width, const int height)
                     player_.setPosition(sf::Vector2f(xPos * 50, yPos * 50));
                     vZombies_.push_back(Zombie(&player_));
                     vZombies_.at(0).setPosition(sf::Vector2f(xPos * 50 + 50, yPos * 50 + 50));
+                    vZombies_.at(0).pTiles = &tiles;
                     
                     playerSet = true;
                 }

@@ -64,7 +64,6 @@ void Engine::draw()
     std::vector<Zombie> vZombies = level_.getZombies();
     for(Zombie zombie : vZombies)
     {
-        std::cout << "Drawing Zombie" << std::endl;
         window_.draw(zombie.getArmLeftSprite());
         window_.draw(zombie.getArmRightSprite());
         window_.draw(zombie.getHeadSprite());

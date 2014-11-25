@@ -9,10 +9,11 @@ Gun::Gun(const std::string& type)
     if(type == "pistol")
     {
         gun_.setTextureRect(sf::IntRect(0, 0, 26, 9));
-        gun_.setOrigin(0, 4.5);     
+        gun_.setOrigin(0.0f, 4.5f);     
         gunPosition_ = sf::Vector2f(35, 10);
         positionLocal_ = gunPosition_;
-        armLeftPosLocal_ = sf::Vector2f(5, 0);
+        armLeftPosLocal_ = sf::Vector2f(2.0f, 10);
+        armRightPosLocal_ = armLeftPosLocal_;
     }
     
 }
