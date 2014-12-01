@@ -19,8 +19,16 @@ public:
     sf::Sprite getArmLeftSprite();
     sf::Sprite getArmRightSprite();
     sf::Sprite getHeadSprite();
+    int getHealth();
+    
+    //Setters
+    void setHealth(const int);
 protected:
 
+    //Humanoid properties
+    int health_ = 100;
+    int speed_ = 100;
+    
     //Body sprite sheet
     sf::Texture bodySpriteSheet_;
     

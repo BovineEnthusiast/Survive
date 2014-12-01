@@ -1,7 +1,8 @@
 #ifndef GUN_H
 #define	GUN_H
 #include "GameObject.h"
-#include <vector>
+#include <deque>
+#include <list>
 #include <SFML/Graphics.hpp>
 #include "Bullet.h"
 
@@ -16,13 +17,14 @@ public:
     //Getters
     sf::Vector2f getArmRightPos();
     sf::Vector2f getArmLeftPos();
-    std::vector<Bullet> getBullets();
+    std::deque<Bullet> getBullets();
     sf::Sprite getSprite();
     //Setters
     void setLocalPosition(const sf::Vector2f&);
     void setPlayerPosition(const sf::Vector2f&);
     void setPlayerVelocity(const sf::Vector2f&);
     void setPlayerHeadRotation(const float);
+    void setBulletsPtr(std::list<Bullet>*);
 private:
     sf::Texture gunSpriteSheet_;
     sf::Sprite gun_;
@@ -44,7 +46,7 @@ private:
     sf::Vector2f bulletSpawnPos_ = sf::Vector2f(2.5, 0);
     
     //Stores all active bullets
-    std::vector<Bullet> vBullets_;
+    std::list<Bullet>* pLBullets_;
     
     //Gun properties
     sf::Vector2f gunPosition_;

@@ -1,7 +1,6 @@
 #include "Gun.h"
 #include "GameObject.h"
 #include <math.h>
-#include <iostream>
 Gun::Gun(const std::string& type) 
 {
     gunSpriteSheet_.loadFromFile("gunSpriteSheet.png");
@@ -12,7 +11,7 @@ Gun::Gun(const std::string& type)
         gun_.setOrigin(0.0f, 4.5f);     
         gunPosition_ = sf::Vector2f(35, 10);
         positionLocal_ = gunPosition_;
-        armLeftPosLocal_ = sf::Vector2f(2.0f, 10);
+        armLeftPosLocal_ = sf::Vector2f(4.0f, 0.0f);
         armRightPosLocal_ = armLeftPosLocal_;
     }
     
@@ -65,7 +64,7 @@ void Gun::update(const sf::Time& dT)
         {
             //Converts the rotation to a vector, times it by bulletSpeed_, and creates a bullet
             sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180), sin(rotationGlobal_ * 3.14159265358 / 180)) * bulletSpeed_; 
-            vBullets_.push_back(Bullet(bulletSpawnPos_, bulletVelocity, bulletDamage_));
+            pLBullets_->push_back(Bullet(bulletSpawnPos_, bulletVelocity, bulletDamage_));
             currentBullets_ -= 1;
             fireRateClock_.restart();
         }
@@ -93,10 +92,6 @@ void Gun::update(const sf::Time& dT)
             totalBullets_ = 0;
         }
     }
-    
-    for(size_t bullet = 0; bullet < vBullets_.size(); bullet++)
-        vBullets_[bullet].update(dT);
-   
   
 }
 
@@ -104,7 +99,6 @@ void Gun::update(const sf::Time& dT)
 //Getters
 sf::Vector2f Gun::getArmLeftPos() {return armLeftPosGlobal_;}
 sf::Vector2f Gun::getArmRightPos() {return armRightPosGlobal_;}
-std::vector<Bullet> Gun::getBullets() {return vBullets_;}
 sf::Sprite Gun::getSprite() {return gun_;}
 
 //Setters 
@@ -112,3 +106,4 @@ void Gun::setLocalPosition(const sf::Vector2f& position) {positionLocal_ = posit
 void Gun::setPlayerPosition(const sf::Vector2f& position) {playerPos_ = position;}
 void Gun::setPlayerVelocity(const sf::Vector2f& velocity) {playerVelocity_ = velocity;}
 void Gun::setPlayerHeadRotation(const float rotation) {playerRotation_ = rotation;}
+void Gun::setBulletsPtr(std::list<Bullet>* pointer) {pLBullets_ = pointer;}

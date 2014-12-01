@@ -2,6 +2,7 @@
 #define	PLAYER_H
 #include "Humanoid.h"
 #include "Gun.h"
+#include "Bullet.h"
 #include <SFML/Graphics.hpp>
 class Player : public Humanoid
 {
@@ -19,6 +20,7 @@ public:
     //Setters
     void setVelocity(const sf::Vector2f&);
     void setPosition(const sf::Vector2f&);
+    void setGunBulletPointers(std::list<Bullet>*);
 private:
     std::vector<Gun> vGuns_;
     

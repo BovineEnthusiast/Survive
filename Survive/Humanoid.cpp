@@ -66,3 +66,7 @@ sf::Sprite Humanoid::getLegRightSprite() {return legRightSprite_;}
 sf::Sprite Humanoid::getArmLeftSprite() {return armLeftSprite_;}
 sf::Sprite Humanoid::getArmRightSprite() {return armRightSprite_;}
 sf::Sprite Humanoid::getHeadSprite() {return headSprite_;}
+int Humanoid::getHealth() {return health_;}
+
+//Setters
+void Humanoid::setHealth(const int health) {health_ = health;}

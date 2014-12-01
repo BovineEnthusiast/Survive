@@ -4,20 +4,22 @@
 #include <iostream>
 Player::Player() 
 {
-    positionGlobal_ = sf::Vector2f(1000.0f, 1000.0f);
+    //Sets the texture from the zombie to the player
+    bodySpriteSheet_.loadFromFile("player.png");
+    
+   // positionGlobal_ = sf::Vector2f(1000.0f, 1000.0f);
     
     //Default gun
     vGuns_.push_back(Gun("pistol"));
     vGuns_[0].setLocalPosition(sf::Vector2f(30, 10));
     
-    armLeftSprite_.setOrigin(armLeftSprite_.getLocalBounds().width / 2, 0);
-    armRightSprite_.setOrigin(armLeftSprite_.getLocalBounds().width / 2, 0);
+    armLeftSprite_.setOrigin(armLeftSprite_.getLocalBounds().width, 4.5f);
+    armRightSprite_.setOrigin(armLeftSprite_.getLocalBounds().width, 4.5f);
 }
 
 void Player::update(const sf::Time& dT)
 { 
     vGuns_[0].window = window;
-    animate(dT);
     
     velocity_ = sf::Vector2f(0,0);
     
@@ -32,8 +34,9 @@ void Player::update(const sf::Time& dT)
     if(velocity_ != sf::Vector2f(0,0))
         velocity_ /= (float)sqrt( velocity_.x * velocity_.x + velocity_.y * velocity_.y);
     
-    velocity_ *= (float)10;
-    
+    velocity_ *= 10.0f;
+    animate(dT);
+
     headSprite_.setRotation(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358);
 
    
@@ -44,22 +47,27 @@ void Player::update(const sf::Time& dT)
     vGuns_[0].setPlayerVelocity(velocity_);
     vGuns_[0].update(dT);
     
-    float rotationRadians = (headSprite_.getRotation() ) * 3.14159265358 / 180;
+    float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358 / 180;
     sf::Vector2f perpVec = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
     
-    sf::Vector2f armRotationVecLeft = (positionGlobal_ + sf::Vector2f(perpVec * 11.5f)) - (vGuns_[0].getArmLeftPos() + vGuns_[0].getPositionGlobal());
-    sf::Vector2f armRotationVecRight = (positionGlobal_ - sf::Vector2f(perpVec * 11.5f)) - (vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
+    sf::Vector2f armRotationVecLeft = (positionGlobal_ - sf::Vector2f(perpVec * 11.5f)) - armLeftSprite_.getPosition();
+    sf::Vector2f armRotationVecRight = (positionGlobal_ + sf::Vector2f(perpVec * 11.5f)) - armRightSprite_.getPosition(); 
     armLeftSprite_.setPosition(vGuns_[0].getArmLeftPos() + vGuns_[0].getPositionGlobal());
     armRightSprite_.setPosition(vGuns_[0].getArmRightPos() + vGuns_[0].getPositionGlobal());
-    armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180);
-    armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180);
+    armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 + 180.0f);
+    armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 + 180.0f);
 
 }
-//Getters
 
+//Getters
 sf::Vector2f Player::getVelocity() {return velocity_;}
 std::vector<Gun> Player::getGuns() {return vGuns_;}
 
 //Setters 
 void Player::setVelocity(const sf::Vector2f& velocity) {velocity_ = velocity;}
 void Player::setPosition(const sf::Vector2f& position) {positionGlobal_ = position;}
+void Player::setGunBulletPointers(std::list<Bullet>* pointer)
+{
+    for(auto iGun = vGuns_.begin(); iGun != vGuns_.end(); ++iGun)
+        iGun->setBulletsPtr(pointer);
+}

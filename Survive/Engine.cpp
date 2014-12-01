@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Camera.h"
 #include <iostream>
+#include <deque>
 Engine::Engine() 
 {
     
@@ -53,7 +54,6 @@ void Engine::draw()
         }
     
     //The player and current gun
-    
     window_.draw(level_.getPlayer().getLegLeftSprite());
     window_.draw(level_.getPlayer().getLegRightSprite());
     window_.draw(level_.getPlayer().getArmLeftSprite());
@@ -62,17 +62,24 @@ void Engine::draw()
     window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
     
     std::vector<Zombie> vZombies = level_.getZombies();
-    for(Zombie zombie : vZombies)
+    for(auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
     {
-        window_.draw(zombie.getArmLeftSprite());
-        window_.draw(zombie.getArmRightSprite());
-        window_.draw(zombie.getHeadSprite());
-        window_.draw(zombie.getLegLeftSprite());
-        window_.draw(zombie.getLegRightSprite());
+        window_.draw(iZombie->getArmLeftSprite());
+        window_.draw(iZombie->getArmRightSprite());
+        window_.draw(iZombie->getHeadSprite());
+        window_.draw(iZombie->getLegLeftSprite());
+        window_.draw(iZombie->getLegRightSprite());
     }
-    std::vector<Bullet> vBullets = level_.getPlayer().getGuns().at(0).getBullets();
-    for(size_t bullet = 0; bullet < vBullets.size(); ++bullet)
-        window_.draw(vBullets.at(bullet).getSprite());
+    
+    //Draws bullets
+    std::list<Bullet> vBullets = level_.getBullets();
+    for(auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
+    {
+        std::cout << vBullets.size() << std::endl;
+        window_.draw(iBullet->getSprite());
+        std::cout << "Draw bullet!" << std::endl;
+    }
+        
 }
 int Engine::run()
 { 

@@ -2,7 +2,9 @@
 #include "Zombie.h"
 #include <cmath>
 #include <iostream>
+#include <deque>
 #include <SFML/System.hpp>
+#include "Collision.h"
 Level::Level() 
 {
     //Loads the tile sheet then assigns their locations to a map
@@ -16,16 +18,61 @@ Level::Level()
     tileSprites_["hill"] = sf::IntRect(270, 0, 54, 54);
     
     player_.pTiles = &tiles;
+    vZombies_.push_back(Zombie(&player_));
+    vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
+    vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
+
 }
 
 void Level::update(const sf::Time& dT)
 {
-    //NOTE: change this loop to something better
-    //for(int i = 0; i < gameObjects_.size(); ++i)
-        //gameObjects_[i].update(dT);
+    //Adds zombies if current amount is less than max
+   // if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+   // {
+       // vZombies_.push_back(Zombie(&player_));
+       // vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
+       // vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
+       // zombieSpawnClock_.restart();
+         //Needs to be on special tiles... eventually
+  // }
     player_.update(dT);
-    for(size_t zombie = 0; zombie < vZombies_.size(); ++zombie)
-        vZombies_.at(zombie).update(dT);
+    player_.setGunBulletPointers(&lBullets_);
+    for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end();)
+    {
+        //Checks player collision
+        if(isColliding(player_.getHeadSprite(), iZombies->getHeadSprite()))
+        {
+            player_.setPosition(player_.getPositionGlobal() - player_.getVelocity() * dT.asSeconds() * 20.0f);
+        }
+        for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end(); ++iBullet)
+        {
+            if((isColliding(iZombies->getHeadSprite(), iBullet->getSprite(), iBullet->getLastPosition())) == true)            
+            {
+                iZombies->setHealth(iZombies->getHealth() - 25);
+                iBullet->setHit(true);
+                std::cout << "hit" << std::endl;
+            }
+                
+        }
+            
+        iZombies->update(dT);
+        
+        if(iZombies->getHealth() <= 0)
+           iZombies = vZombies_.erase(iZombies);
+        else
+            ++iZombies;
+    }
+    for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end();)
+    {
+        iBullet->update(dT);
+        if(iBullet->isHit() || iBullet->isDead())
+           iBullet = lBullets_.erase(iBullet);
+        else
+            ++iBullet;
+    }
+         
+    
+    
 }
 
 //Generates the level with the diamond-square algorithm
@@ -343,10 +390,6 @@ void Level::generateLevel(const int width, const int height)
                 if(!playerSet)
                 {
                     player_.setPosition(sf::Vector2f(xPos * 50, yPos * 50));
-                    vZombies_.push_back(Zombie(&player_));
-                    vZombies_.at(0).setPosition(sf::Vector2f(xPos * 50 + 50, yPos * 50 + 50));
-                    vZombies_.at(0).pTiles = &tiles;
-                    
                     playerSet = true;
                 }
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"], "grass");
@@ -361,11 +404,13 @@ void Level::generateLevel(const int width, const int height)
 void Level::moveCamera(const sf::Vector2f& move) {camera_.move(move);}
 void Level::zoomCamera(const int zoom) {camera_.changeSize(zoom);}
 void Level::resizeCamera(const sf::Vector2u& size) {camera_.resizeView(size);}
+
 //Getters
 bool Level::isMenu() {return menu_;}
 sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() {return player_;}
 std::vector<Zombie> Level::getZombies() {return vZombies_;}
+std::list<Bullet> Level::getBullets() {return lBullets_;}
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}
 void Level::setPlayerWindow(sf::RenderWindow& renderWindow) {player_.window = &renderWindow;}
