@@ -16,7 +16,7 @@ public:
     void setTileTexture();
     void setTileTextureRect();
 private:
-    sf::Sprite _sprite;
+    sf::Sprite sprite_;
     std::string type_ = "";
     bool hasItem_ = false;
 };

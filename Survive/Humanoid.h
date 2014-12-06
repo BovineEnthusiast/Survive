@@ -9,7 +9,7 @@
 class Humanoid : public GameObject
 {
 public:
-    Humanoid();
+    Humanoid(sf::Texture*);
     void animate(const sf::Time&); 
     std::vector<std::vector<Tile>>* pTiles;
  
@@ -27,12 +27,10 @@ protected:
 
     //Humanoid properties
     int health_ = 100;
-    int speed_ = 100;
-    
-    //Body sprite sheet
-    sf::Texture bodySpriteSheet_;
-    
+    float speed_ = 4;
+        
     //Body sprites
+    sf::Texture* bodySpriteSheet_;
     sf::Sprite legLeftSprite_;
     sf::Sprite legRightSprite_;
     sf::Sprite armLeftSprite_;

@@ -34,10 +34,26 @@ void Engine::draw()
     //Vector positions of tiles to render
     int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_;
     int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_;
-    int bottomRightX = (camBottomRight.x + fmod(camBottomRight.x, tileSize_)) / tileSize_;
-    int bottomRightY = (camBottomRight.y - fmod(camBottomRight.y, tileSize_)) / tileSize_;
+    int bottomRightX;
+    int bottomRightY;
+    
+    if(50 - fmod(camBottomRight.x, tileSize_) == 0)
+        bottomRightX = (camBottomRight.x / tileSize_);
+    else
+        bottomRightX = (camBottomRight.x + (50 - fmod(camBottomRight.x, tileSize_))) / tileSize_;
+    if(50 - fmod(camBottomRight.y, tileSize_) == 0)
+        bottomRightY = (camBottomRight.y / tileSize_);
+    else
+        bottomRightY = (camBottomRight.y + (50 - fmod(camBottomRight.y, tileSize_))) / tileSize_;
+    
+    //Prevents out of bounds exception
+    if(bottomRightX > 128)
+        bottomRightX = 128;
+    if(bottomRightY > 128)
+        bottomRightY = 128;
+    
 
-    //Draws Tiles inside the range of the camera first
+    //Draws Tiles inside the range of the camera
     for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
     	for(size_t tile = topLeftY; tile <= bottomRightY; ++tile)
         {
@@ -45,13 +61,7 @@ void Engine::draw()
             window_.draw(level_.tiles[vTile][tile].getSprite());
         }
     
-    //Draws tile items. Separate because tile items have to be drawn on top to prevent being clipped(at least for now)
-    for(size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
-    	for(size_t tile = topLeftY; tile <= bottomRightY; ++tile)
-        {
-            level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_, (float)tile * tileSize_));
-            window_.draw(level_.tiles[vTile][tile].getSprite());
-        }
+    
     
     //The player and current gun
     window_.draw(level_.getPlayer().getLegLeftSprite());
@@ -66,18 +76,32 @@ void Engine::draw()
     {
         window_.draw(iZombie->getArmLeftSprite());
         window_.draw(iZombie->getArmRightSprite());
-        window_.draw(iZombie->getHeadSprite());
         window_.draw(iZombie->getLegLeftSprite());
         window_.draw(iZombie->getLegRightSprite());
+        window_.draw(iZombie->getHeadSprite());
+        
     }
     
     //Draws bullets
     std::list<Bullet> vBullets = level_.getBullets();
     for(auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
     {
-        std::cout << vBullets.size() << std::endl;
         window_.draw(iBullet->getSprite());
-        std::cout << "Draw bullet!" << std::endl;
+    }
+        
+    //Draws trees
+    std::vector<Tree> vTrees = level_.getTrees();
+    for(auto iTree = vTrees.begin(); iTree != vTrees.end(); ++iTree)
+    {
+        window_.draw(iTree->getLowerLeafOne());
+        window_.draw(iTree->getLowerLeafTwo());
+        window_.draw(iTree->getLowerLeafThree());
+        window_.draw(iTree->getLowerLeafFour());
+        window_.draw(iTree->getUpperLeafOne());
+        window_.draw(iTree->getUpperLeafTwo());
+        window_.draw(iTree->getUpperLeafThree());
+        window_.draw(iTree->getUpperLeafFour());
+        window_.draw(iTree->getTrunk());
     }
         
 }

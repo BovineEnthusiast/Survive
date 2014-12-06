@@ -13,6 +13,8 @@ public:
     void assignParent(const GameObject&);
     void removeParent();
     
+    //Setters
+    void setPositionGlobal(const sf::Vector2f&);
     //Getters
     sf::Vector2f getPositionGlobal() const;
     sf::Vector2f getScaleGlobal() const;

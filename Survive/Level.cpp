@@ -5,20 +5,24 @@
 #include <deque>
 #include <SFML/System.hpp>
 #include "Collision.h"
+#include "Tree.h"
 Level::Level() 
 {
     //Loads the tile sheet then assigns their locations to a map
     if(!tileSpriteSheet_.loadFromFile("TileSpritesheet.png"))
         std::cout << "failed to load from file" << std::endl;
-    tileSprites_["deepWater"] = sf::IntRect(0, 0, 54, 54);
-    tileSprites_["shallowWater"] = sf::IntRect(54, 0, 54, 54);
-    tileSprites_["sand"] = sf::IntRect(108, 0, 54, 54);
-    tileSprites_["dirt"] = sf::IntRect(162, 0, 54, 54);
-    tileSprites_["grass"] = sf::IntRect(216, 0, 54, 54);
-    tileSprites_["hill"] = sf::IntRect(270, 0, 54, 54);
+    tileSprites_["deepWater"] = sf::IntRect(0, 0, 60, 60);
+    tileSprites_["shallowWater"] = sf::IntRect(60, 0, 60, 60);
+    tileSprites_["sand"] = sf::IntRect(120, 0, 60, 60);
+    tileSprites_["dirt"] = sf::IntRect(180, 0, 60, 60);
+    tileSprites_["dirtyGrass"] = sf::IntRect(240, 0, 60, 60);
+    tileSprites_["grass"] = sf::IntRect(300, 0, 60, 60);
+    tileSprites_["hill"] = sf::IntRect(360, 0, 60, 60);
+    tileSprites_["snow"] = sf::IntRect(420, 0, 60, 60);
+
     
     player_.pTiles = &tiles;
-    vZombies_.push_back(Zombie(&player_));
+    vZombies_.push_back(Zombie(&player_, &imageManager_.humanoidZombieTexture));
     vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
     vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
 
@@ -27,14 +31,14 @@ Level::Level()
 void Level::update(const sf::Time& dT)
 {
     //Adds zombies if current amount is less than max
-   // if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-   // {
-       // vZombies_.push_back(Zombie(&player_));
-       // vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
-       // vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
-       // zombieSpawnClock_.restart();
+   if(zombieSpawnClock_.getElapsedTime().asSeconds() > zombieSpawnTime_)
+    {
+        vZombies_.push_back(Zombie(&player_, &imageManager_.humanoidZombieTexture));
+        vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
+        vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
+        zombieSpawnClock_.restart();
          //Needs to be on special tiles... eventually
-  // }
+    }
     player_.update(dT);
     player_.setGunBulletPointers(&lBullets_);
     for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end();)
@@ -50,7 +54,6 @@ void Level::update(const sf::Time& dT)
             {
                 iZombies->setHealth(iZombies->getHealth() - 25);
                 iBullet->setHit(true);
-                std::cout << "hit" << std::endl;
             }
                 
         }
@@ -70,6 +73,10 @@ void Level::update(const sf::Time& dT)
         else
             ++iBullet;
     }
+    for(auto iTree = vTrees_.begin(); iTree != vTrees_.end(); ++iTree)
+    {
+        iTree->update(dT);
+    }
          
     
     
@@ -86,12 +93,15 @@ void Level::generateLevel(const int width, const int height)
     //Seeds random
     std::srand(time(0));
     
-    float rangeDeepWater = -0.3;
-    float rangeShallowWater = 0;
-    float rangeSand = 0.05;
-    float rangeDirt = 0.1;
-    float rangeGrass = 0.9;
-    float rangeHill = 1;
+    float rangeDeepWater = -0.8f;
+    float rangeShallowWater = -0.6f;
+    float rangeSand = -0.1f;
+    float rangeDirt = 0.0f;
+    float rangeDirtyGrass = 0.1f;
+    float rangeGrass = 0.6f;
+    float rangeHill = 0.8f;
+    float rangeSnow = 1.0f;
+    
     //A heightmap array that will (hopefully) end up being between -1 to 1
     float heightmap[width][height];
     
@@ -102,22 +112,14 @@ void Level::generateLevel(const int width, const int height)
     
     //Initial circle of deep water to guarantee island
    
-   heightmap[0][0] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[width - 1][0] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[0][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[width - 1][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[(width - 1) / 2][0] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[(width - 1) / 2][height - 1] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[0][(height - 1) / 2] = (std::rand() % 80) / 100 * - 0.2f;
-    heightmap[width - 1][(height - 1) / 2] = (std::rand() % 80) / 100 * - 0.2f;
+    heightmap[0][0] = (std::rand() % 200) / 100 * - 1.0f;
+    heightmap[width - 1][0] = (std::rand() % 200) / 100 * - 1.0f;
+    heightmap[0][height - 1] = (std::rand() % 200) / 100 * - 1.0f;
+    heightmap[width - 1][height - 1] = (std::rand() % 200) / 100 * - 1.0f;
+    heightmap[(width - 1) / 2][(height - 1) / 2] = 1.0f;
    
     //Island seeds
-    heightmap[(width - 1) / 2][(height - 1) / 2] = 0.8f;
     
-    heightmap[(width - 1) / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
-    heightmap[(width - 1) * 3 / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
-    heightmap[(width - 1) / 4][(height - 1) / 4] = ((std::rand() % 200) - 100) / 100;
-    heightmap[(width - 1) * 3 / 4][(height - 1) * 3 / 4] = ((std::rand() % 200) - 100) / 100;
 
 
    
@@ -159,7 +161,7 @@ void Level::generateLevel(const int width, const int height)
                 
                 //Assigns midpoint and adds a std::random variance that is reduced every iteration
                 if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] == -10)
-                    heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = squareValueAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);  
+                    heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = squareValueAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.6, iteration);  
                
                 if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] > 1)
                     heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = 1;
@@ -185,7 +187,7 @@ void Level::generateLevel(const int width, const int height)
 
                 //Assigns midpoint and adds a std::random variance that is reduced every iteration
                 if(heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] == -10)
-                    heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] = squareValueAverage  + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
+                    heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] = squareValueAverage  + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.6, iteration);
                 
                 //Clamps to -1 to 1
                 if(heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] > 1)
@@ -347,7 +349,7 @@ void Level::generateLevel(const int width, const int height)
             }
         }
     //Fills gradientArray array with (5-7) circle gradients
-    for(int circle = 0; circle < 9; ++ circle)
+   /* for(int circle = 0; circle < 9; ++ circle)
     {
         int xCenter = std::rand() % (int)(width / 4.0f) + (int)(width / 8.0f);
         int yCenter = std::rand() % (int)(width / 4.0f) + (int)(width / 8.0f);
@@ -363,7 +365,7 @@ void Level::generateLevel(const int width, const int height)
                     gradientArray[xPos][yPos] = 0;
             }
         }
-    }
+    }*/
     //Adds tiles to tile array
     int xCenter = (width - 1) / 2;
     int yCenter = xCenter;
@@ -373,10 +375,19 @@ void Level::generateLevel(const int width, const int height)
     {
        for(int yPos = 0; yPos < height; ++yPos)
         {    
-            heightmap[xPos][yPos] -= gradientArray[xPos][yPos] * 0.1;
-            //heightmap[xPos][yPos] -= sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) / width * 0.75f;
+            //heightmap[xPos][yPos] -= gradientArray[xPos][yPos] * 0.1;
+            heightmap[xPos][yPos] -= sqrt(pow(xPos - width / 2, 2) + pow(yPos - height / 2, 2)) * 0.025f ;
             //Assigns tiles based on height
             float height = heightmap[xPos][yPos];
+            
+            //Places trees
+            if(height > rangeShallowWater && std::rand() % 100 <= 2)
+            {
+                vTrees_.push_back(Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture));
+                vTrees_.at(vTrees_.size() - 1).setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
+            }
+            
+            //Assigns tiles
             if(height < rangeDeepWater)
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["deepWater"], "deepWater");
             else if(height < rangeShallowWater)
@@ -385,6 +396,8 @@ void Level::generateLevel(const int width, const int height)
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["sand"], "sand");
             else if(height < rangeDirt)
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirt"], "dirt");
+            else if(height < rangeDirtyGrass)
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirtyGrass"], "dirtyGrass");
             else if(height < rangeGrass)
             {
                 if(!playerSet)
@@ -394,8 +407,10 @@ void Level::generateLevel(const int width, const int height)
                 }
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"], "grass");
             }
-            else
+            else if(height < rangeHill)
                 tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["hill"], "hill");
+            else
+                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["snow"], "snow");
         }
     }
        
@@ -411,6 +426,8 @@ sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() {return player_;}
 std::vector<Zombie> Level::getZombies() {return vZombies_;}
 std::list<Bullet> Level::getBullets() {return lBullets_;}
+std::vector<Tree> Level::getTrees() {return vTrees_;}
+
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}
 void Level::setPlayerWindow(sf::RenderWindow& renderWindow) {player_.window = &renderWindow;}

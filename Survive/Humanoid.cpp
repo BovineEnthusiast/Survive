@@ -1,20 +1,20 @@
 #include "Humanoid.h"
 #include <math.h>
 #include <iostream>
-Humanoid::Humanoid() 
+Humanoid::Humanoid(sf::Texture* texture) 
 {
-    velocity_ = sf::Vector2f(1.0f, 0);
-    bodySpriteSheet_.loadFromFile("zombie.png");
+    bodySpriteSheet_ = texture;
+    
     //Assigns the texture and the texture rects
-    legLeftSprite_.setTexture(bodySpriteSheet_);
+    legLeftSprite_.setTexture(*bodySpriteSheet_);
     legLeftSprite_.setTextureRect(sf::IntRect(34, 14, 15, 11));
-    legRightSprite_.setTexture(bodySpriteSheet_);
+    legRightSprite_.setTexture(*bodySpriteSheet_);
     legRightSprite_.setTextureRect(sf::IntRect(34, 14, 15, 11));
-    armLeftSprite_.setTexture(bodySpriteSheet_);
+    armLeftSprite_.setTexture(*bodySpriteSheet_);
     armLeftSprite_.setTextureRect(sf::IntRect(34, 25, 27, 9));
-    armRightSprite_.setTexture(bodySpriteSheet_);
+    armRightSprite_.setTexture(*bodySpriteSheet_);
     armRightSprite_.setTextureRect(sf::IntRect(34, 25, 27, 9));
-    headSprite_.setTexture(bodySpriteSheet_);
+    headSprite_.setTexture(*bodySpriteSheet_);
     headSprite_.setTextureRect(sf::IntRect(0, 0, 34, 34));
     
     //Assigns their origins

@@ -10,6 +10,8 @@
 #include "Player.h"
 #include "Zombie.h"
 #include "Bullet.h"
+#include "Tree.h"
+#include "ImageManager.h"
 class Level 
 {
 public:
@@ -30,30 +32,28 @@ public:
     Player getPlayer();
     std::vector<Zombie> getZombies();
     std::list<Bullet> getBullets();
+    std::vector<Tree> getTrees();
     //Setters
     void setCameraPosition(const sf::Vector2f&);
     void setPlayerWindow(sf::RenderWindow&);
 private:
     sf::Texture tileSpriteSheet_;
-        
+    ImageManager imageManager_;    
     Camera camera_;    
         
     //Number of zombies that can be on screen
     int maxZombies_ = 50;
     //The amount of time between zombie spawns in ms
-    int zombieSpawnTime_ = 2500;
+    int zombieSpawnTime_ = 2.5f;
     
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
-    Player player_;
-    //Will only be one at most
-    //std::vector<Player> players_;
     
-    //Stores all the zombies
+    //Stores all the different objects in the level
+    Player player_ = Player(&imageManager_.humanoidPlayerTexture);
     std::vector<Zombie> vZombies_;
-    
-    //Stores all the bullets
     std::list<Bullet> lBullets_;
+    std::vector<Tree> vTrees_;
     
     //Used to tell whether level is a menu
     bool menu_ = false;

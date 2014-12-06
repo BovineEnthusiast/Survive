@@ -1,18 +1,16 @@
 #include "Zombie.h"
 #include <iostream>
 #include "Collision.h"
-Zombie::Zombie(Player* player)
-: pPlayer_(player)
-{
-    bodySpriteSheet_.loadFromFile("zombie.png");
-}
+Zombie::Zombie(Player* player, sf::Texture* texture)
+: Humanoid(texture), pPlayer_(player)
+{}
 void Zombie::update(const sf::Time& dT)
 {
     if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) > 50)
     {
         targetVector_ = pPlayer_->getPositionGlobal() - positionGlobal_;
         targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
-        velocity_ = targetVector_;  
+        velocity_ = targetVector_ * speed_;  
     }
     else
         velocity_ = sf::Vector2f(0,0);

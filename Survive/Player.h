@@ -7,7 +7,7 @@
 class Player : public Humanoid
 {
 public:
-    Player();
+    Player(sf::Texture*);
     void update(const sf::Time&);
     bool windowFocus;
     sf::RenderWindow* window;

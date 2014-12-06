@@ -2,12 +2,9 @@
 #include "Humanoid.h"
 #include <math.h>
 #include <iostream>
-Player::Player() 
+Player::Player(sf::Texture* texture)
+:Humanoid(texture)
 {
-    //Sets the texture from the zombie to the player
-    bodySpriteSheet_.loadFromFile("player.png");
-    
-   // positionGlobal_ = sf::Vector2f(1000.0f, 1000.0f);
     
     //Default gun
     vGuns_.push_back(Gun("pistol"));
