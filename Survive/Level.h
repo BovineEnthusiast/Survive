@@ -12,6 +12,7 @@
 #include "Bullet.h"
 #include "Tree.h"
 #include "ImageManager.h"
+#include "SpatialPartition.h"
 class Level 
 {
 public:
@@ -30,9 +31,7 @@ public:
     bool isMenu();
     sf::View getCameraView();
     Player getPlayer();
-    std::vector<Zombie> getZombies();
-    std::list<Bullet> getBullets();
-    std::vector<Tree> getTrees();
+    std::vector<SpatialPartition> getSpatialPartitions() const;
     //Setters
     void setCameraPosition(const sf::Vector2f&);
     void setPlayerWindow(sf::RenderWindow&);
@@ -49,11 +48,11 @@ private:
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
     
-    //Stores all the different objects in the level
+   
     Player player_ = Player(&imageManager_.humanoidPlayerTexture);
-    std::vector<Zombie> vZombies_;
-    std::list<Bullet> lBullets_;
-    std::vector<Tree> vTrees_;
+    
+     //Stores all the different objects in the level
+    std::vector<SpatialPartition> spatialPartitions_;
     
     //Used to tell whether level is a menu
     bool menu_ = false;

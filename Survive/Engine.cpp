@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Camera.h"
+#include "SpatialPartition.h"
 #include <iostream>
 #include <deque>
 Engine::Engine() 
@@ -61,8 +62,6 @@ void Engine::draw()
             window_.draw(level_.tiles[vTile][tile].getSprite());
         }
     
-    
-    
     //The player and current gun
     window_.draw(level_.getPlayer().getLegLeftSprite());
     window_.draw(level_.getPlayer().getLegRightSprite());
@@ -71,38 +70,45 @@ void Engine::draw()
     window_.draw(level_.getPlayer().getHeadSprite());
     window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
     
-    std::vector<Zombie> vZombies = level_.getZombies();
-    for(auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
+    std::vector<SpatialPartition> spatialPartitions = level_.getSpatialPartitions();
+    for(auto iPartition = spatialPartitions.begin(); iPartition != spatialPartitions.end(); ++iPartition)
     {
-        window_.draw(iZombie->getArmLeftSprite());
-        window_.draw(iZombie->getArmRightSprite());
-        window_.draw(iZombie->getLegLeftSprite());
-        window_.draw(iZombie->getLegRightSprite());
-        window_.draw(iZombie->getHeadSprite());
-        
+        std::vector<Zombie> vZombies = iPartition->getZombies();
+        for(auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
+        {
+            window_.draw(iZombie->getArmLeftSprite());
+            window_.draw(iZombie->getArmRightSprite());
+            window_.draw(iZombie->getLegLeftSprite());
+            window_.draw(iZombie->getLegRightSprite());
+            window_.draw(iZombie->getHeadSprite());
+
+        }
+
+        //Draws bullets
+        std::list<Bullet> vBullets = iPartition->getBullets();
+        for(auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
+        {
+            window_.draw(iBullet->getSprite());
+        }
+
+        //Draws trees
+        std::vector<Tree> vTrees = iPartition->getTrees();
+        for(auto iTree = vTrees.begin(); iTree != vTrees.end(); ++iTree)
+        {
+            window_.draw(iTree->getLowerLeafOne());
+            window_.draw(iTree->getLowerLeafTwo());
+            window_.draw(iTree->getLowerLeafThree());
+            window_.draw(iTree->getLowerLeafFour());
+            window_.draw(iTree->getUpperLeafOne());
+            window_.draw(iTree->getUpperLeafTwo());
+            window_.draw(iTree->getUpperLeafThree());
+            window_.draw(iTree->getUpperLeafFour());
+            window_.draw(iTree->getTrunk());
+        }
     }
+
     
-    //Draws bullets
-    std::list<Bullet> vBullets = level_.getBullets();
-    for(auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
-    {
-        window_.draw(iBullet->getSprite());
-    }
-        
-    //Draws trees
-    std::vector<Tree> vTrees = level_.getTrees();
-    for(auto iTree = vTrees.begin(); iTree != vTrees.end(); ++iTree)
-    {
-        window_.draw(iTree->getLowerLeafOne());
-        window_.draw(iTree->getLowerLeafTwo());
-        window_.draw(iTree->getLowerLeafThree());
-        window_.draw(iTree->getLowerLeafFour());
-        window_.draw(iTree->getUpperLeafOne());
-        window_.draw(iTree->getUpperLeafTwo());
-        window_.draw(iTree->getUpperLeafThree());
-        window_.draw(iTree->getUpperLeafFour());
-        window_.draw(iTree->getTrunk());
-    }
+    
         
 }
 int Engine::run()

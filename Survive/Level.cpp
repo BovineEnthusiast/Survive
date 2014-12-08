@@ -22,64 +22,23 @@ Level::Level()
 
     
     player_.pTiles = &tiles;
-    vZombies_.push_back(Zombie(&player_, &imageManager_.humanoidZombieTexture));
-    vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
-    vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
 
 }
 
 void Level::update(const sf::Time& dT)
 {
+    for(auto iPartition = spatialPartitions_.begin(); iPartition != spatialPartitions_.end(); ++iPartition)
+        iPartition->update(dT);
     //Adds zombies if current amount is less than max
    if(zombieSpawnClock_.getElapsedTime().asSeconds() > zombieSpawnTime_)
     {
-        vZombies_.push_back(Zombie(&player_, &imageManager_.humanoidZombieTexture));
-        vZombies_.at(vZombies_.size() - 1).pTiles = &tiles;
-        vZombies_.at(vZombies_.size() - 1).setPosition(sf::Vector2f(3225.0f, 3225.0f));
+       Zombie zombie = Zombie(&player_, &imageManager_.humanoidZombieTexture);
+       zombie.pTiles = &tiles;
+       zombie.setPosition(sf::Vector2f(3225.0f, 3225.0f));
+       spatialPartitions_.at(0).pushZombie(zombie);
         zombieSpawnClock_.restart();
          //Needs to be on special tiles... eventually
-    }
-    player_.update(dT);
-    player_.setGunBulletPointers(&lBullets_);
-    for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end();)
-    {
-        //Checks player collision
-        if(isColliding(player_.getHeadSprite(), iZombies->getHeadSprite()))
-        {
-            player_.setPosition(player_.getPositionGlobal() - player_.getVelocity() * dT.asSeconds() * 20.0f);
-        }
-        for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end(); ++iBullet)
-        {
-            if((isColliding(iZombies->getHeadSprite(), iBullet->getSprite(), iBullet->getLastPosition())) == true)            
-            {
-                iZombies->setHealth(iZombies->getHealth() - 25);
-                iBullet->setHit(true);
-            }
-                
-        }
-            
-        iZombies->update(dT);
-        
-        if(iZombies->getHealth() <= 0)
-           iZombies = vZombies_.erase(iZombies);
-        else
-            ++iZombies;
-    }
-    for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end();)
-    {
-        iBullet->update(dT);
-        if(iBullet->isHit() || iBullet->isDead())
-           iBullet = lBullets_.erase(iBullet);
-        else
-            ++iBullet;
-    }
-    for(auto iTree = vTrees_.begin(); iTree != vTrees_.end(); ++iTree)
-    {
-        iTree->update(dT);
-    }
-         
-    
-    
+    }   
 }
 
 //Generates the level with the diamond-square algorithm
@@ -375,7 +334,11 @@ void Level::generateLevel(const int width, const int height)
     {
        for(int yPos = 0; yPos < height; ++yPos)
         {    
-            //heightmap[xPos][yPos] -= gradientArray[xPos][yPos] * 0.1;
+           //Create a spacial partition if possible
+           if(xPos % 10 == 0 && yPos % 10 == 0)
+               spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f ,yPos * 50.0f, 500.0f ,500.0f), &player_, &spatialPartitions_));
+           
+           
             heightmap[xPos][yPos] -= sqrt(pow(xPos - width / 2, 2) + pow(yPos - height / 2, 2)) * 0.025f ;
             //Assigns tiles based on height
             float height = heightmap[xPos][yPos];
@@ -383,8 +346,10 @@ void Level::generateLevel(const int width, const int height)
             //Places trees
             if(height > rangeShallowWater && std::rand() % 100 <= 2)
             {
-                vTrees_.push_back(Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture));
-                vTrees_.at(vTrees_.size() - 1).setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
+                Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
+                tree.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
+                spatialPartitions_.at(spatialPartitions_.size() - 1).pushTree(tree);
+                
             }
             
             //Assigns tiles
@@ -424,10 +389,7 @@ void Level::resizeCamera(const sf::Vector2u& size) {camera_.resizeView(size);}
 bool Level::isMenu() {return menu_;}
 sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() {return player_;}
-std::vector<Zombie> Level::getZombies() {return vZombies_;}
-std::list<Bullet> Level::getBullets() {return lBullets_;}
-std::vector<Tree> Level::getTrees() {return vTrees_;}
-
+std::vector<SpatialPartition> Level::getSpatialPartitions() const {return spatialPartitions_;}
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}
 void Level::setPlayerWindow(sf::RenderWindow& renderWindow) {player_.window = &renderWindow;}
