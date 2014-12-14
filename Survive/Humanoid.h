@@ -19,9 +19,12 @@ public:
     sf::Sprite getArmLeftSprite();
     sf::Sprite getArmRightSprite();
     sf::Sprite getHeadSprite();
+    sf::Vector2f getVelocity();
     int getHealth();
     
+    
     //Setters
+    void setVelocity(const sf::Vector2f&);
     void setHealth(const int);
 protected:
 

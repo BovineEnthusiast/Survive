@@ -3,7 +3,7 @@
 #include <iostream>
 
 //Checks if two square sprites are colliding
-bool isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTwo)
+sf::Vector2f isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTwo)
 {
     sf::Vector2f axis[4];
     
@@ -24,9 +24,10 @@ bool isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTwo)
     float squareTwoRotationPerp = squareTwoRotation + 3.14159265358f / 2.0f;
     axis[3] = sf::Vector2f(cos(squareTwoRotationPerp), sin(squareTwoRotationPerp));
     
-    //Tests all of them
-    for(size_t numAxis = 0; numAxis < 4; ++numAxis)
-    {
+    float smallestProjection = 1000;
+    sf::Vector2f smallestProjectionAxis;
+    bool negate = false;
+    
         sf::Vector2f squareOneVertices[4];
         sf::Vector2f squareTwoVertices[4];
         //Gets the four vertices for both squares
@@ -42,7 +43,9 @@ bool isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTwo)
         squareTwoVertices[2] = squareTwo.getPosition() + sf::Vector2f(cos(squareTwoRotation), sin(squareTwoRotation)) * (float)(squareTwo.getLocalBounds().width / 2.0f) - sf::Vector2f(cos(squareTwoRotationPerp), sin(squareTwoRotationPerp)) * (float)(squareTwo.getLocalBounds().width / 2.0f);
         squareTwoVertices[3] = squareTwo.getPosition() - sf::Vector2f(cos(squareTwoRotation), sin(squareTwoRotation)) * (float)(squareTwo.getLocalBounds().width / 2.0f) - sf::Vector2f(cos(squareTwoRotationPerp), sin(squareTwoRotationPerp)) * (float)(squareTwo.getLocalBounds().width / 2.0f);
         
-        
+    //Tests all of them
+    for(size_t numAxis = 0; numAxis < 4; ++numAxis)
+    { 
         //Gets the projection for each square
         //Square 1
         float squareOneMax = squareOneVertices[0].x * axis[numAxis].x + squareOneVertices[0].y * axis[numAxis].y;
@@ -69,19 +72,37 @@ bool isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTwo)
         }
       
         //Checks if the two projections are overlapping
-        if(squareOneMax <= squareTwoMax && squareOneMax >= squareTwoMin)
-            continue;
-        else if(squareOneMin <= squareTwoMax && squareOneMin >= squareTwoMin)
-            continue;
-        else if(squareTwoMax <= squareOneMax && squareTwoMax >= squareOneMin)
-            continue;
+        if(squareTwoMax <= squareOneMax && squareTwoMax >= squareOneMin)
+        {
+            float distance = squareTwoMax - squareOneMin;
+            if(distance < smallestProjection)
+            {
+                smallestProjection = distance;
+                smallestProjectionAxis = axis[numAxis];
+                negate = true;
+
+            }
+        }
         else if(squareTwoMin <= squareOneMax && squareTwoMin >= squareOneMin)
-            continue;
+        {
+            float distance = squareOneMax - squareTwoMin;
+            if(distance < smallestProjection)
+            {
+                smallestProjection = distance;
+                smallestProjectionAxis = axis[numAxis];
+                negate = false;
+            }
+        }
         else
-            return false;
+            return sf::Vector2f(-1.0f, -1.0f);
         
     }
-    return true;
+        //std::cout << smallestProjection << std::endl;
+        if(negate)
+            return smallestProjectionAxis * -smallestProjection;
+        else
+            
+        return smallestProjectionAxis * smallestProjection;
 }
 
 //Checks to see if a bullet has collided

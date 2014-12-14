@@ -57,11 +57,9 @@ void Player::update(const sf::Time& dT)
 }
 
 //Getters
-sf::Vector2f Player::getVelocity() {return velocity_;}
 std::vector<Gun> Player::getGuns() {return vGuns_;}
 
 //Setters 
-void Player::setVelocity(const sf::Vector2f& velocity) {velocity_ = velocity;}
 void Player::setPosition(const sf::Vector2f& position) {positionGlobal_ = position;}
 void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 {

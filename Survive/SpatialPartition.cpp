@@ -22,13 +22,18 @@ void SpatialPartition::update(const sf::Time& dT)
 
     for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end();)
     {
-        std::cout << "zombie loop" << std::endl;
+       // std::cout << "zombie loop" << std::endl;
           
         //Checks player collision
-        if(hasPlayer_ && isColliding(player_->getHeadSprite(), iZombies->getHeadSprite()))
+        if(hasPlayer_ && isColliding(player_->getHeadSprite(), iZombies->getHeadSprite()) != sf::Vector2f(-1.0f, -1.0f))
         {
-            player_->setPosition(player_->getPositionGlobal() - player_->getVelocity() * dT.asSeconds() * 20.0f);
+           // player_->setPosition(player_->getPositionGlobal() - player_->getVelocity() * dT.asSeconds() * 20.0f);
+            player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), iZombies->getHeadSprite()));
         }
+        /*for(auto iZombies2 = vZombies_.begin(); iZombies2 != vZombies_.end(); ++iZombies2)
+            if(iZombies != iZombies2 && isColliding(iZombies->getHeadSprite(), iZombies2->getHeadSprite()))
+                iZombies->setPosition(iZombies->getPositionGlobal() - iZombies->getVelocity() * dT.asSeconds() * 20.0f);
+        */
         for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end(); ++iBullet)
         {
             if((isColliding(iZombies->getHeadSprite(), iBullet->getSprite(), iBullet->getLastPosition())) == true)            
@@ -62,25 +67,44 @@ void SpatialPartition::update(const sf::Time& dT)
         
         
     }
-    for(auto iTree = vTrees_.begin(); iTree != vTrees_.end(); ++iTree)
+    for(auto iTree = vTrees_.begin(); iTree != vTrees_.end();)
     {
-         //std::cout << "tree loop" << std::endl;
         iTree->update(dT);
        
         //Checks for collisions
         sf::Vector2f treePos = iTree->getTrunk().getPosition();
         
-        if(hasPlayer_ && isColliding(player_->getHeadSprite(), iTree->getTrunk()))
+        if(hasPlayer_ && isColliding(player_->getHeadSprite(), iTree->getTrunk()) != sf::Vector2f(-1.0f, -1.0f))
         {
-            player_->setPosition(player_->getPositionGlobal() - player_->getVelocity() * dT.asSeconds() * 20.0f);
+           // player_->setPosition(player_->getPositionGlobal() - player_->getVelocity() * dT.asSeconds() * 20.0f);
+            player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), iTree->getTrunk()));
+                         
+                
         }
         
+       /* for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end(); ++iZombies)
+            if(isColliding(iZombies->getHeadSprite(), iTree->getTrunk()) != sf::Vector2f(-1.0f, -1.0f))
+                iZombies->setPosition(iZombies->getPositionGlobal() - iZombies->getVelocity() * dT.asSeconds() * 20.0f);
+        */
         for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end(); ++iBullet)
         {
              //std::cout << "tree---bullet loop" << std::endl;
             if((isColliding(iTree->getTrunk(), iBullet->getSprite(), iBullet->getLastPosition())) == true)
                 iBullet->setHit(true);
         }
+        
+        if(!partitionSpace_.contains(iTree->getTrunk().getPosition()))
+        {
+            for(auto iPartition = partitions_->begin(); iPartition != partitions_->end(); ++iPartition)
+                if(iPartition->getPartitionSpace().contains(iTree->getTrunk().getPosition()))
+                {
+                    iPartition->pushTree(*iTree);
+                    iTree = vTrees_.erase(iTree);
+                    break;
+                }
+        }
+        else
+            ++iTree;
         
     }
     for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end();)

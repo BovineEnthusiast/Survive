@@ -13,12 +13,9 @@ public:
     sf::RenderWindow* window;
     
     //Getters
-    
-    sf::Vector2f getVelocity();
     std::vector<Gun> getGuns();
     
     //Setters
-    void setVelocity(const sf::Vector2f&);
     void setPosition(const sf::Vector2f&);
     void setGunBulletPointers(std::list<Bullet>*);
 private:

@@ -344,7 +344,7 @@ void Level::generateLevel(const int width, const int height)
             float height = heightmap[xPos][yPos];
             
             //Places trees
-            if(height > rangeShallowWater && std::rand() % 100 <= 2)
+            if(height > rangeShallowWater && height < rangeHill && std::rand() % 100 <= 2)
             {
                 Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
                 tree.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));

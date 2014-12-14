@@ -41,9 +41,9 @@ private:
     Camera camera_;    
         
     //Number of zombies that can be on screen
-    int maxZombies_ = 50;
+    int maxZombies_ = 5;
     //The amount of time between zombie spawns in ms
-    int zombieSpawnTime_ = 2.5f;
+    int zombieSpawnTime_ = 5.0f;
     
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
