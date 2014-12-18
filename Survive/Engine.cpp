@@ -3,6 +3,7 @@
 #include "SpatialPartition.h"
 #include <iostream>
 #include <deque>
+#include <string>
 Engine::Engine() 
 {
     
@@ -62,7 +63,24 @@ void Engine::draw()
             window_.draw(level_.tiles[vTile][tile].getSprite());
         }
     
-    //The player and current gun
+
+    std::vector<SpatialPartition> spatialPartitions = level_.getSpatialPartitions();
+
+    for(auto iPartition = spatialPartitions.begin(); iPartition != spatialPartitions.end(); ++iPartition)
+    {
+        //Dens
+        std::vector<Den> vDens = iPartition->getDens();
+        for(auto iDen = vDens.begin(); iDen != vDens.end(); ++iDen)
+            window_.draw(iDen->getSprite());
+        
+        
+        //Blood splats
+        std::deque<BloodSplat> dBloodSplats = iPartition->getBloodSplats();
+        for(size_t bloodSplat = 0; bloodSplat < dBloodSplats.size(); ++bloodSplat)
+            window_.draw(dBloodSplats.at(bloodSplat).getSprite());
+  
+    }
+    //Player and gun
     window_.draw(level_.getPlayer().getLegLeftSprite());
     window_.draw(level_.getPlayer().getLegRightSprite());
     window_.draw(level_.getPlayer().getArmLeftSprite());
@@ -70,16 +88,19 @@ void Engine::draw()
     window_.draw(level_.getPlayer().getHeadSprite());
     window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
     
-    std::vector<SpatialPartition> spatialPartitions = level_.getSpatialPartitions();
     for(auto iPartition = spatialPartitions.begin(); iPartition != spatialPartitions.end(); ++iPartition)
     {
+        
+        
+        //Zombies
         std::vector<Zombie> vZombies = iPartition->getZombies();
         for(auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
         {
-            window_.draw(iZombie->getArmLeftSprite());
-            window_.draw(iZombie->getArmRightSprite());
+        
             window_.draw(iZombie->getLegLeftSprite());
             window_.draw(iZombie->getLegRightSprite());
+            window_.draw(iZombie->getArmLeftSprite());
+            window_.draw(iZombie->getArmRightSprite());
             window_.draw(iZombie->getHeadSprite());
 
         }
@@ -125,7 +146,7 @@ int Engine::run()
     {
         //delta time
         _dT = _dTClock.restart();
-        
+            
          //Updates Level
         level_.update(_dT);
         

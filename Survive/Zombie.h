@@ -16,7 +16,15 @@ private:
     
     //A normalized vector that points towards the player, from the zombie
     sf::Vector2f targetVector_;
-
+    
+    sf::Clock armClock_;
+    sf::Clock attackClock_;
+    bool attacking_ = false;
+    bool hit_ = false;
+    float armLeftVerticalOffset_ = std::rand() % 7;
+    float armRightVerticalOffset_ = std::rand() % 7;
+    float armLeftHorizontalOffset_ = std::rand() % 7;
+    float armRightHorizontalOffset_ = std::rand() % 7;
 };
 
 #endif	

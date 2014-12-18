@@ -20,13 +20,31 @@ Humanoid::Humanoid(sf::Texture* texture)
     //Assigns their origins
     legLeftSprite_.setOrigin(7.5f, 5.5f);
     legRightSprite_.setOrigin(7.5f, 5.5f);
-    armLeftSprite_.setOrigin(27.0f, 4.5f);
-    armRightSprite_.setOrigin(27.0f, 4.5f);
+    armLeftSprite_.setOrigin(0.0f, 4.5f);
+    armRightSprite_.setOrigin(0.0f, 4.5f);
     headSprite_.setOrigin(17.0f, 16.0f);
 }
 
 void Humanoid::animate(const sf::Time& dT)
 {
+    if(injureClock_.getElapsedTime().asSeconds() < 0.15f)
+    {
+        headSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
+        armLeftSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
+        armRightSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
+        legLeftSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
+        legRightSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
+        speed_ = finalSpeed_ - 2;
+    }
+    else
+    {
+        headSprite_.setColor(sf::Color(255, 255, 255));
+        armLeftSprite_.setColor(sf::Color(255, 255, 255));
+        armRightSprite_.setColor(sf::Color(255, 255, 255));
+        legLeftSprite_.setColor(sf::Color(255, 255, 255));
+        legRightSprite_.setColor(sf::Color(255, 255, 255));
+        speed_ = finalSpeed_;
+    }
     //Sets global variables
     sf::Vector2f normalizedVelocity = velocity_ / (float)sqrt( velocity_.x * velocity_.x + velocity_.y * velocity_.y );
     
@@ -38,8 +56,8 @@ void Humanoid::animate(const sf::Time& dT)
     if(tile == "shallowWater" || tile == "deepWater")
         positionGlobal_ -= velocity_ * dT.asSeconds() * 20.0f;
  
-    
-    rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358;
+    if(velocity_ != sf::Vector2f(0.0f,0.0f))
+        rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358;
     
     //REMEMBER: normalized -1/(y/x)
     sf::Vector2f perpVec;
@@ -50,14 +68,20 @@ void Humanoid::animate(const sf::Time& dT)
     
     perpVec /= (float)sqrt(1 + perpVec.x * perpVec.x);
     
-    legLeftSprite_.setPosition(positionGlobal_ - perpVec * 10.0f + (normalizedVelocity * (float)(sin(sinClock.getElapsedTime().asSeconds() * 10) * 15)));
-    legRightSprite_.setPosition(positionGlobal_ + perpVec * 10.0f + (normalizedVelocity * (float)(sin(sinClock.getElapsedTime().asSeconds() * 10) * -15)));
+    legLeftSprite_.setPosition(positionGlobal_ - perpVec * 10.0f + (normalizedVelocity * (float)(sin(sinClock_.getElapsedTime().asSeconds() * 10) * 15)));
+    legRightSprite_.setPosition(positionGlobal_ + perpVec * 10.0f + (normalizedVelocity * (float)(sin(sinClock_.getElapsedTime().asSeconds() * 10) * -15)));
     headSprite_.setPosition(positionGlobal_);
     
    
     headSprite_.setRotation(rotationGlobal_);
     legLeftSprite_.setRotation(rotationGlobal_);
     legRightSprite_.setRotation(rotationGlobal_);
+}
+
+void Humanoid::injure()
+{
+    injured_ = true;
+    injureClock_.restart();
 }
 
 //Getters

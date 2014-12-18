@@ -51,15 +51,18 @@ private:
     //Gun properties
     sf::Vector2f gunPosition_;
     float reloadTime_ = 1.5f; //In Seconds
-    int bulletsPerMag_ = 99999; //How much per reload
-    int currentBullets_ = 9999; //In current reload
+    int bulletsPerMag_ = 30; //How much per reload
+    int currentBullets_ = 15; //In current reload
     int totalBullets_ = 9999; //Total ammo
-    int recoilAmount_ = 25; //In game "pixels"
+    int recoilAmount_ = 16; //In game "pixels"
     float fireRate_ = 0.1f; // bullets/sec
     bool reloading_ = false;
     bool auto_ = true;
     bool clicked_ = false; //Used to enforce semi-auto
     
+    //Animation variables
+    sf::Vector2f swayOffset_;
+    sf::Vector2f recoilOffset_;
     
     //Bullet properties
     float bulletSpeed_ = 750.0f; //per second

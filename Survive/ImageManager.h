@@ -11,6 +11,8 @@ public:
     sf::Texture humanoidZombieTexture;
     sf::Texture humanoidPlayerTexture;
     sf::Texture gunPistolTexture;
+    sf::Texture zombieDenTexture;
+    std::vector<sf::Texture> vBloodSplatTextures;
 };
 
 #endif	

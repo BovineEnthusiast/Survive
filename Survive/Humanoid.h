@@ -10,7 +10,8 @@ class Humanoid : public GameObject
 {
 public:
     Humanoid(sf::Texture*);
-    void animate(const sf::Time&); 
+    void animate(const sf::Time&);
+    void injure();
     std::vector<std::vector<Tile>>* pTiles;
  
     //Getters
@@ -21,6 +22,7 @@ public:
     sf::Sprite getHeadSprite();
     sf::Vector2f getVelocity();
     int getHealth();
+    bool isInjured();
     
     
     //Setters
@@ -31,6 +33,7 @@ protected:
     //Humanoid properties
     int health_ = 100;
     float speed_ = 4;
+    float finalSpeed_ = speed_;
         
     //Body sprites
     sf::Texture* bodySpriteSheet_;
@@ -49,7 +52,9 @@ protected:
     
 private:
     
-    sf::Clock sinClock;
+    sf::Clock sinClock_;
+    sf::Clock injureClock_;
+    bool injured_ = false;
         
 };
 

@@ -24,30 +24,42 @@ void Gun::update(const sf::Time& dT)
     //Animated the local position if moving
     if(playerVelocity_ != sf::Vector2f(0,0))
     {
-        positionLocal_ += sf::Vector2f(sin(animationClock_.getElapsedTime().asSeconds() * 5) * 0.0025f, cos(animationClock_.getElapsedTime().asSeconds() * 10) * 0.02f);
+        swayOffset_ = sf::Vector2f(sin(animationClock_.getElapsedTime().asSeconds() * 5) * 1.0f, cos(animationClock_.getElapsedTime().asSeconds() * 10) * 5.00f);
     }
     else
     {
-        animationClock_.restart();
+        if(abs(swayOffset_.x) > 0.5f )
+        {
+            swayOffset_ = sf::Vector2f(sin(animationClock_.getElapsedTime().asSeconds() * 5) * 1.0f, cos(animationClock_.getElapsedTime().asSeconds() * 10) * 5.00f);
+        }
+        else
+        {
+            animationClock_.restart();
+            swayOffset_ = sf::Vector2f(0,0);
+        }
     }
    
-    if(fireRateClock_.getElapsedTime().asSeconds() <= fireRate_ / 3)
-        positionLocal_ += sf::Vector2f(dT.asSeconds() * recoilAmount_ / -(1.0f/3.0f), 0);     
+    if(fireRateClock_.getElapsedTime().asSeconds() <= fireRate_ / 3.0f)
+        recoilOffset_ = sf::Vector2f(dT.asSeconds() / (fireRate_ / 3.0f) * recoilAmount_, 0);     
     else if(fireRateClock_.getElapsedTime().asSeconds() <= fireRate_)
-        positionLocal_ += sf::Vector2f(dT.asSeconds() * recoilAmount_ / (2.0f/3.0f), 0);
-    else if(playerVelocity_ == sf::Vector2f(0,0))    
-        positionLocal_  = gunPosition_;
+        recoilOffset_ = sf::Vector2f((dT.asSeconds() - fireRate_ / 3.0f) / (fireRate_ * 2.0f / 3.0f) * recoilAmount_, 0); 
+    else   
+        recoilOffset_  = sf::Vector2f(0, 0);
     
+    //Value used to rotate sprites to player's rotation
+    float rotateBy = playerRotation_ * 3.14159265358 / 180;
+
     
-    
+    //rotates the offsets based on player rotation
+    swayOffset_ = sf::Vector2f(swayOffset_.x * cos(rotateBy) - swayOffset_.y * sin(rotateBy), swayOffset_.x * sin(rotateBy) + swayOffset_.y * cos(rotateBy));
+    recoilOffset_ = sf::Vector2f(recoilOffset_.x * cos(rotateBy) - recoilOffset_.y * sin(rotateBy), recoilOffset_.x * sin(rotateBy) + recoilOffset_.y * cos(rotateBy));
     
     //Updates position + rotation
-    float rotateBy = playerRotation_ * 3.14159265358 / 180;
     positionGlobal_ = playerPos_ + sf::Vector2f(positionLocal_.x * cos(rotateBy) - positionLocal_.y * sin(rotateBy), positionLocal_.x * sin(rotateBy) + positionLocal_.y * cos(rotateBy));
-    armLeftPosGlobal_ = sf::Vector2f(armLeftPosLocal_.x * cos(rotateBy) - armLeftPosLocal_.y * sin(rotateBy), armLeftPosLocal_.x * sin(rotateBy) + armLeftPosLocal_.y * cos(rotateBy));
-    armRightPosGlobal_ = sf::Vector2f(armRightPosLocal_.x * cos(rotateBy) - armRightPosLocal_.y * sin(rotateBy), armRightPosLocal_.x * sin(rotateBy) + armRightPosLocal_.y * cos(rotateBy));
+    armLeftPosGlobal_ = sf::Vector2f(recoilOffset_.x + swayOffset_.x + armLeftPosLocal_.x * cos(rotateBy) - armLeftPosLocal_.y * sin(rotateBy), recoilOffset_.y + swayOffset_.y + armLeftPosLocal_.x * sin(rotateBy) + armLeftPosLocal_.y * cos(rotateBy));
+    armRightPosGlobal_ = sf::Vector2f(recoilOffset_.x + swayOffset_.x + armRightPosLocal_.x * cos(rotateBy) - armRightPosLocal_.y * sin(rotateBy), recoilOffset_.y + swayOffset_.y + armRightPosLocal_.x * sin(rotateBy) + armRightPosLocal_.y * cos(rotateBy));
     rotationGlobal_ = atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358;        
-    gun_.setPosition(positionGlobal_);
+    gun_.setPosition(positionGlobal_ + swayOffset_ + recoilOffset_);
     gun_.setRotation(rotationGlobal_);
     
     //If not reloading and 'R' is pressed, reload

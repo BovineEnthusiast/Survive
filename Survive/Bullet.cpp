@@ -20,7 +20,6 @@ void Bullet::update(const sf::Time& dT)
     lastPosition_ = positionGlobal_;
     positionGlobal_ += velocity_ * dT.asSeconds();
     bullet_.setPosition(positionGlobal_);
-
 }
 
 //Setters

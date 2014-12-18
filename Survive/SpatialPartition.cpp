@@ -19,7 +19,26 @@ void SpatialPartition::update(const sf::Time& dT)
         player_->update(dT);
         player_->setGunBulletPointers(&lBullets_);
     }
-
+    
+    for(auto iBloodSplat = dBloodSplats_.begin(); iBloodSplat != dBloodSplats_.end();)
+    {
+        iBloodSplat->update(dT);
+        if(iBloodSplat->isFaded())
+            iBloodSplat = dBloodSplats_.erase(iBloodSplat);
+        else
+            ++iBloodSplat;
+    }
+    for(auto iDen = vDens_.begin(); iDen != vDens_.end(); ++iDen)
+    {
+        iDen->update(dT);
+        if(iDen->isReadyToSpawn())
+        {
+            Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture);
+            zombie.pTiles = pVTiles_;
+            zombie.setPosition(iDen->getPositionGlobal());
+            vZombies_.push_back(zombie);
+        }
+    }
     for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end();)
     {
        // std::cout << "zombie loop" << std::endl;
@@ -30,16 +49,19 @@ void SpatialPartition::update(const sf::Time& dT)
            // player_->setPosition(player_->getPositionGlobal() - player_->getVelocity() * dT.asSeconds() * 20.0f);
             player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), iZombies->getHeadSprite()));
         }
-        /*for(auto iZombies2 = vZombies_.begin(); iZombies2 != vZombies_.end(); ++iZombies2)
-            if(iZombies != iZombies2 && isColliding(iZombies->getHeadSprite(), iZombies2->getHeadSprite()))
-                iZombies->setPosition(iZombies->getPositionGlobal() - iZombies->getVelocity() * dT.asSeconds() * 20.0f);
-        */
+        for(auto iZombies2 = vZombies_.begin(); iZombies2 != vZombies_.end(); ++iZombies2)
+            if(iZombies != iZombies2 && isColliding(iZombies->getHeadSprite(), iZombies2->getHeadSprite()) != sf::Vector2f(-1.0f, -1.0f))
+                iZombies->setPositionGlobal(iZombies->getPositionGlobal() - isColliding(iZombies->getHeadSprite(), iZombies2->getHeadSprite()));
+        
         for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end(); ++iBullet)
         {
             if((isColliding(iZombies->getHeadSprite(), iBullet->getSprite(), iBullet->getLastPosition())) == true)            
             {
                 // std::cout << "zombie---bullet loop" << std::endl;
+                iZombies->injure();
                 iZombies->setHealth(iZombies->getHealth() - 25);
+                dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
+                dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(iBullet->getSprite().getPosition());
                 iBullet->setHit(true);
             }     
         }
@@ -82,10 +104,10 @@ void SpatialPartition::update(const sf::Time& dT)
                 
         }
         
-       /* for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end(); ++iZombies)
+        for(auto iZombies = vZombies_.begin(); iZombies != vZombies_.end(); ++iZombies)
             if(isColliding(iZombies->getHeadSprite(), iTree->getTrunk()) != sf::Vector2f(-1.0f, -1.0f))
-                iZombies->setPosition(iZombies->getPositionGlobal() - iZombies->getVelocity() * dT.asSeconds() * 20.0f);
-        */
+                iZombies->setPositionGlobal(iZombies->getPositionGlobal() - isColliding(iZombies->getHeadSprite(), iTree->getTrunk()));
+        
         for(auto iBullet = lBullets_.begin(); iBullet != lBullets_.end(); ++iBullet)
         {
              //std::cout << "tree---bullet loop" << std::endl;
@@ -136,14 +158,19 @@ void SpatialPartition::update(const sf::Time& dT)
 }
 
 //Setters
-
+void SpatialPartition::setImageManagerPointer(ImageManager* imageManager) {imageManager_ = imageManager;}
+void SpatialPartition::setTilesPointer(std::vector<std::vector<Tile> >* pTiles) {pVTiles_ = pTiles;}
 //Getters
 sf::FloatRect SpatialPartition::getPartitionSpace() const {return partitionSpace_;}
 std::vector<Zombie> SpatialPartition::getZombies() const {return vZombies_;}
 std::list<Bullet> SpatialPartition::getBullets() const {return lBullets_;}
 std::vector<Tree> SpatialPartition::getTrees() const {return vTrees_;}
+std::vector<Den> SpatialPartition::getDens() const {return vDens_;}
+std::deque<BloodSplat> SpatialPartition::getBloodSplats() const {return dBloodSplats_;}
 
 //Pushers
 void SpatialPartition::pushZombie(const Zombie& zombie) {vZombies_.push_back(zombie);}
 void SpatialPartition::pushBullet(const Bullet& bullet) {lBullets_.push_back(bullet);}
 void SpatialPartition::pushTree(const Tree& tree) {vTrees_.push_back(tree);}
+void SpatialPartition::pushDen(const Den& den) {vDens_.push_back(den);}
+void SpatialPartition::pushBloodSplat(const BloodSplat& splat) {dBloodSplats_.push_back(splat);}

@@ -51,14 +51,14 @@ void Tree::update(const sf::Time& dT)
     upperLeafFour_.setPosition(positionGlobal_);
     trunk_.setPosition(positionGlobal_);
     
-    lowerLeafOne_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 2.0f) / 25.0f);
-    lowerLeafTwo_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 4.0f) / 25.0f);
-    lowerLeafThree_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 6.0f) / 25.0f);
-    lowerLeafFour_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 8.0f) / 25.0f);
-    upperLeafOne_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 10.0f) / 25.0f);
-    upperLeafTwo_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 12.0f) / 25.0f);
-    upperLeafThree_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 14.0f) / 25.0f);
-    upperLeafFour_.rotate(sin(swayClock_.getElapsedTime().asSeconds() + 16.0f) / 25.0f);
+    lowerLeafOne_.setRotation(30 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    lowerLeafTwo_.setRotation(120 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    lowerLeafThree_.setRotation(210 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    lowerLeafFour_.setRotation(300 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    upperLeafOne_.setRotation(75 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    upperLeafTwo_.setRotation(165 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    upperLeafThree_.setRotation(255 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    upperLeafFour_.setRotation(345 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
 }
 
 //Setters
