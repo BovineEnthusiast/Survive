@@ -2,7 +2,10 @@
 
 ImageManager::ImageManager() 
 {
+    //Guns
     gunPistolTexture.loadFromFile("gunSpriteSheet.png");
+    gunRifleTexture.loadFromFile("rifle.png");
+    
     treeUpperLeafTexture.loadFromFile("tree_upper.png");
     treeLowerLeafTexture.loadFromFile("tree_lower.png");
     treeTrunkTexture.loadFromFile("tree_trunk.png");

@@ -12,6 +12,7 @@
 #include "Bullet.h"
 #include "Tree.h"
 #include "ImageManager.h"
+#include "SoundManager.h"
 #include "SpatialPartition.h"
 class Level 
 {
@@ -38,6 +39,7 @@ public:
 private:
     sf::Texture tileSpriteSheet_;
     ImageManager imageManager_;    
+    SoundManager soundManager_;
     Camera camera_;    
         
     //Number of zombies that can be on screen
@@ -49,7 +51,7 @@ private:
     std::map<std::string, sf::IntRect> tileSprites_; 
     
    
-    Player player_ = Player(&imageManager_.humanoidPlayerTexture);
+    Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, &soundManager_);
     
      //Stores all the different objects in the level
     std::vector<SpatialPartition> spatialPartitions_;

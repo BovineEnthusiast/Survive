@@ -29,6 +29,7 @@ void Level::update(const sf::Time& dT)
 {
     for(auto iPartition = spatialPartitions_.begin(); iPartition != spatialPartitions_.end(); ++iPartition)
         iPartition->update(dT);
+    soundManager_.update(dT);
     //Adds zombies if current amount is less than max
 }
 
@@ -45,9 +46,9 @@ void Level::generateLevel(const int width, const int height)
     
     float rangeDeepWater = -0.8f;
     float rangeShallowWater = -0.6f;
-    float rangeSand = -0.1f;
-    float rangeDirt = 0.0f;
-    float rangeDirtyGrass = 0.1f;
+    float rangeSand = -0.4f;
+    float rangeDirt = -0.2f;
+    float rangeDirtyGrass = -0.1f;
     float rangeGrass = 0.6f;
     float rangeHill = 0.8f;
     float rangeSnow = 1.0f;

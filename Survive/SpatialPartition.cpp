@@ -59,7 +59,7 @@ void SpatialPartition::update(const sf::Time& dT)
             {
                 // std::cout << "zombie---bullet loop" << std::endl;
                 iZombies->injure();
-                iZombies->setHealth(iZombies->getHealth() - 25);
+                iZombies->setHealth(iZombies->getHealth() - iBullet->getDamage());
                 dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
                 dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(iBullet->getSprite().getPosition());
                 iBullet->setHit(true);

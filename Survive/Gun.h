@@ -5,11 +5,13 @@
 #include <list>
 #include <SFML/Graphics.hpp>
 #include "Bullet.h"
+#include "SoundManager.h"
+#include "ImageManager.h"
 
 class Gun : public GameObject
 {
 public:
-    Gun(const std::string&);
+    Gun(const std::string&, ImageManager*, SoundManager*);
     void update(const sf::Time&);
     
     sf::RenderWindow* window;
@@ -19,6 +21,8 @@ public:
     sf::Vector2f getArmLeftPos();
     std::deque<Bullet> getBullets();
     sf::Sprite getSprite();
+    int getDamage() const;
+    
     //Setters
     void setLocalPosition(const sf::Vector2f&);
     void setPlayerPosition(const sf::Vector2f&);
@@ -26,10 +30,14 @@ public:
     void setPlayerHeadRotation(const float);
     void setBulletsPtr(std::list<Bullet>*);
 private:
-    sf::Texture gunSpriteSheet_;
+    sf::Texture* pTexture_;
     sf::Sprite gun_;
     
+    //Used to play sounds
+    SoundManager* pSoundManager_;
     
+    //Used to get texture
+    ImageManager* pImageManager_;
     
     //The player's properties
     sf::Vector2f playerPos_;
@@ -50,14 +58,15 @@ private:
     
     //Gun properties
     sf::Vector2f gunPosition_;
+    std::string gunType_;
     float reloadTime_ = 1.5f; //In Seconds
-    int bulletsPerMag_ = 30; //How much per reload
+    int bulletsPerMag_ = 15; //How much per reload
     int currentBullets_ = 15; //In current reload
     int totalBullets_ = 9999; //Total ammo
-    int recoilAmount_ = 16; //In game "pixels"
+    int recoilAmount_ = 15; //In game "pixels"
     float fireRate_ = 0.1f; // bullets/sec
     bool reloading_ = false;
-    bool auto_ = true;
+    bool auto_ = false;
     bool clicked_ = false; //Used to enforce semi-auto
     
     //Animation variables

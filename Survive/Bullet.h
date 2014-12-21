@@ -13,6 +13,7 @@ public:
     
     //Getters
     sf::RectangleShape getSprite();
+    int getDamage() const;
     bool isDead();
     bool isHit();
     sf::Vector2f getLastPosition();

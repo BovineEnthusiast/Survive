@@ -49,10 +49,10 @@ void Engine::draw()
         bottomRightY = (camBottomRight.y + (50 - fmod(camBottomRight.y, tileSize_))) / tileSize_;
     
     //Prevents out of bounds exception
-    if(bottomRightX > 128)
-        bottomRightX = 128;
-    if(bottomRightY > 128)
-        bottomRightY = 128;
+    if(bottomRightX > 256)
+        bottomRightX = 256;
+    if(bottomRightY > 256)
+        bottomRightY = 256;
     
 
     //Draws Tiles inside the range of the camera
@@ -86,7 +86,7 @@ void Engine::draw()
     window_.draw(level_.getPlayer().getArmLeftSprite());
     window_.draw(level_.getPlayer().getArmRightSprite());
     window_.draw(level_.getPlayer().getHeadSprite());
-    window_.draw(level_.getPlayer().getGuns().at(0).getSprite());
+    window_.draw(level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex()).getSprite());
     
     for(auto iPartition = spatialPartitions.begin(); iPartition != spatialPartitions.end(); ++iPartition)
     {
@@ -136,7 +136,7 @@ int Engine::run()
 { 
     //Sets the viewport to the camera
     window_.setView(level_.getCameraView());
-    level_.generateLevel(129, 129);
+    level_.generateLevel(257, 257);
 
     //TEMPORARY
     level_.setPlayerWindow(window_);

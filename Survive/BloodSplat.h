@@ -16,8 +16,8 @@ private:
     sf::Color color_ = sf::Color(200 + std::rand() % 56, 0, 0, 150);
     //Fade properties
     bool faded_ = false;
-    float fadeAfter_ = 3000;
-    float fadeFor_ = 1000;
+    float fadeAfter_ = 10000;
+    float fadeFor_ = 5000;
     sf::Clock lifeClock_;
     
 };

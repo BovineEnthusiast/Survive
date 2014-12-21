@@ -25,6 +25,7 @@ void Bullet::update(const sf::Time& dT)
 //Setters
 void Bullet::setHit(bool hit) {hit_ = hit;}
 //Getters
+int Bullet::getDamage() const {return damage_;}
 sf::RectangleShape Bullet::getSprite() {return bullet_;}
 bool Bullet::isDead() {return deathClock_.getElapsedTime().asMilliseconds() > deathTime_;}
 bool Bullet::isHit() {return hit_;}
