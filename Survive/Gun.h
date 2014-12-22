@@ -22,6 +22,8 @@ public:
     std::deque<Bullet> getBullets();
     sf::Sprite getSprite();
     int getDamage() const;
+    int getCurrentBullets() const;
+    int getTotalAmmo() const;
     
     //Setters
     void setLocalPosition(const sf::Vector2f&);

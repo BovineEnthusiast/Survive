@@ -1,15 +1,13 @@
 #include "Engine.h"
 #include "Camera.h"
 #include "SpatialPartition.h"
+#include "GUIManager.h"
 #include <iostream>
 #include <deque>
 #include <string>
-Engine::Engine() 
-{
-    
-}
-
-
+Engine::Engine()
+:level_(&window_)
+{}
 bool Engine::initialize()
 {
     window_.create(sf::VideoMode(645, 645), "Survive");
@@ -23,7 +21,6 @@ void Engine::update()
 
 void Engine::draw()
 {
-    //Temporary
  
     
     //Camera view for easier reference
@@ -128,7 +125,11 @@ void Engine::draw()
         }
     }
 
+    //GUI elements
+    GUIManager GUIManagerCopy = level_.getGUIManager();
     
+    window_.draw(GUIManagerCopy.getHealthOutOf());
+    window_.draw(GUIManagerCopy.getHealthCurrent());
     
         
 }
@@ -138,8 +139,7 @@ int Engine::run()
     window_.setView(level_.getCameraView());
     level_.generateLevel(257, 257);
 
-    //TEMPORARY
-    level_.setPlayerWindow(window_);
+   
     
     //Game Loop
     while(window_.isOpen())

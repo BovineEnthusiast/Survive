@@ -32,7 +32,14 @@ private:
     sf::SoundBuffer bufferGrassSix_;
     sf::SoundBuffer bufferGrassSeven_;
     
+    //Hits
+    sf::SoundBuffer bufferCrunch_;
+    sf::SoundBuffer bufferCrunchySplat_;
+    
     std::list<sf::Sound> lSounds_;
+    
+    //---------------Music----------------------------
+    sf::Music musicBackgroundNature_;
     
     
     

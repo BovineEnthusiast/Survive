@@ -6,7 +6,8 @@
 #include <SFML/System.hpp>
 #include "Collision.h"
 #include "Tree.h"
-Level::Level() 
+Level::Level(sf::RenderWindow* pWindow)
+:pWindow_(pWindow)
 {
     //Loads the tile sheet then assigns their locations to a map
     if(!tileSpriteSheet_.loadFromFile("TileSpritesheet.png"))
@@ -22,6 +23,7 @@ Level::Level()
 
     
     player_.pTiles = &tiles;
+    player_.window = pWindow_;
 
 }
 
@@ -30,6 +32,7 @@ void Level::update(const sf::Time& dT)
     for(auto iPartition = spatialPartitions_.begin(); iPartition != spatialPartitions_.end(); ++iPartition)
         iPartition->update(dT);
     soundManager_.update(dT);
+    GUIManager_.update(dT);
     //Adds zombies if current amount is less than max
 }
 
@@ -329,7 +332,7 @@ void Level::generateLevel(const int width, const int height)
            //Create a spacial partition if possible
            if(xPos % 10 == 0 && yPos % 10 == 0)
            {
-               spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f ,yPos * 50.0f, 500.0f ,500.0f), &player_, &spatialPartitions_));
+               spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f ,yPos * 50.0f, 500.0f ,500.0f), &player_, &spatialPartitions_, &soundManager_));
                spatialPartitions_.at(spatialPartitions_.size() - 1).setImageManagerPointer(&imageManager_);
                spatialPartitions_.at(spatialPartitions_.size() - 1).setTilesPointer(&tiles);
 
@@ -352,7 +355,7 @@ void Level::generateLevel(const int width, const int height)
                 tree.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
                 spatialPartitions_.at(spatialPartitions_.size() - 1).pushTree(tree);
             }
-            if(height > rangeShallowWater && height < rangeHill && std::rand() % 2500 < 2)
+            if(height > rangeShallowWater && height < rangeHill && std::rand() % 2500 < 5)
             {
                 std::cout << "den created" << std::endl;
                 Den den = Den(&imageManager_.zombieDenTexture);
@@ -394,10 +397,10 @@ void Level::zoomCamera(const int zoom) {camera_.changeSize(zoom);}
 void Level::resizeCamera(const sf::Vector2u& size) {camera_.resizeView(size);}
 
 //Getters
-bool Level::isMenu() {return menu_;}
+bool Level::isMenu() const {return menu_;}
 sf::View Level::getCameraView() {return camera_.getView();}
-Player Level::getPlayer() {return player_;}
+Player Level::getPlayer() const {return player_;}
 std::vector<SpatialPartition> Level::getSpatialPartitions() const {return spatialPartitions_;}
+GUIManager Level::getGUIManager() const {return GUIManager_;}
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}
-void Level::setPlayerWindow(sf::RenderWindow& renderWindow) {player_.window = &renderWindow;}

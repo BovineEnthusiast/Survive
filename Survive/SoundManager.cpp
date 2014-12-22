@@ -49,6 +49,21 @@ SoundManager::SoundManager()
 
     if(!bufferGrassSeven_.loadFromFile("sounds/footstep/grass/grass_7.ogg"))
         std::cout << "Failed to load: sounds/footstep/grass/grass_7.ogg" << std::endl;
+    
+    
+    //Hits
+    if(!bufferCrunch_.loadFromFile("sounds/hit/crunch.ogg"))
+        std::cout << "Failed to load: sounds/hit/crunch.ogg" << std::endl;
+    
+    if(!bufferCrunchySplat_.loadFromFile("sounds/hit/crunchy_splat.ogg"))
+        std::cout << "Failed to load: sounds/hit/crunchy_splat.ogg" << std::endl;
+    
+    //--------------Music--------------
+    if(!musicBackgroundNature_.openFromFile("sounds/background/nature.ogg"))
+        std::cout << "Failed to load: sounds/background/nature.ogg" << std::endl;
+    
+    musicBackgroundNature_.setLoop(true);
+    musicBackgroundNature_.play();
 
 
 }
@@ -121,6 +136,19 @@ void SoundManager::playSound(const std::string& type)
             sound = sf::Sound(bufferGrassSeven_);
    
         
+        lSounds_.push_back(sound);
+        lSounds_.back().play();
+    }
+    else if(type == "hit")
+    {
+   
+        sf::Sound sound = sf::Sound(bufferCrunch_);
+        lSounds_.push_back(sound);
+        lSounds_.back().play();
+    }
+    else if(type == "zombie_death")
+    {
+        sf::Sound sound = sf::Sound(bufferCrunchySplat_);
         lSounds_.push_back(sound);
         lSounds_.back().play();
     }

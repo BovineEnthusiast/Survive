@@ -14,11 +14,9 @@ public:
     
 private:
     sf::RenderWindow window_;
-   // Level mainMenu_;
-    //Level gameLevel_;
-    Level level_;
     sf::Time _dT;
     sf::Clock _dTClock;
+    Level level_;
     int tileSize_ = 50;
     bool windowFocused_ = true;
     void update();

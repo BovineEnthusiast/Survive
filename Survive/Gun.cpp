@@ -136,6 +136,8 @@ sf::Vector2f Gun::getArmLeftPos() {return armLeftPosGlobal_;}
 sf::Vector2f Gun::getArmRightPos() {return armRightPosGlobal_;}
 sf::Sprite Gun::getSprite() {return gun_;}
 int Gun::getDamage() const {return bulletDamage_;}
+int Gun::getCurrentBullets() const {return currentBullets_;}
+int Gun::getTotalAmmo() const {return totalBullets_;}
 
 //Setters 
 void Gun::setLocalPosition(const sf::Vector2f& position) {positionLocal_ = position;}

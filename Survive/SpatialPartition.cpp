@@ -2,8 +2,8 @@
 #include "Collision.h"
 #include <iostream>
 
-SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<SpatialPartition>* partitions)
-:partitionSpace_(partitionSpace), player_(player), partitions_(partitions)
+SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<SpatialPartition>* partitions, SoundManager* pSoundManager)
+:partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager)
 {
 }
 void SpatialPartition::update(const sf::Time& dT)
@@ -63,6 +63,13 @@ void SpatialPartition::update(const sf::Time& dT)
                 dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
                 dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(iBullet->getSprite().getPosition());
                 iBullet->setHit(true);
+                
+                //Sound
+                pSoundManager_->playSound("hit");
+                
+                if(iZombies->getHealth() <= 0)
+                    pSoundManager_->playSound("zombie_death");
+
             }     
         }
          

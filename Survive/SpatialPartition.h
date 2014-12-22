@@ -11,11 +11,12 @@
 #include "Den.h"
 #include "BloodSplat.h"
 #include "ImageManager.h"
+#include "SoundManager.h"
 
 class SpatialPartition 
 {
 public:
-    SpatialPartition(const sf::FloatRect&, Player*, std::vector<SpatialPartition>*);
+    SpatialPartition(const sf::FloatRect&, Player*, std::vector<SpatialPartition>*, SoundManager*);
     void update(const sf::Time&);
     
     //Setters
@@ -48,6 +49,7 @@ private:
     bool hasPlayer_ = false;
     sf::FloatRect partitionSpace_;
     ImageManager* imageManager_;
+    SoundManager* pSoundManager_;
     std::vector<std::vector<Tile>>* pVTiles_;
 };
 
