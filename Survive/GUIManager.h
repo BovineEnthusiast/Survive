@@ -13,6 +13,8 @@ public:
     sf::RectangleShape getHealthCurrent() const;
     sf::Text getCurrentAmmo() const;
     sf::Text getTotalAmmo() const;
+	sf::RectangleShape getReloadOutOf() const;
+	sf::RectangleShape getReloadCurrent() const;
     
     
 private:
@@ -26,11 +28,16 @@ private:
     sf::Vector2f healthOffset_ = sf::Vector2f(0.01f, 0.01f); //In percent of window size
     sf::Vector2f healthSize_ = sf::Vector2f(0.075f, 0.01f); //In percent of window size
     
-    //Weapon
-    sf::Text currentAmmo_;
-    sf::Text totalAmmo_;
-    sf::Vector2f ammoOffset = sf::Vector2f(0.025f, 0.025f);
-    int ammoSize = 8;
+	//Weapon
+	sf::Text ammo_;
+	sf::Vector2f ammoOffset_ = sf::Vector2f(0.015f, 0.015f);
+	float ammoSize_ = 0.035f; //In percent 
+
+	//Reload
+	sf::RectangleShape reloadOutOf_;
+	sf::RectangleShape reloadCurrent_;
+	sf::Vector2f reloadOffset_ = sf::Vector2f(0.01f, 0.01f);
+	sf::Vector2f reloadSize_ = sf::Vector2f(0.075f, 0.01f);
 };
 
 #endif	

@@ -5,7 +5,7 @@
 Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* pSoundManager)
 :Humanoid(texture), pSoundManager_(pSoundManager)
 {
-    finalSpeed_ = 10;
+    finalSpeed_ = 20;
     
     //Pushes the guns
     vGuns_.push_back(Gun("pistol", pImageManager, pSoundManager));

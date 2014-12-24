@@ -35,6 +35,7 @@ public:
     Player getPlayer() const;
     std::vector<SpatialPartition> getSpatialPartitions() const;
     GUIManager getGUIManager() const;
+	bool hasLost();
     
     //Setters
     void setCameraPosition(const sf::Vector2f&);
@@ -47,7 +48,9 @@ private:
     GUIManager GUIManager_ = GUIManager(pWindow_, &player_);
 
     Camera camera_;    
-        
+
+	//True if the player dies
+	bool lost_ = false;
     //The amount of time between zombie spawns in ms
     int zombieSpawnTime_ = 5.0f;
     

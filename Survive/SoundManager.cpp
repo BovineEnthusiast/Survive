@@ -78,7 +78,7 @@ void SoundManager::update(const sf::Time& dT)
         else
             ++iSound;
     }
-    std::cout << lSounds_.size() << std::endl ;
+    //std::cout << lSounds_.size() << std::endl ;
     //std::cout << lSounds_.back().getStatus() << std::endl;;
 
     

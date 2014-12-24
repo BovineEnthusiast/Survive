@@ -1,6 +1,7 @@
 #include "Level.h"
 #include "Zombie.h"
 #include <cmath>
+#include <algorithm>
 #include <iostream>
 #include <deque>
 #include <SFML/System.hpp>
@@ -31,14 +32,24 @@ void Level::update(const sf::Time& dT)
 {
     for(auto iPartition = spatialPartitions_.begin(); iPartition != spatialPartitions_.end(); ++iPartition)
         iPartition->update(dT);
+
     soundManager_.update(dT);
     GUIManager_.update(dT);
+
+
+	if (player_.getHealth() <= 0)
+		lost_ = true;
     //Adds zombies if current amount is less than max
 }
 
 //Generates the level with the diamond-square algorithm
 void Level::generateLevel(const int width, const int height) 
 {
+	//Resets the level in case of replay
+	player_.setHealth(100);
+	spatialPartitions_.clear();
+	tiles.clear();
+
     //Resizes tiles vectores
     tiles.resize(width);
     for(int vec = 0; vec < tiles.size(); ++vec)
@@ -57,7 +68,10 @@ void Level::generateLevel(const int width, const int height)
     float rangeSnow = 1.0f;
     
     //A heightmap array that will (hopefully) end up being between -1 to 1
-    float heightmap[width][height];
+	std::vector<std::vector<float>> heightmap;
+	heightmap.resize(width);
+	for (int i = 0; i < heightmap.size(); ++i)
+		heightmap[i].resize(width);
     
     //Initial fill of four corners -1 to 0.99
     for(int xPos = 0; xPos < width; ++xPos)
@@ -294,7 +308,10 @@ void Level::generateLevel(const int width, const int height)
     }
     
     //Initializes gradientArray to 1's
-    float gradientArray[width][height];
+	std::vector<std::vector<float>> gradientArray;
+	gradientArray.resize(width);
+	for (int i = 0; i < gradientArray.size(); ++i)
+		gradientArray[i].resize(width);
     for(int xPos = 0; xPos < width; ++xPos)
         {
             for(int yPos = 0; yPos < height; ++yPos)
@@ -357,7 +374,6 @@ void Level::generateLevel(const int width, const int height)
             }
             if(height > rangeShallowWater && height < rangeHill && std::rand() % 2500 < 5)
             {
-                std::cout << "den created" << std::endl;
                 Den den = Den(&imageManager_.zombieDenTexture);
                 den.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
                 spatialPartitions_.at(spatialPartitions_.size() - 1).pushDen(den);
@@ -390,6 +406,7 @@ void Level::generateLevel(const int width, const int height)
         }
     }
        
+	std::cout << "Done gen";
 }
 //Camera
 void Level::moveCamera(const sf::Vector2f& move) {camera_.move(move);}
@@ -402,5 +419,15 @@ sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() const {return player_;}
 std::vector<SpatialPartition> Level::getSpatialPartitions() const {return spatialPartitions_;}
 GUIManager Level::getGUIManager() const {return GUIManager_;}
+bool Level::hasLost()  
+{ 
+	if (lost_)
+	{
+		lost_ = false;
+		return true;
+	}
+	else
+		return false;
+}
 //Setters
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}

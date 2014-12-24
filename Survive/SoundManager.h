@@ -39,11 +39,7 @@ private:
     std::list<sf::Sound> lSounds_;
     
     //---------------Music----------------------------
-    sf::Music musicBackgroundNature_;
-    
-    
-    
-    
+    sf::Music musicBackgroundNature_;    
 };
 
 #endif

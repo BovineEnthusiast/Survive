@@ -4,7 +4,7 @@
 Zombie::Zombie(Player* player, sf::Texture* texture)
 : Humanoid(texture), pPlayer_(player)
 {
-    finalSpeed_ = 3 + std::rand() % 10;
+    finalSpeed_ = 3 + std::rand() % 20;
 }
 void Zombie::update(const sf::Time& dT)
 {

@@ -161,7 +161,8 @@ void SpatialPartition::update(const sf::Time& dT)
         
         
     }
-  
+	//std::cout << std::endl;
+
 }
 
 //Setters
