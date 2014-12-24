@@ -6,7 +6,7 @@
 GUIManager::GUIManager(sf::RenderWindow* pWindow, Player* pPlayer) 
 :pWindow_(pWindow), pPlayer_(pPlayer)
 {
-    if(!font_.loadFromFile("arial.ttf"));
+    if(!font_.loadFromFile("arial.ttf"))
         std::cout << "Failed to load font." << std::endl;
         
     //Health
