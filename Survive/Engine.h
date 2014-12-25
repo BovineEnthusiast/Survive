@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "Level.h"
 #include "MenuManager.h"
+#include "SettingsManager.h"
+#include "SoundManager.h"
 
 class Engine 
 {
@@ -18,6 +20,8 @@ private:
     sf::Time _dT;
     sf::Clock _dTClock;
     Level level_;
+	SettingsManager settingsManager_;
+	SoundManager soundManager_;
 	MenuManager menuManager_;
     int tileSize_ = 50;
     bool windowFocused_ = true;

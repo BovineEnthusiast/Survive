@@ -1,41 +1,34 @@
 #include "MenuManager.h"
 #include <iostream>
 
-MenuManager::MenuManager(sf::RenderWindow* pWindow)
-	:pWindow_(pWindow)
+MenuManager::MenuManager(sf::RenderWindow* pWindow, SettingsManager* pSettingsManager, SoundManager* pSoundManager)
+	:pWindow_(pWindow), pSettingsManager_(pSettingsManager), pSoundManager_(pSoundManager)
 {
 	if (!font_.loadFromFile("font.otf"))
 	{
 		//std::cout << "Failed to load font." << std::endl;
 	}
-	selectionRect_.setFillColor(sf::Color(200, 200, 200, 50));
-	selectionRect_.setPosition(sf::Vector2f(-10000.0f, -10000.0f));
+	selectionRect_.setOrigin(sf::Vector2f(0, 0));
 
-	surviveTitleText_.setFont(font_);
-	playText_.setFont(font_);
-	settingsText_.setFont(font_);
-	quitText_.setFont(font_);
-	settingsTitleText_.setFont(font_);
-	audioText_.setFont(font_);
-	gameplayText_.setFont(font_);
-	windowText_.setFont(font_);
-	gameplayTitleText_.setFont(font_);
-	mapSizeText_.setFont(font_);
-	difficultyMultiplierText_.setFont(font_);
-	backText_.setFont(font_);
+	titleRect_.setFillColor(sf::Color(255, 0, 55, 200));
+	titleRect_.setOrigin(0.0f, 0.0f);
 
-	surviveTitleText_.setColor(sf::Color(226, 232, 235));
-	playText_.setColor(sf::Color(226, 232, 235));
-	settingsText_.setColor(sf::Color(226, 232, 235));
-	quitText_.setColor(sf::Color(226, 232, 235));
-	settingsText_.setColor(sf::Color(226, 232, 235));
-	audioText_.setColor(sf::Color(226, 232, 235));
-	gameplayText_.setColor(sf::Color(226, 232, 235));
-	windowText_.setColor(sf::Color(226, 232, 235));
-	gameplayTitleText_.setColor(sf::Color(226, 232, 235));
-	mapSizeText_.setColor(sf::Color(226, 232, 235));
-	difficultyMultiplierText_.setColor(sf::Color(226, 232, 235));
-	backText_.setColor(sf::Color(226, 232, 235));
+	setUp(surviveTitleText_);
+	setUp(playText_);
+	setUp(settingsText_);
+	setUp(quitText_);
+	setUp(settingsTitleText_);
+	setUp(audioText_);
+	setUp(gameplayText_);
+	setUp(graphicsText_);
+	setUp(gameplayTitleText_);
+	setUp(mapSizeText_);
+	setUp(difficultyMultiplierText_);
+	setUp(graphicsTitleText_);
+	setUp(windowText_);
+	setUp(vSyncText_);
+	setUp(backText_);
+
 
 	//Assigns all the strings to the texts
 	surviveTitleText_.setString("Survive");
@@ -45,15 +38,62 @@ MenuManager::MenuManager(sf::RenderWindow* pWindow)
 	settingsTitleText_.setString("Settings");
 	audioText_.setString("Audio");
 	gameplayText_.setString("Gameplay");
-	windowText_.setString("Window: Windowed");
+	graphicsText_.setString("Graphics");
 	gameplayTitleText_.setString("Gameplay");
 	mapSizeText_.setString("Map Size: 257");
 	difficultyMultiplierText_.setString("Difficulty: Easy");
+	graphicsTitleText_.setString("Graphics");
+	windowText_.setString("Window: Windowed");
+	vSyncText_.setString("V-Sync: Off");
 	backText_.setString("Back");
+
+	
 }
 
 void MenuManager::update(const sf::Time& dT)
 {
+	selectionRect_.setFillColor(sf::Color::Transparent);
+
+	if (!firstUpdateRan_)
+	{
+		//Window Mode
+		int windowMode = pSettingsManager_->getWindowMode();
+		if (windowMode == windowed)
+		{
+			currentWindowMode_ = windowed;
+			windowText_.setString("Window: Windowed");
+			pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::Default);
+		}
+		else if (windowMode == fullscreen)
+		{
+			currentWindowMode_ = fullscreen;
+			pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::Fullscreen);
+			windowText_.setString("Window: Fullscreen");
+		}
+		else
+		{
+			currentWindowMode_ = borderless;
+			pWindow_->create(sf::VideoMode::getDesktopMode(), "Survive", sf::Style::None);
+			windowText_.setString("Window: Borderless");
+		}
+		
+		//VSync
+		int vSync = pSettingsManager_->getVSync();
+		if (vSync == 0)
+		{
+			vSync_ = false;
+			pWindow_->setVerticalSyncEnabled(false);
+			vSyncText_.setString("V-Sync: Off");
+		}
+		else
+		{
+			std::cout << "this" << std::endl;
+			vSync_ = true;
+			pWindow_->setVerticalSyncEnabled(true);
+			vSyncText_.setString("V-Sync: On");
+		}
+		firstUpdateRan_ = true;
+	}
 
 	if (clicked_ && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
@@ -71,126 +111,159 @@ void MenuManager::update(const sf::Time& dT)
 	//std::cout << "update?" << std::endl;
 	if (currentMenu_ == mainMenu)
 	{
-		surviveTitleText_.setCharacterSize((int)(titleSize_ * windowSize.y));
-		playText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
-		settingsText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
-		quitText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
+		highlight(surviveTitleText_);
+		position(surviveTitleText_, 1);
+		position(playText_, 3);
+		position(settingsText_, 4);
+		position(quitText_, 5);
 
-		surviveTitleText_.setOrigin(sf::Vector2f(surviveTitleText_.getLocalBounds().width / 2.0f, surviveTitleText_.getLocalBounds().height / 2.0f));
-		playText_.setOrigin(sf::Vector2f(playText_.getLocalBounds().width / 2.0f, playText_.getLocalBounds().height / 2.0f));
-		settingsText_.setOrigin(sf::Vector2f(settingsText_.getLocalBounds().width / 2.0f, settingsText_.getLocalBounds().height / 2.0f));
-		quitText_.setOrigin(sf::Vector2f(quitText_.getLocalBounds().width / 2.0f, quitText_.getLocalBounds().height / 2.0f));
-
-		surviveTitleText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_);
-		playText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 2);
-		settingsText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 3);
-		quitText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 4);
-
-
-		if (playText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
-		{
-			selectionRect_.setSize(sf::Vector2f(playText_.getGlobalBounds().width, playText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(playText_.getPosition());
-
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				playClicked_ = true;
-		}
-		else if (settingsText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
-		{
-			selectionRect_.setSize(sf::Vector2f(settingsText_.getGlobalBounds().width, settingsText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(settingsText_.getPosition());
-
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				currentMenu_ = settingsMenu;
-		}
-		else if (quitText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
-		{
-			selectionRect_.setSize(sf::Vector2f(quitText_.getGlobalBounds().width, quitText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(quitText_.getPosition());
-			
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				pWindow_->close();
-		}
-	}
-	else if (currentMenu_ = settingsMenu)
-	{
-		settingsTitleText_.setCharacterSize((int)(titleSize_ * windowSize.y));
-		audioText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
-		gameplayText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
-		windowText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
-		backText_.setCharacterSize((int)(buttonSize_ * windowSize.y));
-
-		settingsTitleText_.setOrigin(sf::Vector2f(settingsTitleText_.getGlobalBounds().width / 2.0f, settingsTitleText_.getGlobalBounds().height / 2.0f));
-		audioText_.setOrigin(sf::Vector2f(audioText_.getGlobalBounds().width / 2.0f, audioText_.getGlobalBounds().height / 2.0f));
-		gameplayText_.setOrigin(sf::Vector2f(gameplayText_.getGlobalBounds().width / 2.0, gameplayText_.getGlobalBounds().height / 2.0f));
-		windowText_.setOrigin(sf::Vector2f(windowText_.getGlobalBounds().width / 2.0f, windowText_.getGlobalBounds().height / 2.0f));
-		backText_.setOrigin(sf::Vector2f(backText_.getGlobalBounds().width / 2.0f, backText_.getGlobalBounds().height / 2.0f));
-
-		settingsTitleText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_);
-		audioText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 2);
-		gameplayText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 3);
-		windowText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 4);
-		backText_.setPosition(windowSize.x / 2.0f, windowSize.y * titleOffset_ + windowSize.y * 0.15f * 5);
+		if (hover(playText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			playClicked_ = true;
+		else if (hover(settingsText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			currentMenu_ = settingsMenu;
+		else if (hover(quitText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			pWindow_->close();
 		
-		if (audioText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
+	}
+	else if (currentMenu_ == settingsMenu)
+	{
+		selectionRect_.setFillColor(sf::Color::Transparent);
+		highlight(settingsTitleText_);
+		position(settingsTitleText_, 1);
+		position(audioText_, 3);
+		position(gameplayText_, 4);
+		position(graphicsText_, 5);
+		position(backText_, 6);
+		
+		if (hover(audioText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			currentMenu_ = audioMenu;
+		else if (hover(gameplayText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			currentMenu_ = gameplayMenu;
+		else if (hover(graphicsText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			selectionRect_.setSize(sf::Vector2f(audioText_.getGlobalBounds().width, audioText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(audioText_.getPosition());
-
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				currentMenu_ = audioMenu;
+			currentMenu_ = graphicsMenu;
 		}
-		else if (gameplayText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
-		{
-			selectionRect_.setSize(sf::Vector2f(gameplayText_.getGlobalBounds().width, gameplayText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(gameplayText_.getPosition());
+		else if (hover(backText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			currentMenu_ = mainMenu;
 
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				currentMenu_ = gameplayMenu;
-		}
-		else if (windowText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
-		{
-			selectionRect_.setSize(sf::Vector2f(windowText_.getGlobalBounds().width, windowText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(windowText_.getPosition());
 
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	}
+	else if (currentMenu_ == graphicsMenu)
+	{
+		selectionRect_.setFillColor(sf::Color::Transparent);
+		highlight(graphicsTitleText_);
+		position(graphicsTitleText_, 1);
+		position(vSyncText_, 3);
+		position(windowText_, 4);
+		position(backText_, 5);
+
+		if (hover(vSyncText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+		{
+			if (vSync_)
 			{
-				if (currentWindowMode_ == windowed)
-				{
-					currentWindowMode_ = fullscreen;
-					pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::Fullscreen);
-					windowText_.setString("Window: Fullscreen");
-				}
-				else if (currentWindowMode_ == fullscreen)
-				{
-					currentWindowMode_ = borderless;
-					pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::None);
-					windowText_.setString("Window: Borderless");
-				}
-				else
-				{
-					currentWindowMode_ = windowed;
-					pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::Default);
-					windowText_.setString("Window: Windowed");
-				}
+				vSync_ = false;
+				vSyncText_.setString("V-Sync: Off");
+				pWindow_->setVerticalSyncEnabled(false);
+				pSettingsManager_->setVSync(0);
+				pSettingsManager_->save();
+			}
+			else
+			{
+				vSync_ = true;
+				vSyncText_.setString("V-Sync: On");
+				pWindow_->setVerticalSyncEnabled(true);
+				pSettingsManager_->setVSync(1);
+				pSettingsManager_->save();
 			}
 		}
-		else if (backText_.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
+		else if (hover(windowText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 		{
-			selectionRect_.setSize(sf::Vector2f(backText_.getGlobalBounds().width, backText_.getGlobalBounds().height));
-			selectionRect_.setOrigin(sf::Vector2f(selectionRect_.getSize().x / 2.0f, selectionRect_.getSize().y / 2.0f));
-			selectionRect_.setPosition(backText_.getPosition());
+			if (currentWindowMode_ == windowed)
+			{
+				currentWindowMode_ = fullscreen;
+				pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::Fullscreen);
+				windowText_.setString("Window: Fullscreen");
+				pSettingsManager_->setWindowMode(fullscreen);
+				pSettingsManager_->save();
+			}
+			else if (currentWindowMode_ == fullscreen)
+			{
+				currentWindowMode_ = borderless;
+				pWindow_->create(sf::VideoMode::getDesktopMode(), "Survive", sf::Style::None);
+				windowText_.setString("Window: Borderless");
+				pSettingsManager_->setWindowMode(borderless);
+				pSettingsManager_->save();
+			}
+			else
+			{
+				currentWindowMode_ = windowed;
+				pWindow_->create(sf::VideoMode(pWindow_->getSize().x, pWindow_->getSize().y), "Survive", sf::Style::Default);
+				windowText_.setString("Window: Windowed");
+				pSettingsManager_->setWindowMode(windowed);
+				pSettingsManager_->save();
+			}
 
-			if (click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-				currentMenu_ = mainMenu;
 		}
+		else if (hover(backText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			currentMenu_ = settingsMenu;
+
 	}
+//	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && selectionRect_.getFillColor() == sf::Color(255, 0, 55, 200))
+	//	pSoundManager_->playSound("click");
+
+	//Plays hover sound
+	if (!soundPlayed_ && selectionRect_.getFillColor() == sf::Color(255, 0, 55, 200))
+	{
+		pSoundManager_->playSound("hover");
+		soundPlayed_ = true;
+	}
+	else if (selectionRect_.getFillColor() != sf::Color(255, 0, 55, 200))
+		soundPlayed_ = false;
+}
+void MenuManager::setUp(sf::Text& text)
+{
+	text.setFont(font_);
+	text.setColor(sf::Color(226, 232, 235));
+}
+void MenuManager::position(sf::Text& text, const int multiplier)
+{
+	sf::Vector2f windowSize = pWindow_->getView().getSize();
+
+	if (multiplier == 1)
+	{
+		text.setCharacterSize((int)(titleSize_ * windowSize.y));
+		text.setOrigin(sf::Vector2f(text.getGlobalBounds().width / 2.0f, text.getGlobalBounds().height / 2.0f));
+		text.setPosition(windowSize.x / 2.0f, windowSize.y * textOffset_);
+	}
+	else
+	{
+		text.setCharacterSize((int)(buttonSize_ * windowSize.y));
+		text.setOrigin(sf::Vector2f(text.getGlobalBounds().width / 2.0f, text.getGlobalBounds().height / 2.0f));
+		text.setPosition(windowSize.x / 2.0f, windowSize.y * textOffset_ * multiplier);
+	}
+
+}
+
+bool MenuManager::hover(const sf::Text& text)
+{
+	if (text.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_)))
+	{
+		sf::FloatRect bounds = text.getGlobalBounds();
+		selectionRect_.setFillColor(sf::Color(255, 0, 55, 200));
+		selectionRect_.setSize(sf::Vector2f(bounds.width + bounds.width * 0.75f, bounds.height + bounds.height * 0.25f));
+		selectionRect_.setPosition(text.getGlobalBounds().left - text.getGlobalBounds().width * 0.375f, text.getGlobalBounds().top - text.getGlobalBounds().height * 0.175f);
+		return true;
+	}
+	else
+		return false;
+}
+
+void MenuManager::highlight(const sf::Text& text)
+{
+	sf::FloatRect bounds = text.getGlobalBounds();
+	titleRect_.setFillColor(sf::Color(255, 0, 55, 200));
+	titleRect_.setSize(sf::Vector2f(pWindow_->getSize().x, bounds.height + bounds.height * 0.25f));
+	titleRect_.setPosition(0, text.getGlobalBounds().top - text.getGlobalBounds().height * 0.175f);
 }
 //Getters
 bool MenuManager::isPlayClicked()
@@ -205,6 +278,7 @@ bool MenuManager::isPlayClicked()
 }
 int MenuManager::getCurrentMenu() const { return currentMenu_; }
 sf::RectangleShape MenuManager::getSelectionRect() const { return selectionRect_; }
+sf::RectangleShape MenuManager::getTitleRect() const { return titleRect_; }
 sf::Text MenuManager::getSurviveTitleText() const { return surviveTitleText_; }
 sf::Text MenuManager::getPlayText() const { return playText_; }
 sf::Text MenuManager::getSettingsText() const { return settingsText_; }
@@ -212,6 +286,8 @@ sf::Text MenuManager::getQuitText() const { return quitText_; }
 sf::Text MenuManager::getSettingsTitleText() const { return settingsTitleText_; }
 sf::Text MenuManager::getAudioText() const { return audioText_; }
 sf::Text MenuManager::getGameplayText() const { return gameplayText_; }
+sf::Text MenuManager::getGraphicsTitleText() const { return graphicsTitleText_; }
+sf::Text MenuManager::getVSyncText() const { return vSyncText_; }
 sf::Text MenuManager::getWindowText() const { return windowText_; }
-
+sf::Text MenuManager::getGraphicsText() const { return graphicsText_; }
 sf::Text MenuManager::getBackText() const { return backText_; }

@@ -7,8 +7,8 @@
 #include <SFML/System.hpp>
 #include "Collision.h"
 #include "Tree.h"
-Level::Level(sf::RenderWindow* pWindow)
-:pWindow_(pWindow)
+Level::Level(sf::RenderWindow* pWindow, SoundManager* pSoundManager)
+	:pWindow_(pWindow), pSoundManager_(pSoundManager)
 {
     //Loads the tile sheet then assigns their locations to a map
     if(!tileSpriteSheet_.loadFromFile("TileSpritesheet.png"))
@@ -33,7 +33,6 @@ void Level::update(const sf::Time& dT)
     for(auto iPartition = spatialPartitions_.begin(); iPartition != spatialPartitions_.end(); ++iPartition)
         iPartition->update(dT);
 
-    soundManager_.update(dT);
     GUIManager_.update(dT);
 
 
@@ -349,7 +348,7 @@ void Level::generateLevel(const int width, const int height)
            //Create a spacial partition if possible
            if(xPos % 10 == 0 && yPos % 10 == 0)
            {
-               spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f ,yPos * 50.0f, 500.0f ,500.0f), &player_, &spatialPartitions_, &soundManager_));
+               spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f ,yPos * 50.0f, 500.0f ,500.0f), &player_, &spatialPartitions_, pSoundManager_));
                spatialPartitions_.at(spatialPartitions_.size() - 1).setImageManagerPointer(&imageManager_);
                spatialPartitions_.at(spatialPartitions_.size() - 1).setTilesPointer(&tiles);
 

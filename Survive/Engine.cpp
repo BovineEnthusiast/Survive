@@ -6,7 +6,7 @@
 #include <deque>
 #include <string>
 Engine::Engine()
-	:level_(&window_), menuManager_(&window_)
+	:level_(&window_, &soundManager_), menuManager_(&window_, &settingsManager_, &soundManager_)
 {}
 bool Engine::initialize()
 {
@@ -24,12 +24,14 @@ void Engine::update()
 		if (level_.hasLost())
 			inMenu_ = true;
 	}
+	soundManager_.update(_dT);
 }
 
 void Engine::draw()
 {
 	if (inMenu_)
 	{
+		window_.draw(menuManager_.getTitleRect());
 		if (menuManager_.getCurrentMenu() == 0)
 		{
 			window_.draw(menuManager_.getSelectionRect());
@@ -44,6 +46,14 @@ void Engine::draw()
 			window_.draw(menuManager_.getSettingsTitleText());
 			window_.draw(menuManager_.getAudioText());
 			window_.draw(menuManager_.getGameplayText());
+			window_.draw(menuManager_.getGraphicsText());
+			window_.draw(menuManager_.getBackText());
+		}
+		else if (menuManager_.getCurrentMenu() == 4)
+		{
+			window_.draw(menuManager_.getSelectionRect());
+			window_.draw(menuManager_.getGraphicsTitleText());
+			window_.draw(menuManager_.getVSyncText());
 			window_.draw(menuManager_.getWindowText());
 			window_.draw(menuManager_.getBackText());
 		}

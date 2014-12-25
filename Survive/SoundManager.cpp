@@ -57,6 +57,12 @@ SoundManager::SoundManager()
     
     if(!bufferCrunchySplat_.loadFromFile("sounds/hit/crunchy_splat.ogg"))
         std::cout << "Failed to load: sounds/hit/crunchy_splat.ogg" << std::endl;
+
+	//UI
+	if (!bufferHover_.loadFromFile("sounds/ui/hover.wav"))
+		std::cout << "Failed to load: sounds/ui/hover.wav";
+	if (!bufferClick_.loadFromFile("sounds/ui/click.wav"))
+		std::cout << "Failed to load: sounds/ui/click.wav";
     
     //--------------Music--------------
     if(!musicBackgroundNature_.openFromFile("sounds/background/nature.ogg"))
@@ -152,4 +158,14 @@ void SoundManager::playSound(const std::string& type)
         lSounds_.push_back(sound);
         lSounds_.back().play();
     }
+	else if (type == "hover")
+	{
+		lSounds_.push_back(sf::Sound(bufferHover_));
+		lSounds_.back().play();
+	}
+	else if (type == "click")
+	{
+		lSounds_.push_back(sf::Sound(bufferClick_));
+		lSounds_.back().play();
+	}
 }

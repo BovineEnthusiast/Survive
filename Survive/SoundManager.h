@@ -36,6 +36,10 @@ private:
     sf::SoundBuffer bufferCrunch_;
     sf::SoundBuffer bufferCrunchySplat_;
     
+	//UI
+	sf::SoundBuffer bufferHover_;
+	sf::SoundBuffer bufferClick_;
+
     std::list<sf::Sound> lSounds_;
     
     //---------------Music----------------------------

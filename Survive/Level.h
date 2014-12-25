@@ -18,7 +18,7 @@
 class Level 
 {
 public:
-    Level(sf::RenderWindow*);
+    Level(sf::RenderWindow*, SoundManager*);
     
     void update(const sf::Time&);
     void generateLevel(const int width, const int height); //Fills the tiles vector with procedural tiles
@@ -43,8 +43,8 @@ private:
     sf::RenderWindow* pWindow_;
     sf::Texture tileSpriteSheet_;
     ImageManager imageManager_;    
-    SoundManager soundManager_;
-    Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, &soundManager_);
+    SoundManager* pSoundManager_;
+    Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, pSoundManager_);
     GUIManager GUIManager_ = GUIManager(pWindow_, &player_);
 
     Camera camera_;    
