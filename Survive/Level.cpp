@@ -11,16 +11,14 @@ Level::Level(sf::RenderWindow* pWindow, SoundManager* pSoundManager)
 	:pWindow_(pWindow), pSoundManager_(pSoundManager)
 {
     //Loads the tile sheet then assigns their locations to a map
-    if(!tileSpriteSheet_.loadFromFile("TileSpritesheet.png"))
+    if(!tileSpriteSheet_.loadFromFile("tiles.jpg"))
         std::cout << "failed to load from file" << std::endl;
-    tileSprites_["deepWater"] = sf::IntRect(0, 0, 60, 60);
-    tileSprites_["shallowWater"] = sf::IntRect(60, 0, 60, 60);
-    tileSprites_["sand"] = sf::IntRect(120, 0, 60, 60);
-    tileSprites_["dirt"] = sf::IntRect(180, 0, 60, 60);
-    tileSprites_["dirtyGrass"] = sf::IntRect(240, 0, 60, 60);
-    tileSprites_["grass"] = sf::IntRect(300, 0, 60, 60);
-    tileSprites_["hill"] = sf::IntRect(360, 0, 60, 60);
-    tileSprites_["snow"] = sf::IntRect(420, 0, 60, 60);
+    tileSprites_["deepWater"] = sf::IntRect(0, 0, 32, 32);
+    tileSprites_["shallowWater"] = sf::IntRect(448, 32, 32, 32);
+    tileSprites_["sand"] = sf::IntRect(0, 64, 32, 32);
+    tileSprites_["dirt"] = sf::IntRect(448, 96, 32, 32);
+    tileSprites_["grass"] = sf::IntRect(0, 128, 32, 32);
+    tileSprites_["hill"] = sf::IntRect(448, 160, 32, 32);
 
     
     player_.pTiles = &tiles;
@@ -30,17 +28,36 @@ Level::Level(sf::RenderWindow* pWindow, SoundManager* pSoundManager)
 
 void Level::update(const sf::Time& dT)
 {
+	//if (zombiesAlive_ > 0)
+	if (zombiesToSpawn_ == 0 && zombiesAlive_ == 0 && !beetweenWaves_)
+	{
+		waveClock_.restart();
+		beetweenWaves_ = true;
+		std::cout << "Wave ended!" << std::endl;
+	}
+	if (waveClock_.getElapsedTime().asSeconds() > waveTime_ && beetweenWaves_)
+	{
+		++wave_;
+		zombiesToSpawn_ = wave_ * 10;
+		beetweenWaves_ = false;
+		std::cout << "Wave " << wave_ <<  "started!" << std::endl;
+
+	}
+	
     for(auto iPartition = spatialPartitions_.begin(); iPartition != spatialPartitions_.end(); ++iPartition)
         iPartition->update(dT);
 
-    GUIManager_.update(dT);
 
 
 	if (player_.getHealth() <= 0)
 		lost_ = true;
     //Adds zombies if current amount is less than max
 }
+void Level::updateGUI(const sf::Time& dT)
+{
+	GUIManager_.update(dT);
 
+}
 //Generates the level with the diamond-square algorithm
 void Level::generateLevel(const int width, const int height) 
 {
@@ -48,11 +65,14 @@ void Level::generateLevel(const int width, const int height)
 	player_.setHealth(100);
 	spatialPartitions_.clear();
 	tiles.clear();
+	wave_ = 1;
+	zombiesAlive_ = 0;
+	zombiesToSpawn_ = 10;
 
     //Resizes tiles vectores
-    tiles.resize(width);
+    tiles.resize(width - 1);
     for(int vec = 0; vec < tiles.size(); ++vec)
-        tiles[vec].resize(height);
+        tiles[vec].resize(height - 1);
     
     //Seeds random
     std::srand(time(0));
@@ -61,10 +81,8 @@ void Level::generateLevel(const int width, const int height)
     float rangeShallowWater = -0.6f;
     float rangeSand = -0.4f;
     float rangeDirt = -0.2f;
-    float rangeDirtyGrass = -0.1f;
-    float rangeGrass = 0.6f;
-    float rangeHill = 0.8f;
-    float rangeSnow = 1.0f;
+    float rangeGrass = 0.75f;
+    float rangeHill = 1.0f;
     
     //A heightmap array that will (hopefully) end up being between -1 to 1
 	std::vector<std::vector<float>> heightmap;
@@ -311,32 +329,43 @@ void Level::generateLevel(const int width, const int height)
 	gradientArray.resize(width);
 	for (int i = 0; i < gradientArray.size(); ++i)
 		gradientArray[i].resize(width);
+	for (int xPos = 0; xPos < width; ++xPos)
+	{
+		for (int yPos = 0; yPos < height; ++yPos)
+		{
+			gradientArray[xPos][yPos] = 0;
+		}
+	}
     for(int xPos = 0; xPos < width; ++xPos)
         {
             for(int yPos = 0; yPos < height; ++yPos)
             {
-                gradientArray[xPos][yPos] = 2;
+				gradientArray[xPos][yPos] = sqrt(pow(xPos - width / 2, 2) + pow(yPos - height / 2, 2)) * 0.025f;
             }
         }
     //Fills gradientArray array with (5-7) circle gradients
-   /* for(int circle = 0; circle < 9; ++ circle)
-    {
-        int xCenter = std::rand() % (int)(width / 4.0f) + (int)(width / 8.0f);
-        int yCenter = std::rand() % (int)(width / 4.0f) + (int)(width / 8.0f);
-        int radius = std::rand() % (int)(width / 10.0f) + width / 10.0f;
-        
-        for(int xPos = 0; xPos < width; ++xPos)
-        {
-            for(int yPos = 0; yPos < height; ++yPos)
-            {
-                if(sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) <= radius)
-                    gradientArray[xPos][yPos] -= (1 - (sqrt(pow(xPos - xCenter, 2) + pow(yPos - yCenter, 2)) / radius));
-                if(gradientArray[xPos][yPos] < 0)
-                    gradientArray[xPos][yPos] = 0;
-            }
-        }
-    }*/
-    //Adds tiles to tile array
+	/*for (int circle = 0; circle < 5; ++circle)
+	{
+		int xCenter = std::rand() % (int)(2 * width / 4.0f) + (int)(width / 4.0f);
+		int yCenter = std::rand() % (int)(2 * width / 4.0f) + (int)(width / 4.0f);
+		int radius = std::rand() % (int)(2 * width / 10.0f) + width / 10.0f;
+	
+
+		for (int xPos = 0; xPos < width; ++xPos)
+		{
+			for (int yPos = 0; yPos < height; ++yPos)
+			{
+				gradientArray[xPos][yPos] += sqrt(pow(xPos - width / 2, 2) + pow(yPos - height / 2, 2)) * 0.025f;
+				if (gradientArray[xPos][yPos] > 1.0f)
+					gradientArray[xPos][yPos] = 1.0f;
+				else if (gradientArray[xPos][yPos] < 0.0f)
+					gradientArray[xPos][yPos] = 0.0f;
+			}
+		}
+	}
+	*/
+	
+
     int xCenter = (width - 1) / 2;
     int yCenter = xCenter;
     //Used to place player on a green tile
@@ -348,63 +377,79 @@ void Level::generateLevel(const int width, const int height)
            //Create a spacial partition if possible
            if(xPos % 10 == 0 && yPos % 10 == 0)
            {
-               spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f ,yPos * 50.0f, 500.0f ,500.0f), &player_, &spatialPartitions_, pSoundManager_));
+			   spatialPartitions_.push_back(SpatialPartition(sf::FloatRect(xPos * 50.0f, yPos * 50.0f, 500.0f, 500.0f), &player_, &spatialPartitions_, pSoundManager_, &zombiesAlive_, &zombiesToSpawn_, &wave_));
                spatialPartitions_.at(spatialPartitions_.size() - 1).setImageManagerPointer(&imageManager_);
                spatialPartitions_.at(spatialPartitions_.size() - 1).setTilesPointer(&tiles);
-
            }
            
-            heightmap[xPos][yPos] -= sqrt(pow(xPos - width / 2, 2) + pow(yPos - height / 2, 2)) * 0.025f ;
-            //Assigns tiles based on height
+            heightmap[xPos][yPos] -= gradientArray[xPos][yPos] ;
             float height = heightmap[xPos][yPos];
             
-            //Places trees
-            if(height > rangeDirtyGrass && height < rangeHill && std::rand() % 100 <= 2)
-            {
-                Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
-                tree.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
-                spatialPartitions_.at(spatialPartitions_.size() - 1).pushTree(tree);
-            }
-            else if(height > rangeSand && height < rangeHill && std::rand() % 100 <= 1)
-            {
-                Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
-                tree.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
-                spatialPartitions_.at(spatialPartitions_.size() - 1).pushTree(tree);
-            }
-            if(height > rangeShallowWater && height < rangeHill && std::rand() % 2500 < 5)
-            {
-                Den den = Den(&imageManager_.zombieDenTexture);
-                den.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
-                spatialPartitions_.at(spatialPartitions_.size() - 1).pushDen(den);
-            }
-            
-            //Assigns tiles
-            if(height < rangeDeepWater)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["deepWater"], "deepWater");
-            else if(height < rangeShallowWater)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["shallowWater"], "shallowWater");
-            else if(height < rangeSand)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["sand"], "sand");
-            else if(height < rangeDirt)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirt"], "dirt");
-            else if(height < rangeDirtyGrass)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["dirtyGrass"], "dirtyGrass");
-            else if(height < rangeGrass)
-            {
-                if(!playerSet)
-                {
-                    player_.setPosition(sf::Vector2f(xPos * 50, yPos * 50));
-                    playerSet = true;
-                }
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["grass"], "grass");
-            }
-            else if(height < rangeHill)
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["hill"], "hill");
-            else
-                tiles[xPos][yPos] = Tile(tileSpriteSheet_, tileSprites_["snow"], "snow");
+			//Sets the heightmap to the tiles' numbers (0 = deep water, 1 = shallow water, etc...)
+			if (height < rangeDeepWater)
+				heightmap[xPos][yPos] = 0;
+			else if (height < rangeShallowWater)
+				heightmap[xPos][yPos] = 2;
+			else if (height < rangeSand)
+				heightmap[xPos][yPos] = 4;
+			else if (height < rangeDirt)
+				heightmap[xPos][yPos] = 6;
+			else if (height < rangeGrass)
+				heightmap[xPos][yPos] = 8;
+			else
+				heightmap[xPos][yPos] = 10;
         }
     }
-       
+	
+	for (int xPos = 0; xPos < width - 1; ++xPos)
+	{
+		for (int yPos = 0; yPos < height - 1; ++yPos)
+		{
+			int topLeft = heightmap[xPos][yPos];
+			int topRight = heightmap[xPos + 1][yPos];
+			int bottomLeft = heightmap[xPos][yPos + 1];
+			int bottomRight = heightmap[xPos + 1][yPos + 1];
+
+			int hTL = topLeft >> 1;
+			int hTR = topRight >> 1;
+			int hBL = bottomLeft >> 1;
+			int hBR = bottomRight >> 1;
+
+			int saddle = ((topLeft & 1) + (topRight & 1) + (bottomLeft & 1) + (bottomRight & 1) + 1) >> 2;
+
+			int shape = (hTL & 1) | (hTR & 1) << 1 | (hBL & 1) << 2 | (hBR & 1) << 3;
+
+			int ring = (hTL + hTR + hBL + hBR) >> 2;
+
+			int row = (ring << 1) | saddle;
+			int col = shape - (ring & 1);
+
+			//Places trees and dens
+			 if (row > 5 && row <= 9 && std::rand() % 100 <= 1)
+			 {
+				 Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
+				 tree.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
+				 spatialPartitions_.at(spatialPartitions_.size() - 1).pushTree(tree);
+			 }
+			 if (row > 5 && row <= 9 && std::rand() % 500 < 1)
+			 {
+				 Den den = Den(&imageManager_.zombieDenTexture);
+				 den.setPositionGlobal(sf::Vector2f(xPos * 50 + 25, yPos * 50 + 25));
+				 spatialPartitions_.at(spatialPartitions_.size() - 1).pushDen(den);
+			 }
+
+			 std::string type;
+			if (row <= 3 || row >= 10)
+				type = "unwalkable";
+			else
+				type = "walkable";
+			tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
+
+			if (type == "walkable")
+				player_.setPosition(sf::Vector2f(50 * xPos, 50 * yPos));
+		}
+	}
+	
 	std::cout << "Done gen";
 }
 //Camera
@@ -413,7 +458,6 @@ void Level::zoomCamera(const int zoom) {camera_.changeSize(zoom);}
 void Level::resizeCamera(const sf::Vector2u& size) {camera_.resizeView(size);}
 
 //Getters
-bool Level::isMenu() const {return menu_;}
 sf::View Level::getCameraView() {return camera_.getView();}
 Player Level::getPlayer() const {return player_;}
 std::vector<SpatialPartition> Level::getSpatialPartitions() const {return spatialPartitions_;}

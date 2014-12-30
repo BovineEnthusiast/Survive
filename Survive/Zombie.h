@@ -6,7 +6,7 @@
 class Zombie : public Humanoid
 {
 public:
-    Zombie(Player*, sf::Texture*);
+    Zombie(Player*, sf::Texture*, const int, const int);
     void update(const sf::Time&);
     
     void setPosition(const sf::Vector2f&);//TEMP PROB!?

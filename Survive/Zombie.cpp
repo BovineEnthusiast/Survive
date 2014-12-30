@@ -1,10 +1,12 @@
 #include "Zombie.h"
 #include <iostream>
 #include "Collision.h"
-Zombie::Zombie(Player* player, sf::Texture* texture)
+Zombie::Zombie(Player* player, sf::Texture* texture, const int health, const int speed)
 : Humanoid(texture), pPlayer_(player)
 {
-    finalSpeed_ = 3 + std::rand() % 20;
+    finalSpeed_ = 3 + std::rand() % (int)(speed * 1.5);
+	health_ = 100 + health;
+
 }
 void Zombie::update(const sf::Time& dT)
 {

@@ -21,6 +21,7 @@ public:
     Level(sf::RenderWindow*, SoundManager*);
     
     void update(const sf::Time&);
+	void updateGUI(const sf::Time&);
     void generateLevel(const int width, const int height); //Fills the tiles vector with procedural tiles
     std::vector< std::vector<Tile> > tiles;
 
@@ -45,26 +46,34 @@ private:
     ImageManager imageManager_;    
     SoundManager* pSoundManager_;
     Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, pSoundManager_);
-    GUIManager GUIManager_ = GUIManager(pWindow_, &player_);
+
+	int wave_ = 1;
+	int zombiesToSpawn_ = 10;
+	int zombiesAlive_ = 0;
+
+    GUIManager GUIManager_ = GUIManager(pWindow_, &player_, &wave_, &zombiesAlive_);
 
     Camera camera_;    
 
+	//Used as money
+	int credits = 0;
 	//True if the player dies
 	bool lost_ = false;
     //The amount of time between zombie spawns in ms
     int zombieSpawnTime_ = 5.0f;
     
+	//Time between waves
+	float waveTime_ = 5.0f;
+	bool beetweenWaves_ = false;
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
     
      //Stores all the different objects in the level
     std::vector<SpatialPartition> spatialPartitions_;
     
-    //Used to tell whether level is a menu
-    bool menu_ = false;
-
     //Clocks
     sf::Clock zombieSpawnClock_;
+	sf::Clock waveClock_;
 };
 
 #endif

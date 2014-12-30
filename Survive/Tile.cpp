@@ -1,11 +1,11 @@
 #include "Tile.h"
 Tile::Tile(){}
-Tile::Tile(const sf::Texture& texture, const sf::IntRect& intRect, const std::string& type)
-: type_(type)
+Tile::Tile(sf::Texture* pTexture, const sf::IntRect& intRect, const std::string& type)
+	: type_(type), pTexture_(pTexture)
 {
-    sprite_.setTexture(texture);
+    sprite_.setTexture(*pTexture_);
     sprite_.setTextureRect(intRect);
-    
+	sprite_.setScale(50.0f / 32.0f, 50.0f / 32.0f);
 }
 
 //Getters

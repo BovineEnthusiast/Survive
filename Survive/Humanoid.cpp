@@ -53,7 +53,7 @@ void Humanoid::animate(const sf::Time& dT)
     
     //Checks to see if it was moved to an illegal tile
     std::string tile = pTiles->at((positionGlobal_.x - fmod(positionGlobal_.x, 50)) / 50).at((positionGlobal_.y - fmod(positionGlobal_.y, 50)) / 50).getType();
-    if(tile == "shallowWater" || tile == "deepWater")
+    if(tile == "unwalkable")
         positionGlobal_ -= velocity_ * dT.asSeconds() * 20.0f;
  
     if(velocity_ != sf::Vector2f(0.0f,0.0f))

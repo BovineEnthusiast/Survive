@@ -2,6 +2,7 @@
 
 ImageManager::ImageManager() 
 {
+	tileSheetTexture.loadFromFile("tiles.jpg");
     //Guns
     gunPistolTexture.loadFromFile("gunSpriteSheet.png");
     gunRifleTexture.loadFromFile("rifle.png");

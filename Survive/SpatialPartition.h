@@ -16,7 +16,7 @@
 class SpatialPartition 
 {
 public:
-    SpatialPartition(const sf::FloatRect&, Player*, std::vector<SpatialPartition>*, SoundManager*);
+    SpatialPartition(const sf::FloatRect&, Player*, std::vector<SpatialPartition>*, SoundManager*, int*, int*, int*);
     void update(const sf::Time&);
     
     //Setters
@@ -39,6 +39,9 @@ public:
   
 
 private:
+	int* pZombiesAlive_;
+	int* pZombiesToSpawn_;
+	int* pWave_;
     std::vector<Zombie> vZombies_;
     std::list<Bullet> lBullets_;
     std::vector<Tree> vTrees_;

@@ -5,6 +5,7 @@ class ImageManager
 {
 public:
     ImageManager();
+	sf::Texture tileSheetTexture;
     sf::Texture treeUpperLeafTexture;
     sf::Texture treeLowerLeafTexture;
     sf::Texture treeTrunkTexture;

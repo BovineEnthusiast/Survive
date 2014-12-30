@@ -165,6 +165,10 @@ void Engine::draw()
 		//GUI elements
 		GUIManager GUIManagerCopy = level_.getGUIManager();
 
+		window_.draw(GUIManagerCopy.getWaveBackground());
+		window_.draw(GUIManagerCopy.getWaveText());
+		window_.draw(GUIManagerCopy.getZombiesText());
+
 		window_.draw(GUIManagerCopy.getHealthOutOf());
 		window_.draw(GUIManagerCopy.getHealthCurrent());
 
@@ -173,6 +177,8 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getReloadCurrent());
 		window_.draw(GUIManagerCopy.getTotalAmmo());
 
+		//Store
+		window_.draw(GUIManagerCopy.getBuyMenuBackground());
 	}
 }
 int Engine::run()
@@ -200,7 +206,6 @@ int Engine::run()
 
 			//update cam
 			level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
-
 			//Clamps the camera to edges
 			if (level_.getCameraView().getCenter().x - level_.getCameraView().getSize().x / 2 < 0)
 				level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getSize().x / 2, level_.getCameraView().getCenter().y));
@@ -213,6 +218,7 @@ int Engine::run()
 
 			level_.resizeCamera(window_.getSize());
 			window_.setView(level_.getCameraView());
+			level_.updateGUI(_dT);
 
 		}
 

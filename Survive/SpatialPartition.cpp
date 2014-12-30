@@ -2,8 +2,8 @@
 #include "Collision.h"
 #include <iostream>
 
-SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<SpatialPartition>* partitions, SoundManager* pSoundManager)
-:partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager)
+SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<SpatialPartition>* partitions, SoundManager* pSoundManager, int* pZombiesAlive, int* pZombiesToSpawn, int* pWave)
+	:partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager), pZombiesAlive_(pZombiesAlive), pZombiesToSpawn_(pZombiesToSpawn), pWave_(pWave)
 {
 }
 void SpatialPartition::update(const sf::Time& dT)
@@ -31,9 +31,13 @@ void SpatialPartition::update(const sf::Time& dT)
     for(auto iDen = vDens_.begin(); iDen != vDens_.end(); ++iDen)
     {
         iDen->update(dT);
-        if(iDen->isReadyToSpawn())
+        if(iDen->isReadyToSpawn() && *pZombiesToSpawn_ > 0)
         {
-            Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture);
+			--(*pZombiesToSpawn_);
+			++(*pZombiesAlive_);
+			std::cout << "To spawn: " << *pZombiesToSpawn_ << std::endl;
+			std::cout << "Alive: " << *pZombiesAlive_ << std::endl;
+            Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, (*pWave_ - 1) * 10, (*pWave_ + 10));
             zombie.pTiles = pVTiles_;
             zombie.setPosition(iDen->getPositionGlobal());
             vZombies_.push_back(zombie);
@@ -67,8 +71,11 @@ void SpatialPartition::update(const sf::Time& dT)
                 //Sound
                 pSoundManager_->playSound("hit");
                 
-                if(iZombies->getHealth() <= 0)
-                    pSoundManager_->playSound("zombie_death");
+				if (iZombies->getHealth() <= 0)
+				{
+					pSoundManager_->playSound("zombie_death");
+					--(*pZombiesAlive_);
+				}
 
             }     
         }
