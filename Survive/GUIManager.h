@@ -20,19 +20,32 @@ public:
 	sf::RectangleShape getWaveBackground() const;
 	sf::RectangleShape getBuyMenuBackground() const;
 	sf::RectangleShape getExitButton() const;
-	sf::RectangleShape getHighlight()  const;
+	sf::RectangleShape getSelectionRect()  const;
 	sf::Text getStoreText() const;
 	sf::Text getPistolText() const;
 	sf::Text getMagnumText() const;
 	sf::Text getShotgunText() const;
 	sf::Text getRifleText() const;
 	sf::Text getRocketText() const;
+	sf::Text getBarricadeText() const;
+	sf::Text getTurretText() const; 
+	sf::Text getRocketTurretText() const;
+	sf::Text getMineText() const;
 	sf::Text getBuyMagnumText() const;
 	sf::Text getBuyShotgunText() const;
 	sf::Text getBuyRifleText() const;
-	sf::Text getButRocketText() const;
+	sf::Text getBuyRocketText() const;
+	sf::Text getBuyBarricadeText() const;
+	sf::Text getBuyTurretText() const;
+	sf::Text getBuyRocketTurretText() const;
+	sf::Text getBuyMineText() const;
+
     
 private:
+	//Helpers for text
+	void setUpText(sf::Text&, const std::string&);
+	void showInStore(sf::Text&, const int, const int, const float);
+	bool hover(const sf::Text&);
     sf::RenderWindow* pWindow_;
     Player* pPlayer_;
     sf::Font font_;
@@ -74,22 +87,36 @@ private:
 	float storeItemsOpenTime_ = 0.1f;
 	sf::RectangleShape buyMenuBackground_;
 	sf::RectangleShape exitButton_;
-	sf::RectangleShape highlightBackground_;
+	sf::RectangleShape selectionRect_;
 	sf::Text storeText_;
 	sf::Vector2f storeSize_ = sf::Vector2f(0.9f, 0.6f);
 
+	bool magnumBought_ = false;
+	bool shotgunBought_ = false;
+	bool rifleBought_ = false;
+	bool rocketBought_ = false;
+	
 	//Gun/Item texts
 	sf::Text pistolText_;
 	sf::Text magnumText_;
 	sf::Text shotgunText_;
 	sf::Text rifleText_;
 	sf::Text rocketText_;
+	sf::Text barricadeText_;
+	sf::Text turretText_;
+	sf::Text rocketTurretText_;
+	sf::Text mineText_;
+	float itemTextSize_ = 0.05f;
 
 	//Buy button texts
 	sf::Text buyMagnumText_;
 	sf::Text buyShotgunText_;
 	sf::Text buyRifleText_;
 	sf::Text buyRocketText_;
+	sf::Text buyBarricadeText_;
+	sf::Text buyTurretText_;
+	sf::Text buyRocketTurretText_;
+	sf::Text buyMineText_;
 
 	//Clocks
 	sf::Clock storeOpenClock_;

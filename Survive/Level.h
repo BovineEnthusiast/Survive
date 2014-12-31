@@ -64,7 +64,7 @@ private:
     
 	//Time between waves
 	float waveTime_ = 5.0f;
-	bool beetweenWaves_ = false;
+	bool beetweenWaves_ = true;
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
     

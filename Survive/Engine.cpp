@@ -10,7 +10,7 @@ Engine::Engine()
 {}
 bool Engine::initialize()
 {
-	window_.create(sf::VideoMode(720, 720), "Survive");
+	window_.create(sf::VideoMode(1440, 720), "Survive");
 	return true;
 }
 
@@ -179,6 +179,24 @@ void Engine::draw()
 
 		//Store
 		window_.draw(GUIManagerCopy.getBuyMenuBackground());
+		window_.draw(GUIManagerCopy.getSelectionRect());
+		window_.draw(GUIManagerCopy.getPistolText());
+		window_.draw(GUIManagerCopy.getMagnumText());
+		window_.draw(GUIManagerCopy.getShotgunText());
+		window_.draw(GUIManagerCopy.getRifleText());
+		window_.draw(GUIManagerCopy.getRocketText());
+		window_.draw(GUIManagerCopy.getBarricadeText());
+		window_.draw(GUIManagerCopy.getTurretText());
+		window_.draw(GUIManagerCopy.getRocketTurretText());
+		window_.draw(GUIManagerCopy.getMineText());
+		window_.draw(GUIManagerCopy.getBuyMagnumText());
+		window_.draw(GUIManagerCopy.getBuyShotgunText());
+		window_.draw(GUIManagerCopy.getBuyRifleText());
+		window_.draw(GUIManagerCopy.getBuyRocketText());
+		window_.draw(GUIManagerCopy.getBuyBarricadeText());
+		window_.draw(GUIManagerCopy.getBuyTurretText());
+		window_.draw(GUIManagerCopy.getBuyRocketTurretText());
+		window_.draw(GUIManagerCopy.getBuyMineText());
 	}
 }
 int Engine::run()

@@ -51,7 +51,7 @@ void Player::update(const sf::Time& dT)
             footstepClock_.restart();
             pSoundManager_->playSound("grass");
         }
-
+		//float ratio = window->getView().getSize().y /  window->getSize().y;
         headSprite_.setRotation(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358);
 
 
