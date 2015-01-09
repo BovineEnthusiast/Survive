@@ -2,7 +2,7 @@
 #define	BULLET_H
 #include "GameObject.h"
 #include <SFML/Graphics.hpp>
-class Bullet : GameObject
+class Bullet : public GameObject
 {
 public:
     Bullet(const sf::Vector2f&, const sf::Vector2f&, const int);

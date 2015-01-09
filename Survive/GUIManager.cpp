@@ -67,37 +67,37 @@ void GUIManager::update(const sf::Time& dT)
 {
 	if (toggled_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::B))
 		toggled_ = false;
-	sf::Vector2f windowSize = pWindow_->getView().getSize();
-	sf::Vector2f currentWindowPos(pWindow_->getView().getCenter().x - windowSize.x / 2.0f, pWindow_->getView().getCenter().y - windowSize.y / 2.);
+	sf::Vector2f viewSize = pWindow_->getView().getSize();
+	sf::Vector2f currentWindowPos(pWindow_->getView().getCenter().x - viewSize.x / 2.0f, pWindow_->getView().getCenter().y - viewSize.y / 2.);
 
 	//Wave info
-	waveBackground_.setPosition(currentWindowPos.x + windowSize.x, currentWindowPos.y);
-	waveBackground_.setScale(windowSize.x * waveBackgroundSize_.x, windowSize.y * waveBackgroundSize_.y);
+	waveBackground_.setPosition(currentWindowPos.x + viewSize.x, currentWindowPos.y);
+	waveBackground_.setScale(viewSize.x * waveBackgroundSize_.x, viewSize.y * waveBackgroundSize_.y);
 	waveText_.setString("Wave: " + std::to_string(*pWave_));
 	waveText_.setOrigin(waveText_.getLocalBounds().width, 0.0f);
-	waveText_.setPosition(currentWindowPos.x + windowSize.x - (waveTextOffset_.x * windowSize.x), currentWindowPos.y  + (waveTextOffset_.y * windowSize.y));
-	waveText_.setCharacterSize(windowSize.y * waveTextSize_);
+	waveText_.setPosition(currentWindowPos.x + viewSize.x - (waveTextOffset_.x * viewSize.x), currentWindowPos.y  + (waveTextOffset_.y * viewSize.y));
+	waveText_.setCharacterSize(viewSize.y * waveTextSize_);
 	zombiesText_.setString("Zombies: " + std::to_string(*pZombiesAlive_));
 	zombiesText_.setOrigin(zombiesText_.getLocalBounds().width, 0.0f);
-	zombiesText_.setPosition(currentWindowPos.x + windowSize.x - (zombiesTextOffset_.x * windowSize.x), currentWindowPos.y + (zombiesTextOffset_.y * windowSize.y));
-	zombiesText_.setCharacterSize(windowSize.y * zombiesTextSize_);
+	zombiesText_.setPosition(currentWindowPos.x + viewSize.x - (zombiesTextOffset_.x * viewSize.x), currentWindowPos.y + (zombiesTextOffset_.y * viewSize.y));
+	zombiesText_.setCharacterSize(viewSize.y * zombiesTextSize_);
 	
 	//Health
-	healthOutOf_.setScale(windowSize.x * healthSize_.x, windowSize.y * healthSize_.y);
-	healthCurrent_.setScale(windowSize.x * healthSize_.x * (pPlayer_->getHealth() / 100.0f), windowSize.y * healthSize_.y);
-	healthOutOf_.setPosition(currentWindowPos.x + windowSize.x * healthOffset_.x, currentWindowPos.y + windowSize.y - windowSize.y * healthOffset_.y);
-	healthCurrent_.setPosition(currentWindowPos.x + windowSize.x * healthOffset_.x, currentWindowPos.y + windowSize.y - windowSize.y * healthOffset_.y);
+	healthOutOf_.setScale(viewSize.x * healthSize_.x, viewSize.y * healthSize_.y);
+	healthCurrent_.setScale(viewSize.x * healthSize_.x * (pPlayer_->getHealth() / 100.0f), viewSize.y * healthSize_.y);
+	healthOutOf_.setPosition(currentWindowPos.x + viewSize.x * healthOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * healthOffset_.y);
+	healthCurrent_.setPosition(currentWindowPos.x + viewSize.x * healthOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * healthOffset_.y);
 
 	//Reload
 	Gun gun = pPlayer_->getGuns().at(pPlayer_->getCurrentGunIndex());
 	if (gun.isReloading())
-		reloadCurrent_.setScale(windowSize.x * reloadSize_.x * (gun.getCurrentReloadTime().asSeconds() / gun.getReloadTime()), windowSize.y * reloadSize_.y);
+		reloadCurrent_.setScale(viewSize.x * reloadSize_.x * (gun.getCurrentReloadTime().asSeconds() / gun.getReloadTime()), viewSize.y * reloadSize_.y);
 	else
-		reloadCurrent_.setScale(windowSize.x * reloadSize_.x * (gun.getCurrentBullets() / (float)gun.getBulletsPerMag()), windowSize.y * reloadSize_.y);
+		reloadCurrent_.setScale(viewSize.x * reloadSize_.x * (gun.getCurrentBullets() / (float)gun.getBulletsPerMag()), viewSize.y * reloadSize_.y);
 
-	reloadOutOf_.setScale(windowSize.x * reloadSize_.x, windowSize.y * reloadSize_.y);
-	reloadCurrent_.setPosition(currentWindowPos.x + windowSize.x - windowSize.x * reloadOffset_.x, currentWindowPos.y + windowSize.y - windowSize.y * reloadOffset_.y);
-	reloadOutOf_.setPosition(currentWindowPos.x + windowSize.x - windowSize.x * reloadOffset_.x, currentWindowPos.y + windowSize.y - windowSize.y * reloadOffset_.y);
+	reloadOutOf_.setScale(viewSize.x * reloadSize_.x, viewSize.y * reloadSize_.y);
+	reloadCurrent_.setPosition(currentWindowPos.x + viewSize.x - viewSize.x * reloadOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * reloadOffset_.y);
+	reloadOutOf_.setPosition(currentWindowPos.x + viewSize.x - viewSize.x * reloadOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * reloadOffset_.y);
 
 	//Ammo
 	ammo_.setString(std::to_string(pPlayer_->getGuns().at(pPlayer_->getCurrentGunIndex()).getCurrentBullets()) + " / " + std::to_string(pPlayer_->getGuns().at(pPlayer_->getCurrentGunIndex()).getTotalAmmo()));
@@ -123,7 +123,7 @@ void GUIManager::update(const sf::Time& dT)
 		float time = storeOpenClock_.getElapsedTime().asSeconds();
 		if (time > storeOpenTime_)
 		{
-			buyMenuBackground_.setScale(sf::Vector2f(storeSize_.x * windowSize.x, storeSize_.y * windowSize.y));
+			buyMenuBackground_.setScale(sf::Vector2f(storeSize_.x * viewSize.x, storeSize_.y * viewSize.y));
 			buyMenuBackground_.setFillColor(sf::Color(226, 232, 235, 235));
 			buyMenuBackground_.setPosition(pWindow_->getView().getCenter());
 
@@ -186,7 +186,7 @@ void GUIManager::update(const sf::Time& dT)
 		else
 		{
 			
-			buyMenuBackground_.setScale(sf::Vector2f(storeSize_.x * windowSize.x * (time / storeOpenTime_), storeSize_.y * windowSize.y * (time / storeOpenTime_)));
+			buyMenuBackground_.setScale(sf::Vector2f(storeSize_.x * viewSize.x * (time / storeOpenTime_), storeSize_.y * viewSize.y * (time / storeOpenTime_)));
 			buyMenuBackground_.setFillColor(sf::Color(226, 232, 235, 235 * (time / storeOpenTime_)));
 			buyMenuBackground_.setPosition(pWindow_->getView().getCenter());
 		}
@@ -234,8 +234,8 @@ void GUIManager::showInStore(sf::Text& text, const int x, const int y, const flo
 bool GUIManager::hover(const sf::Text& text)
 {
 	sf::View view = pWindow_->getView();
-	sf::Vector2f windowSize = view.getSize();
-	sf::Vector2f currentWindowPos(view.getCenter().x - windowSize.x / 2.0f, view.getCenter().y - windowSize.y / 2.0f);
+	sf::Vector2f viewSize = view.getSize();
+	sf::Vector2f currentWindowPos(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
 	float ratio = view.getSize().y / pWindow_->getSize().y;
 
 	if (text.getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(*pWindow_) * ratio + currentWindowPos))

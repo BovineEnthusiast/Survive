@@ -4,14 +4,16 @@ ImageManager::ImageManager()
 {
 	tileSheetTexture.loadFromFile("tiles.jpg");
     //Guns
-    gunPistolTexture.loadFromFile("gunSpriteSheet.png");
-    gunRifleTexture.loadFromFile("rifle.png");
+    gunPistolTexture.loadFromFile("guns/pistol.png");
+    gunRifleTexture.loadFromFile("guns/rifle.png");
+	gunShotgunTexture.loadFromFile("guns/shotgun.png");
+	gunMagnumTexture.loadFromFile("guns/magnum.png");
     
     treeUpperLeafTexture.loadFromFile("tree_upper.png");
     treeLowerLeafTexture.loadFromFile("tree_lower.png");
     treeTrunkTexture.loadFromFile("tree_trunk.png");
-    humanoidZombieTexture.loadFromFile("zombie.png");
-    humanoidPlayerTexture.loadFromFile("player.png");
+    humanoidZombieTexture.loadFromFile("zombie_new.png");
+    humanoidPlayerTexture.loadFromFile("player_new.png");
     zombieDenTexture.loadFromFile("den.png");
     
     //Blood splatters

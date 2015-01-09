@@ -73,14 +73,14 @@ void Engine::draw()
 		int bottomRightX;
 		int bottomRightY;
 
-		if (50 - fmod(camBottomRight.x, tileSize_) == 0)
+		if (32 - fmod(camBottomRight.x, tileSize_) == 0)
 			bottomRightX = (camBottomRight.x / tileSize_);
 		else
-			bottomRightX = (camBottomRight.x + (50 - fmod(camBottomRight.x, tileSize_))) / tileSize_;
-		if (50 - fmod(camBottomRight.y, tileSize_) == 0)
+			bottomRightX = (camBottomRight.x + (32 - fmod(camBottomRight.x, tileSize_))) / tileSize_;
+		if (32 - fmod(camBottomRight.y, tileSize_) == 0)
 			bottomRightY = (camBottomRight.y / tileSize_);
 		else
-			bottomRightY = (camBottomRight.y + (50 - fmod(camBottomRight.y, tileSize_))) / tileSize_;
+			bottomRightY = (camBottomRight.y + (32 - fmod(camBottomRight.y, tileSize_))) / tileSize_;
 
 		//Prevents out of bounds exception
 		if (bottomRightX > 256)
@@ -98,22 +98,23 @@ void Engine::draw()
 			}
 
 
-		std::vector<SpatialPartition> spatialPartitions = level_.getSpatialPartitions();
+		std::vector<std::vector<SpatialPartition>> spatialPartitions = level_.getSpatialPartitions();
 
-		for (auto iPartition = spatialPartitions.begin(); iPartition != spatialPartitions.end(); ++iPartition)
-		{
-			//Dens
-			std::vector<Den> vDens = iPartition->getDens();
-			for (auto iDen = vDens.begin(); iDen != vDens.end(); ++iDen)
-				window_.draw(iDen->getSprite());
+		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
+			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
+			{
+				//Dens
+				std::vector<Den> vDens = iPartition->getDens();
+				for (auto iDen = vDens.begin(); iDen != vDens.end(); ++iDen)
+					window_.draw(iDen->getSprite());
 
 
-			//Blood splats
-			std::deque<BloodSplat> dBloodSplats = iPartition->getBloodSplats();
-			for (size_t bloodSplat = 0; bloodSplat < dBloodSplats.size(); ++bloodSplat)
-				window_.draw(dBloodSplats.at(bloodSplat).getSprite());
+				//Blood splats
+				std::deque<BloodSplat> dBloodSplats = iPartition->getBloodSplats();
+				for (size_t bloodSplat = 0; bloodSplat < dBloodSplats.size(); ++bloodSplat)
+					window_.draw(dBloodSplats.at(bloodSplat).getSprite());
 
-		}
+			}
 		//Player and gun
 		window_.draw(level_.getPlayer().getLegLeftSprite());
 		window_.draw(level_.getPlayer().getLegRightSprite());
@@ -122,45 +123,46 @@ void Engine::draw()
 		window_.draw(level_.getPlayer().getHeadSprite());
 		window_.draw(level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex()).getSprite());
 
-		for (auto iPartition = spatialPartitions.begin(); iPartition != spatialPartitions.end(); ++iPartition)
-		{
-
-
-			//Zombies
-			std::vector<Zombie> vZombies = iPartition->getZombies();
-			for (auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
+		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
+			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
 
-				window_.draw(iZombie->getLegLeftSprite());
-				window_.draw(iZombie->getLegRightSprite());
-				window_.draw(iZombie->getArmLeftSprite());
-				window_.draw(iZombie->getArmRightSprite());
-				window_.draw(iZombie->getHeadSprite());
 
-			}
+				//Zombies
+				std::vector<Zombie> vZombies = iPartition->getZombies();
+				for (auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
+				{
 
-			//Draws bullets
-			std::list<Bullet> vBullets = iPartition->getBullets();
-			for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
-			{
-				window_.draw(iBullet->getSprite());
-			}
+					window_.draw(iZombie->getLegLeftSprite());
+					window_.draw(iZombie->getLegRightSprite());
+					window_.draw(iZombie->getArmLeftSprite());
+					window_.draw(iZombie->getArmRightSprite());
+					window_.draw(iZombie->getHeadSprite());
 
-			//Draws trees
-			std::vector<Tree> vTrees = iPartition->getTrees();
-			for (auto iTree = vTrees.begin(); iTree != vTrees.end(); ++iTree)
-			{
-				window_.draw(iTree->getLowerLeafOne());
-				window_.draw(iTree->getLowerLeafTwo());
-				window_.draw(iTree->getLowerLeafThree());
-				window_.draw(iTree->getLowerLeafFour());
-				window_.draw(iTree->getUpperLeafOne());
-				window_.draw(iTree->getUpperLeafTwo());
-				window_.draw(iTree->getUpperLeafThree());
-				window_.draw(iTree->getUpperLeafFour());
-				window_.draw(iTree->getTrunk());
+				}
+
+				//Draws bullets
+				std::list<Bullet> vBullets = iPartition->getBullets();
+				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
+				{
+					window_.draw(iBullet->getSprite());
+				}
+
+				//Draws trees
+				std::vector<Tree> vTrees = iPartition->getTrees();
+				for (auto iTree = vTrees.begin(); iTree != vTrees.end(); ++iTree)
+				{
+					window_.draw(iTree->getLowerLeafOne());
+					window_.draw(iTree->getLowerLeafTwo());
+					window_.draw(iTree->getLowerLeafThree());
+					window_.draw(iTree->getLowerLeafFour());
+					window_.draw(iTree->getUpperLeafOne());
+					window_.draw(iTree->getUpperLeafTwo());
+					window_.draw(iTree->getUpperLeafThree());
+					window_.draw(iTree->getUpperLeafFour());
+					window_.draw(iTree->getTrunk());
+				}
 			}
-		}
 
 		//GUI elements
 		GUIManager GUIManagerCopy = level_.getGUIManager();

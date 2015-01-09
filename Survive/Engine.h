@@ -23,7 +23,7 @@ private:
 	SettingsManager settingsManager_;
 	SoundManager soundManager_;
 	MenuManager menuManager_;
-    int tileSize_ = 50;
+    int tileSize_ = 32;
     bool windowFocused_ = true;
 	bool inMenu_ = true;
     void update();

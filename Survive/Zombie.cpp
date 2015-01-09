@@ -10,7 +10,7 @@ Zombie::Zombie(Player* player, sf::Texture* texture, const int health, const int
 }
 void Zombie::update(const sf::Time& dT)
 {
-    if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) > 50)
+    if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) > 33.5f)
     {
         targetVector_ = pPlayer_->getPositionGlobal() - positionGlobal_;
         targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
@@ -20,7 +20,7 @@ void Zombie::update(const sf::Time& dT)
     else
         velocity_ = sf::Vector2f(0,0);
 
-    if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) <= 65.0f && !attacking_)
+    if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) <= 43.5f && !attacking_)
     {
             attackClock_.restart();
             attacking_ = true;
@@ -31,8 +31,8 @@ void Zombie::update(const sf::Time& dT)
     
     headSprite_.setRotation(atan2(pPlayer_->getPositionGlobal().y - positionGlobal_.y, pPlayer_->getPositionGlobal().x - positionGlobal_.x) * 180.0f / 3.14159265358f);
     
-    armLeftSprite_.setPosition(positionGlobal_ + forwardVector * 9.0f + forwardVector * (float)sin(armClock_.getElapsedTime().asSeconds() * 6 + armLeftVerticalOffset_) * 1.5f - perpVector * 12.0f);
-    armRightSprite_.setPosition(positionGlobal_ + forwardVector * 11.0f + forwardVector * (float)sin(armClock_.getElapsedTime().asSeconds() * 6 + armRightVerticalOffset_) * 1.5f + perpVector * 12.0f);
+    armLeftSprite_.setPosition(positionGlobal_ + forwardVector * 6.0f + forwardVector * (float)sin(armClock_.getElapsedTime().asSeconds() * 4 + armLeftVerticalOffset_)   - perpVector * 8.0f);
+    armRightSprite_.setPosition(positionGlobal_ + forwardVector * 7.4f + forwardVector * (float)sin(armClock_.getElapsedTime().asSeconds() * 4 + armRightVerticalOffset_)  + perpVector * 8.0f);
     armLeftSprite_.setRotation(headSprite_.getRotation() + sin(armClock_.getElapsedTime().asSeconds() * 6 + armLeftHorizontalOffset_) * 3);
     armRightSprite_.setRotation(headSprite_.getRotation() + sin(armClock_.getElapsedTime().asSeconds() * 6 + armRightHorizontalOffset_) * 3);
 
@@ -42,14 +42,14 @@ void Zombie::update(const sf::Time& dT)
         sf::Time sinTime = attackClock_.getElapsedTime();
         if(sinTime.asSeconds() < 0.35f)
         {
-            armLeftSprite_.setPosition(armLeftSprite_.getPosition() + forwardVector * (float)sin(sinTime.asSeconds() * 8.164f) * 6.0f);
-            armRightSprite_.setPosition(armRightSprite_.getPosition() + forwardVector * (float)sin(sinTime.asSeconds() * 8.164f) * 6.0f);
-            armLeftSprite_.setRotation(armLeftSprite_.getRotation() + (float)sin(sinTime.asSeconds() * 8.164f) * 12.0f);
-            armRightSprite_.setRotation(armRightSprite_.getRotation() - (float)sin(sinTime.asSeconds() * 8.164f) * 12.0f);
+            armLeftSprite_.setPosition(armLeftSprite_.getPosition() + forwardVector * (float)sin(sinTime.asSeconds() * 8.164f) * 4.0f);
+            armRightSprite_.setPosition(armRightSprite_.getPosition() + forwardVector * (float)sin(sinTime.asSeconds() * 8.164f) * 4.0f);
+            armLeftSprite_.setRotation(armLeftSprite_.getRotation() + (float)sin(sinTime.asSeconds() * 8.164f) * 8.0f);
+            armRightSprite_.setRotation(armRightSprite_.getRotation() - (float)sin(sinTime.asSeconds() * 8.164f) * 8.0f);
             
             if(!hit_ && sinTime.asSeconds() > 0.175f)
             {
-                if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) <= 65.0f)
+                if(sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2)) <= 43.5f)
                 {
                     pPlayer_->setHealth(pPlayer_->getHealth() - 10.0f);
                     pPlayer_->injure();

@@ -7,22 +7,22 @@ Humanoid::Humanoid(sf::Texture* texture)
     
     //Assigns the texture and the texture rects
     legLeftSprite_.setTexture(*bodySpriteSheet_);
-    legLeftSprite_.setTextureRect(sf::IntRect(34, 14, 15, 11));
+    legLeftSprite_.setTextureRect(sf::IntRect(22, 9, 10, 7));
     legRightSprite_.setTexture(*bodySpriteSheet_);
-    legRightSprite_.setTextureRect(sf::IntRect(34, 14, 15, 11));
+	legRightSprite_.setTextureRect(sf::IntRect(22, 9, 10, 7));
     armLeftSprite_.setTexture(*bodySpriteSheet_);
-    armLeftSprite_.setTextureRect(sf::IntRect(34, 25, 27, 9));
+    armLeftSprite_.setTextureRect(sf::IntRect(22, 16, 17, 6));
     armRightSprite_.setTexture(*bodySpriteSheet_);
-    armRightSprite_.setTextureRect(sf::IntRect(34, 25, 27, 9));
+	armRightSprite_.setTextureRect(sf::IntRect(22, 16, 17, 6));
     headSprite_.setTexture(*bodySpriteSheet_);
-    headSprite_.setTextureRect(sf::IntRect(0, 0, 34, 34));
+    headSprite_.setTextureRect(sf::IntRect(0, 0, 22, 22));
     
     //Assigns their origins
-    legLeftSprite_.setOrigin(7.5f, 5.5f);
-    legRightSprite_.setOrigin(7.5f, 5.5f);
-    armLeftSprite_.setOrigin(0.0f, 4.5f);
-    armRightSprite_.setOrigin(0.0f, 4.5f);
-    headSprite_.setOrigin(17.0f, 16.0f);
+    legLeftSprite_.setOrigin(5.0f, 3.5f);
+	legRightSprite_.setOrigin(5.0f, 3.5f);
+    armLeftSprite_.setOrigin(0.0f, 3.0f);
+    armRightSprite_.setOrigin(0.0f, 3.0f);
+    headSprite_.setOrigin(11.0f, 11.0f);
 }
 
 void Humanoid::animate(const sf::Time& dT)
@@ -49,12 +49,12 @@ void Humanoid::animate(const sf::Time& dT)
     sf::Vector2f normalizedVelocity = velocity_ / (float)sqrt( velocity_.x * velocity_.x + velocity_.y * velocity_.y );
     
     //Moves the humanoid
-    positionGlobal_ += velocity_ * dT.asSeconds() * 20.0f;
+    positionGlobal_ += velocity_ * dT.asSeconds() * 13.5f;
     
     //Checks to see if it was moved to an illegal tile
-    std::string tile = pTiles->at((positionGlobal_.x - fmod(positionGlobal_.x, 50)) / 50).at((positionGlobal_.y - fmod(positionGlobal_.y, 50)) / 50).getType();
+    std::string tile = pTiles->at((positionGlobal_.x - fmod(positionGlobal_.x, 32)) / 32).at((positionGlobal_.y - fmod(positionGlobal_.y, 32)) / 32).getType();
     if(tile == "unwalkable")
-        positionGlobal_ -= velocity_ * dT.asSeconds() * 20.0f;
+        positionGlobal_ -= velocity_ * dT.asSeconds() * 13.5f;
  
     if(velocity_ != sf::Vector2f(0.0f,0.0f))
         rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358;
@@ -68,8 +68,8 @@ void Humanoid::animate(const sf::Time& dT)
     
     perpVec /= (float)sqrt(1 + perpVec.x * perpVec.x);
     
-    legLeftSprite_.setPosition(positionGlobal_ - perpVec * 10.0f + (normalizedVelocity * (float)(sin(sinClock_.getElapsedTime().asSeconds() * 10) * 15)));
-    legRightSprite_.setPosition(positionGlobal_ + perpVec * 10.0f + (normalizedVelocity * (float)(sin(sinClock_.getElapsedTime().asSeconds() * 10) * -15)));
+    legLeftSprite_.setPosition(positionGlobal_ - perpVec * 6.7f + (normalizedVelocity * (float)(sin(sinClock_.getElapsedTime().asSeconds() * 10) * 10)));
+    legRightSprite_.setPosition(positionGlobal_ + perpVec * 6.7f + (normalizedVelocity * (float)(sin(sinClock_.getElapsedTime().asSeconds() * 10) * -10)));
     headSprite_.setPosition(positionGlobal_);
     
    

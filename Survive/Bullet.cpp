@@ -10,7 +10,7 @@ Bullet::Bullet(const sf::Vector2f& startPos, const sf::Vector2f& velocity, const
     //Bullet visual description
     positionGlobal_ = startPos;
     lastPosition_ = positionGlobal_;
-    bullet_.setSize(sf::Vector2f(5, 5));
+    bullet_.setSize(sf::Vector2f(3.3f, 3.3f));
     bullet_.setRotation(atan2(velocity_.y, velocity_.x) / 3.14159265358 * 180);
     bullet_.setFillColor(sf::Color(255, 204, 49, 255));
 }

@@ -12,7 +12,9 @@ public:
     sf::Texture humanoidZombieTexture;
     sf::Texture humanoidPlayerTexture;
     sf::Texture gunPistolTexture;
+	sf::Texture gunMagnumTexture;
     sf::Texture gunRifleTexture;
+	sf::Texture gunShotgunTexture;
     sf::Texture zombieDenTexture;
     std::vector<sf::Texture> vBloodSplatTextures;
 };

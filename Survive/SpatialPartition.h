@@ -1,5 +1,6 @@
 #ifndef SPATIALPARTITION_H
 #define	SPATIALPARTITION_H
+#include <array>
 #include <vector>
 #include <deque>
 #include <SFML/Graphics.hpp>
@@ -16,12 +17,15 @@
 class SpatialPartition 
 {
 public:
-    SpatialPartition(const sf::FloatRect&, Player*, std::vector<SpatialPartition>*, SoundManager*, int*, int*, int*);
+	SpatialPartition(const sf::FloatRect&, Player*, std::vector<std::vector<SpatialPartition>>*, SoundManager*, int*, int*, int*);
     void update(const sf::Time&);
     
     //Setters
     void setImageManagerPointer(ImageManager*);
     void setTilesPointer(std::vector<std::vector<Tile>>*);
+
+
+
     //Getters
     sf::FloatRect getPartitionSpace() const;
     std::vector<Zombie> getZombies() const;
@@ -39,6 +43,14 @@ public:
   
 
 private:
+
+	int xPos_;
+	int yPos_;
+	
+	bool firstUpdate_ = true;
+	//Neighboring partitions
+	std::array<SpatialPartition*, 8> pSpatialPartitions_;
+
 	int* pZombiesAlive_;
 	int* pZombiesToSpawn_;
 	int* pWave_;
@@ -48,7 +60,7 @@ private:
     std::vector<Den> vDens_;
     std::deque<BloodSplat> dBloodSplats_;
     Player* player_;
-    std::vector<SpatialPartition>* partitions_;
+    std::vector<std::vector<SpatialPartition>>* partitions_;
     bool hasPlayer_ = false;
     sf::FloatRect partitionSpace_;
     ImageManager* imageManager_;

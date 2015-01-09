@@ -38,6 +38,16 @@ Tree::Tree(sf::Texture* upperTexture, sf::Texture* lowerTexture, sf::Texture* tr
     lowerLeafTwo_.setRotation(165);
     lowerLeafThree_.setRotation(255);
     lowerLeafFour_.setRotation(345);
+
+	upperLeafOne_.setScale(0.67f, 0.67f);
+	upperLeafTwo_.setScale(0.67f, 0.67f);
+	upperLeafThree_.setScale(0.67f, 0.67f);
+	upperLeafFour_.setScale(0.67f, 0.67f);
+	lowerLeafOne_.setScale(0.67f, 0.67f);
+	lowerLeafTwo_.setScale(0.67f, 0.67f);
+	lowerLeafThree_.setScale(0.67f, 0.67f);
+	lowerLeafFour_.setScale(0.67f, 0.67f);
+	trunk_.setScale(0.67f, 0.67f);
 }
 void Tree::update(const sf::Time& dT)
 {

@@ -69,12 +69,13 @@ private:
 	int bulletsPerMag_ = 15; //How much per reload
 	int currentBullets_ = 15; //In current reload
 	int totalBullets_ = 9999; //Total ammo
-	int recoilAmount_ = 15; //In game "pixels"
+	float recoilAmount_ = 5.0f; //In game "pixels"
 	float fireRate_ = 0.1f; // bullets/sec
 	bool reloading_ = false;
 	bool auto_ = false;
 	bool clicked_ = false; //Used to enforce semi-auto
 	bool ptrSet_ = false;
+	bool shotgun_ = false;
 
 	//Animation variables
 	sf::Vector2f swayOffset_;

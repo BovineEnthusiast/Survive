@@ -9,8 +9,9 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
     
     //Pushes the guns
     vGuns_.push_back(Gun("pistol", pImageManager, pSoundManager));
+	vGuns_.push_back(Gun("magnum", pImageManager, pSoundManager));
+	vGuns_.push_back(Gun("shotgun", pImageManager, pSoundManager));
     vGuns_.push_back(Gun("rifle", pImageManager, pSoundManager));
-    
     armLeftSprite_.setOrigin(armLeftSprite_.getLocalBounds().width, 4.5f);
     armRightSprite_.setOrigin(armLeftSprite_.getLocalBounds().width, 4.5f);
 }
@@ -24,8 +25,12 @@ void Player::update(const sf::Time& dT)
         //Switches out the gun if number is pressed
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
             currentGun_ = 0;
-        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
-            currentGun_ = 1;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+			currentGun_ = 1;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+			currentGun_ = 2;
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+			currentGun_ = 3;
         
         vGuns_[currentGun_].window = window;
 

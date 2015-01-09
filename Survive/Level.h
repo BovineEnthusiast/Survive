@@ -34,7 +34,7 @@ public:
     bool isMenu() const;
     sf::View getCameraView();
     Player getPlayer() const;
-    std::vector<SpatialPartition> getSpatialPartitions() const;
+    std::vector<std::vector<SpatialPartition>> getSpatialPartitions() const;
     GUIManager getGUIManager() const;
 	bool hasLost();
     
@@ -46,6 +46,7 @@ private:
     ImageManager imageManager_;    
     SoundManager* pSoundManager_;
     Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, pSoundManager_);
+
 
 	int wave_ = 1;
 	int zombiesToSpawn_ = 10;
@@ -64,12 +65,12 @@ private:
     
 	//Time between waves
 	float waveTime_ = 5.0f;
-	bool beetweenWaves_ = true;
+	bool beetweenWaves_ = false;
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
     
      //Stores all the different objects in the level
-    std::vector<SpatialPartition> spatialPartitions_;
+    std::vector<std::vector<SpatialPartition>> spatialPartitions_;
     
     //Clocks
     sf::Clock zombieSpawnClock_;

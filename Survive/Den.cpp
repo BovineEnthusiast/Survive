@@ -5,6 +5,7 @@ Den::Den(sf::Texture* texture)
     denTexture_ = texture;
     denSprite_.setTexture(*denTexture_);
     denSprite_.setOrigin(74.0f, 62.0f);
+	denSprite_.setScale(0.67f, 0.67f);
 }
 void Den::update(const sf::Time&)
 {
