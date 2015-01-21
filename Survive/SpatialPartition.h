@@ -13,6 +13,7 @@
 #include "BloodSplat.h"
 #include "ImageManager.h"
 #include "SoundManager.h"
+#include "Turret.h"
 
 class SpatialPartition 
 {
@@ -32,7 +33,9 @@ public:
     std::list<Bullet> getBullets() const;
     std::vector<Tree> getTrees() const;
     std::vector<Den> getDens() const;
+	std::vector<Turret> getTurrets() const;
     std::deque<BloodSplat> getBloodSplats() const;
+	std::array<SpatialPartition*, 8> getNeigborPartitions() const;
    
     //Pushers
     void pushZombie(const Zombie&);
@@ -58,6 +61,7 @@ private:
     std::list<Bullet> lBullets_;
     std::vector<Tree> vTrees_;
     std::vector<Den> vDens_;
+	std::vector<Turret> vTurrets_;
     std::deque<BloodSplat> dBloodSplats_;
     Player* player_;
     std::vector<std::vector<SpatialPartition>>* partitions_;
@@ -66,6 +70,9 @@ private:
     ImageManager* imageManager_;
     SoundManager* pSoundManager_;
     std::vector<std::vector<Tile>>* pVTiles_;
+
+	//temp 
+	sf::Clock turretClock_; 
 };
 
 #endif	

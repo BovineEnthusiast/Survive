@@ -132,15 +132,23 @@ void Engine::draw()
 				std::vector<Zombie> vZombies = iPartition->getZombies();
 				for (auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
 				{
-
-					window_.draw(iZombie->getLegLeftSprite());
-					window_.draw(iZombie->getLegRightSprite());
-					window_.draw(iZombie->getArmLeftSprite());
-					window_.draw(iZombie->getArmRightSprite());
-					window_.draw(iZombie->getHeadSprite());
-
+					if (!iZombie->isDead())
+					{
+						window_.draw(iZombie->getLegLeftSprite());
+						window_.draw(iZombie->getLegRightSprite());
+						window_.draw(iZombie->getArmLeftSprite());
+						window_.draw(iZombie->getArmRightSprite());
+						window_.draw(iZombie->getHeadSprite());
+					}
+					else
+						window_.draw(iZombie->getCorpseSprite());
 				}
-
+				std::vector<Turret> vTurrets = iPartition->getTurrets();
+				for (auto& turret : vTurrets)
+				{
+					window_.draw(turret.getBaseSprite());
+					window_.draw(turret.getTurretSprite());
+				}
 				//Draws bullets
 				std::list<Bullet> vBullets = iPartition->getBullets();
 				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
