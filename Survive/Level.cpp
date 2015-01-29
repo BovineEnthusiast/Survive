@@ -46,8 +46,10 @@ void Level::update(const sf::Time& dT)
 	
     for(auto iPartitionRow = spatialPartitions_.begin(); iPartitionRow != spatialPartitions_.end(); ++iPartitionRow)
 		for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
-        iPartition->update(dT);
-
+		{ 
+			iPartition->update(dT);
+			points_ += iPartition->getPoints();
+		}
 
 
 	if (player_.getHealth() <= 0)
@@ -504,4 +506,5 @@ bool Level::hasLost()
 		return false;
 }
 //Setters
+void Level::setPoints(const int points) { points_ = points; }
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}

@@ -231,6 +231,7 @@ void SpatialPartition::update(const sf::Time& dT)
 				dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
 				bullet.setHit(true);
 				pSoundManager_->playSound("hit");
+				points_ += 10;
 			}
 
 		//Neighboring partition's zombies
@@ -328,6 +329,12 @@ std::vector<Den> SpatialPartition::getDens() const { return vDens_; }
 std::deque<BloodSplat> SpatialPartition::getBloodSplats() const { return dBloodSplats_; }
 std::vector<Turret> SpatialPartition::getTurrets() const { return vTurrets_; }
 std::array<SpatialPartition*, 8> SpatialPartition::getNeigborPartitions() const { return pSpatialPartitions_; }
+int SpatialPartition::getPoints() 
+{
+	int points = points_;
+	points_ = 0;
+	return points;
+}
 //Pushers
 void SpatialPartition::pushZombie(const Zombie& zombie) { vZombies_.push_back(zombie); }
 void SpatialPartition::pushBullet(const Bullet& bullet) { lBullets_.push_back(bullet); }

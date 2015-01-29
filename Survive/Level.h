@@ -37,8 +37,10 @@ public:
     std::vector<std::vector<SpatialPartition>> getSpatialPartitions() const;
     GUIManager getGUIManager() const;
 	bool hasLost();
+
     
     //Setters
+	void setPoints(const int points);
     void setCameraPosition(const sf::Vector2f&);
 private:
     sf::RenderWindow* pWindow_;
@@ -47,7 +49,7 @@ private:
     SoundManager* pSoundManager_;
     Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, pSoundManager_);
 
-
+	int points_ = 0;
 	int wave_ = 1;
 	int zombiesToSpawn_ = 10;
 	int zombiesAlive_ = 0;

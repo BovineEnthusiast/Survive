@@ -36,7 +36,7 @@ public:
 	std::vector<Turret> getTurrets() const;
     std::deque<BloodSplat> getBloodSplats() const;
 	std::array<SpatialPartition*, 8> getNeigborPartitions() const;
-   
+	int getPoints();
     //Pushers
     void pushZombie(const Zombie&);
     void pushBullet(const Bullet&);
@@ -53,7 +53,7 @@ private:
 	bool firstUpdate_ = true;
 	//Neighboring partitions
 	std::array<SpatialPartition*, 8> pSpatialPartitions_;
-
+	int points_ = 0;
 	int* pZombiesAlive_;
 	int* pZombiesToSpawn_;
 	int* pWave_;
