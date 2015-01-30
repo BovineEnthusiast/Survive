@@ -4,16 +4,17 @@
 #include <vector>
 #include <deque>
 #include <SFML/Graphics.hpp>
-#include "Zombie.h"
-#include "Bullet.h"
-#include "Tree.h"
-#include "Tile.h"
-#include "Player.h"
-#include "Den.h"
+#include "Barricade.h"
 #include "BloodSplat.h"
+#include "Bullet.h"
+#include "Den.h"
 #include "ImageManager.h"
+#include "Player.h"
 #include "SoundManager.h"
+#include "Tile.h"
+#include "Tree.h"
 #include "Turret.h"
+#include "Zombie.h"
 
 class SpatialPartition 
 {
@@ -34,6 +35,7 @@ public:
     std::vector<Tree> getTrees() const;
     std::vector<Den> getDens() const;
 	std::vector<Turret> getTurrets() const;
+	std::vector<Barricade> getBarricades() const;
     std::deque<BloodSplat> getBloodSplats() const;
 	std::array<SpatialPartition*, 8> getNeigborPartitions() const;
 	int getPoints();
@@ -62,6 +64,7 @@ private:
     std::vector<Tree> vTrees_;
     std::vector<Den> vDens_;
 	std::vector<Turret> vTurrets_;
+	std::vector<Barricade> vBarricades_;
     std::deque<BloodSplat> dBloodSplats_;
     Player* player_;
     std::vector<std::vector<SpatialPartition>>* partitions_;
@@ -71,8 +74,9 @@ private:
     SoundManager* pSoundManager_;
     std::vector<std::vector<Tile>>* pVTiles_;
 
-	//temp 
+	//temp maybe 
 	sf::Clock turretClock_; 
+	sf::Clock barricadeClock_;
 };
 
 #endif	

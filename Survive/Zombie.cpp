@@ -105,6 +105,7 @@ void Zombie::update(const sf::Time& dT)
 			positionGlobal_ += forwardVector * corpseSpeed_ * 13.5f * dT.asSeconds();
 			corpseSprite_.setPosition(positionGlobal_);
 			corpseSprite_.setRotation(rotationGlobal_);
+			headSprite_.setPosition(positionGlobal_); //For collision detection of dead bodies
 			corpseSpeed_ -= 7.5f * dT.asSeconds();
 		}
 		if (!still_ && corpseSpeed_ <= 0.0f)

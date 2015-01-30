@@ -10,7 +10,7 @@ ImageManager::ImageManager()
 	gunMagnumTexture.loadFromFile("guns/magnum.png");
 	turretBaseTexture.loadFromFile("guns/turret/base.png");
 	turretTexture.loadFromFile("guns/turret/turret.png");
-
+	barricadeTexture.loadFromFile("guns/barricade.png");
 
     treeUpperLeafTexture.loadFromFile("tree_upper.png");
     treeLowerLeafTexture.loadFromFile("tree_lower.png");

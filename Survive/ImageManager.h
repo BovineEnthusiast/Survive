@@ -18,6 +18,7 @@ public:
 	sf::Texture gunShotgunTexture;
 	sf::Texture turretBaseTexture;
 	sf::Texture turretTexture;
+	sf::Texture barricadeTexture;
     sf::Texture zombieDenTexture;
     std::vector<sf::Texture> vBloodSplatTextures;
 };

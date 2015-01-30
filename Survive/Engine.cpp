@@ -149,6 +149,11 @@ void Engine::draw()
 					window_.draw(turret.getBaseSprite());
 					window_.draw(turret.getTurretSprite());
 				}
+				std::vector<Barricade> vBarricades = iPartition->getBarricades();
+				for (auto& barricade : vBarricades)
+					window_.draw(barricade.getSprite());
+
+				
 				//Draws bullets
 				std::list<Bullet> vBullets = iPartition->getBullets();
 				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)

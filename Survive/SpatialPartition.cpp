@@ -194,11 +194,18 @@ void SpatialPartition::update(const sf::Time& dT)
 		}
 	}
 
-	//Turrets
+	//Turret Addition
 	if (hasPlayer_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && turretClock_.getElapsedTime().asSeconds() > 1.0f)
 	{
 		turretClock_.restart();
-		vTurrets_.push_back(Turret(player_->getPositionGlobal(), &lBullets_, imageManager_));
+		vTurrets_.push_back(Turret(player_->getPositionGlobal() + sf::Vector2f(16.0f, 16.0f) - sf::Vector2f(fmod(player_->getPositionGlobal().x, 32.0f), fmod(player_->getPositionGlobal().y, 32.0f)), &lBullets_, imageManager_));
+	}
+
+	//Barricade Addition
+	if (hasPlayer_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && barricadeClock_.getElapsedTime().asSeconds() > 1.0f)
+	{
+		barricadeClock_.restart();
+		vBarricades_.push_back(Barricade(player_->getPositionGlobal() + sf::Vector2f(16.0f, 16.0f) - sf::Vector2f(fmod(player_->getPositionGlobal().x, 32.0f), fmod(player_->getPositionGlobal().y, 32.0f)), &imageManager_->barricadeTexture));
 	}
 
 	std::vector<sf::Vector2f> zomPositions;
@@ -217,6 +224,17 @@ void SpatialPartition::update(const sf::Time& dT)
 		turret.preUpdate(zomPositions);
 		turret.update(dT);
 	}
+
+	for (auto iBarricade = vBarricades_.begin(); iBarricade != vBarricades_.end();)
+	{
+		iBarricade->update(dT);
+		if (iBarricade->isReadyToDelete())
+			iBarricade = vBarricades_.erase(iBarricade);
+		else
+			++iBarricade;
+	}
+
+	
 
 	//-----------------COLLISION--------------------------------
 	for (auto& bullet : lBullets_)
@@ -274,18 +292,31 @@ void SpatialPartition::update(const sf::Time& dT)
 				for (auto& zombie2 : partition->vZombies_)
 					if (!zombie2.isDead() && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
 						zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
+		}
 
-			//This partition's trees
-			for (auto& tree : vTrees_)
+		//These collision checks should still occur when dead
+
+		//This partition's trees
+		for (auto& tree : vTrees_)
+			if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
+				zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
+
+		//Neighboring partitions's tree
+		for (auto& partition : pSpatialPartitions_)
+			for (auto& tree : partition->vTrees_)
 				if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
 					zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
 
-			//Neighboring partitions's tree
-			for (auto& partition : pSpatialPartitions_)
-				for (auto& tree : partition->vTrees_)
-					if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
-						zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
-		}
+		//This partition's barricades
+		for (auto& barricade : vBarricades_)
+			if (isColliding(zombie.getHeadSprite(), barricade.getSprite()) != sf::Vector2f(0.0f, 0.0f))
+				zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), barricade.getSprite()));
+
+		//Neighboring partition's barricades
+		for (auto& partition : pSpatialPartitions_)
+			for (auto& barricade : partition->vBarricades_)
+				if (isColliding(zombie.getHeadSprite(), barricade.getSprite()) != sf::Vector2f(0.0f, 0.0f))
+					zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), barricade.getSprite()));
 		
 	}
 
@@ -312,6 +343,17 @@ void SpatialPartition::update(const sf::Time& dT)
 			for (auto& tree : partition->vTrees_)
 				if (isColliding(player_->getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
 					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
+
+		//This partition's barricades
+		for (auto& barricade : vBarricades_)
+			if (isColliding(player_->getHeadSprite(), barricade.getSprite()) != sf::Vector2f(0.0f, 0.0f))
+				player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), barricade.getSprite()));
+
+		//Neighboring partition's barricades
+		for (auto& partition : pSpatialPartitions_)
+			for (auto& barricade : partition->vBarricades_)
+				if (isColliding(player_->getHeadSprite(), barricade.getSprite()) != sf::Vector2f(0.0f, 0.0f))
+					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), barricade.getSprite()));
 	}
 }
 
@@ -328,6 +370,7 @@ std::vector<Tree> SpatialPartition::getTrees() const { return vTrees_; }
 std::vector<Den> SpatialPartition::getDens() const { return vDens_; }
 std::deque<BloodSplat> SpatialPartition::getBloodSplats() const { return dBloodSplats_; }
 std::vector<Turret> SpatialPartition::getTurrets() const { return vTurrets_; }
+std::vector<Barricade> SpatialPartition::getBarricades() const { return vBarricades_; }
 std::array<SpatialPartition*, 8> SpatialPartition::getNeigborPartitions() const { return pSpatialPartitions_; }
 int SpatialPartition::getPoints() 
 {
