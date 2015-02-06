@@ -1,3 +1,4 @@
+
 #include "Collision.h"
 #include <math.h>
 #include <iostream>
@@ -100,9 +101,8 @@ sf::Vector2f isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTw
         //std::cout << smallestProjection << std::endl;
         if(negate)
             return smallestProjectionAxis * -smallestProjection;
-        else
-            
-        return smallestProjectionAxis * smallestProjection;
+        else  
+	  return smallestProjectionAxis * smallestProjection;
 }
 
 //Checks to see if a bullet has collided

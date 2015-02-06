@@ -26,7 +26,7 @@ private:
     Player* pPlayer_;
     
 	//A pointer to the nearest turret
-	Turret* pTurret_;
+	Turret* pTurret_ = nullptr;
 
     //A normalized vector that points towards the player, from the zombie
     sf::Vector2f targetVector_;
