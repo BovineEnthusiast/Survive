@@ -12,26 +12,38 @@ Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture
 }
 void Zombie::update(const sf::Time& dT)
 {
+  if(pTurret_ != nullptr && pTurret_->isDead())
+    pTurret_ = nullptr;
+
+  if(pBarricade_ != nullptr && pBarricade_->isDead())
+    pBarricade_ = nullptr;
+  
 	if (!dead_)
 	{
 		float playerDistance = sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2));
-		float turretDistance = -1.0f;
-		float closerDistance;
+		float turretDistance;
+		float barricadeDistance;
+		float closerDistance = playerDistance;
 
 		if (pTurret_ != nullptr)
-			turretDistance = sqrt(pow(positionGlobal_.y - pTurret_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pTurret_->getPositionGlobal().x, 2));
-		if (pTurret_ != nullptr && turretDistance < playerDistance)
-			closerDistance = turretDistance;
-		else
-			closerDistance = playerDistance;
+		  turretDistance = sqrt(pow(positionGlobal_.y - pTurret_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pTurret_->getPositionGlobal().x, 2));
+		if(pBarricade_ != nullptr)
+		  barricadeDistance = sqrt(pow(positionGlobal_.x - pBarricade_->getPositionGlobal().x, 2) + pow(positionGlobal_.y - pBarricade_->getPositionGlobal().y, 2));
+
+		if (pTurret_ != nullptr && turretDistance < closerDistance)
+		  closerDistance = turretDistance;
+		if(pBarricade_ != nullptr && barricadeDistance < closerDistance)
+		  closerDistance = barricadeDistance;				       
 
 
 		if (closerDistance > 33.5f)
 		{
 			if (closerDistance == playerDistance)
-				targetVector_ = pPlayer_->getPositionGlobal() - positionGlobal_;
+			  targetVector_ = pPlayer_->getPositionGlobal() - positionGlobal_;
+			else if (closerDistance == barricadeDistance)
+			  targetVector_ = pBarricade_->getPositionGlobal() - positionGlobal_;
 			else
-				targetVector_ = pTurret_->getPositionGlobal() - positionGlobal_;
+			  targetVector_ = pTurret_->getPositionGlobal() - positionGlobal_;
 
 			targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
 			velocity_ = targetVector_ * speed_;
@@ -49,7 +61,7 @@ void Zombie::update(const sf::Time& dT)
 		sf::Vector2f perpVector = sf::Vector2f(cos((rotationGlobal_ + 90.0f) * 3.14159265358f / 180.0f), sin((rotationGlobal_ + 90.0f)  * 3.14159265358 / 180.0f));
 		sf::Vector2f forwardVector = sf::Vector2f(cos((rotationGlobal_)* 3.14159265358f / 180.0f), sin((rotationGlobal_)* 3.14159265358 / 180.0f));
 
-		headSprite_.setRotation(atan2(pPlayer_->getPositionGlobal().y - positionGlobal_.y, pPlayer_->getPositionGlobal().x - positionGlobal_.x) * 180.0f / 3.14159265358f);
+		headSprite_.setRotation(atan2(forwardVector.y, forwardVector.x) / 3.14159265358f * 180);
 
 		armLeftSprite_.setPosition(positionGlobal_ + forwardVector * 6.0f + forwardVector * (float)sin(armClock_.getElapsedTime().asSeconds() * 4 + armLeftVerticalOffset_) - perpVector * 8.0f);
 		armRightSprite_.setPosition(positionGlobal_ + forwardVector * 7.4f + forwardVector * (float)sin(armClock_.getElapsedTime().asSeconds() * 4 + armRightVerticalOffset_) + perpVector * 8.0f);
@@ -73,11 +85,15 @@ void Zombie::update(const sf::Time& dT)
 					{
 						if (closerDistance == playerDistance)
 						{
-							pPlayer_->setHealth(pPlayer_->getHealth() - 10.0f);
-							pPlayer_->injure();
+						  pPlayer_->setHealth(pPlayer_->getHealth() - 10);
+						  pPlayer_->injure();
 						}
+						else if(closerDistance == barricadeDistance)
+						  {
+						    pBarricade_->setHealth(pBarricade_->getHealth() - 10);
+						  }
 						else
-							pTurret_->setHealth(pTurret_->getHealth() - 10.0f);
+						  pTurret_->setHealth(pTurret_->getHealth() - 10);
 						
 					}
 					hit_ = true;
@@ -150,3 +166,4 @@ sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
 
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
+void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; } 

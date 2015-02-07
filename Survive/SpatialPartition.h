@@ -19,64 +19,65 @@
 class SpatialPartition 
 {
 public:
-	SpatialPartition(const sf::FloatRect&, Player*, std::vector<std::vector<SpatialPartition>>*, SoundManager*, int*, int*, int*);
-    void update(const sf::Time&);
-    
-    //Setters
-    void setImageManagerPointer(ImageManager*);
-    void setTilesPointer(std::vector<std::vector<Tile>>*);
-
-
-
-    //Getters
-    sf::FloatRect getPartitionSpace() const;
-    std::vector<Zombie> getZombies() const;
-    std::list<Bullet> getBullets() const;
-    std::vector<Tree> getTrees() const;
-    std::vector<Den> getDens() const;
-	std::vector<Turret> getTurrets() const;
-	std::vector<Barricade> getBarricades() const;
-    std::deque<BloodSplat> getBloodSplats() const;
-	std::array<SpatialPartition*, 8> getNeigborPartitions() const;
-	int getPoints();
-    //Pushers
-    void pushZombie(const Zombie&);
-    void pushBullet(const Bullet&);
-    void pushTree(const Tree&);
-    void pushDen(const Den&);
-    void pushBloodSplat(const BloodSplat&);
+  SpatialPartition(const sf::FloatRect&, Player*, std::vector<std::vector<SpatialPartition>>*, SoundManager*, int*, int*, int*);
+  void update(const sf::Time&);
+  
+  //Setters
+  void setImageManagerPointer(ImageManager*);
+  void setTilesPointer(std::vector<std::vector<Tile>>*);
+  
+  
+  
+  //Getters
+  sf::FloatRect getPartitionSpace() const;
+  std::vector<Zombie> getZombies() const;
+  std::list<Bullet> getBullets() const;
+  std::vector<Tree> getTrees() const;
+  std::vector<Den> getDens() const;
+  std::vector<Turret> getTurrets() const;
+  std::vector<Barricade> getBarricades() const;
+  std::deque<BloodSplat> getBloodSplats() const;
+  std::array<SpatialPartition*, 8> getNeigborPartitions() const;
+  int getPoints();
+  //Pushers
+  void pushZombie(const Zombie&);
+  void pushBullet(const Bullet&);
+  void pushTree(const Tree&);
+  void pushDen(const Den&);
+  void pushBloodSplat(const BloodSplat&);
   
 
-private:
+ private:
 
-	int xPos_;
-	int yPos_;
-	
-	bool firstUpdate_ = true;
-	//Neighboring partitions
-	std::array<SpatialPartition*, 8> pSpatialPartitions_;
-	int points_ = 0;
-	int* pZombiesAlive_;
-	int* pZombiesToSpawn_;
-	int* pWave_;
-    std::vector<Zombie> vZombies_;
-    std::list<Bullet> lBullets_;
-    std::vector<Tree> vTrees_;
-    std::vector<Den> vDens_;
-	std::vector<Turret> vTurrets_;
-	std::vector<Barricade> vBarricades_;
-    std::deque<BloodSplat> dBloodSplats_;
-    Player* player_;
-    std::vector<std::vector<SpatialPartition>>* partitions_;
-    bool hasPlayer_ = false;
-    sf::FloatRect partitionSpace_;
-    ImageManager* imageManager_;
-    SoundManager* pSoundManager_;
-    std::vector<std::vector<Tile>>* pVTiles_;
-
-	//temp maybe 
-	sf::Clock turretClock_; 
-	sf::Clock barricadeClock_;
+  int xPos_;
+  int yPos_;
+  
+  bool firstUpdate_ = true;
+  //Neighboring partitions
+  std::array<SpatialPartition*, 8> pSpatialPartitions_;
+  int points_ = 0;
+  int* pZombiesAlive_;
+  int* pZombiesToSpawn_;
+  int* pWave_;
+  std::vector<Zombie> vZombies_;
+  std::list<Bullet> lBullets_;
+  std::vector<Tree> vTrees_;
+  std::vector<Den> vDens_;
+  std::vector<Turret> vTurrets_;
+  std::vector<Barricade> vBarricades_;
+  std::deque<BloodSplat> dBloodSplats_;
+  Player* player_;
+  std::vector<std::vector<SpatialPartition>>* partitions_;
+  bool hasPlayer_ = false;
+  sf::FloatRect partitionSpace_;
+  ImageManager* imageManager_;
+  SoundManager* pSoundManager_;
+  std::vector<std::vector<Tile>>* pVTiles_;
+  
+  //temp maybe 
+  sf::Clock turretClock_; 
+  sf::Clock barricadeClock_;
+  sf::Clock targetClock_;
 };
 
 #endif	

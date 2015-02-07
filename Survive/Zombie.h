@@ -3,6 +3,7 @@
 #include "Humanoid.h"
 #include "Player.h"
 #include "Turret.h"
+#include "Barricade.h"
 
 class Zombie : public Humanoid
 {
@@ -21,12 +22,14 @@ public:
 
 	//Setters
 	void setTurretPtr(Turret*);
+	void setBarricadePtr(Barricade*);
 private:
     //A pointer to the player used to get information such as position
     Player* pPlayer_;
     
-	//A pointer to the nearest turret
+	//A pointer to the nearest attackable item
 	Turret* pTurret_ = nullptr;
+	Barricade* pBarricade_ = nullptr;
 
     //A normalized vector that points towards the player, from the zombie
     sf::Vector2f targetVector_;

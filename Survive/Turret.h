@@ -15,6 +15,8 @@ public:
 
 	//Getters
 	int getHealth() const;
+	bool isDead() const;
+	bool isSafeToDelete() const;
 	sf::Sprite getBaseSprite() const;
 	sf::Sprite getTurretSprite() const;
 
@@ -32,6 +34,8 @@ private:
 	int bullets_ = 100;
 	int health_ = 100;
 	bool reloading_ = false;
+	bool dead_ = false;
+	bool safeToDelete_ = false;
 	float firerate_ = 0.1;
 	float reloadTime_ = 5.0f;
 	//Clocks

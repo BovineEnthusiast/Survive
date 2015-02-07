@@ -10,15 +10,19 @@ public:
 
 	//Getters
 	bool isDead() const;
-	bool isReadyToDelete() const;
+	int getHealth() const;
+	bool isSafeToDelete() const;
 	sf::Sprite getSprite() const;
+
+	//Setters
+	void setHealth(int);
 private:
 	//Visual stuff
 	sf::Texture* pTexture_;
 	sf::Sprite sprite_;
 
 	bool dead_ = false;
-	bool readyToDelete_ = false; //Lets all zombies that point to this clear their pointers
+	bool safeToDelete_ = false; //Lets all zombies that point to this clear their pointers
 
 	int health_ = 100;
 };
