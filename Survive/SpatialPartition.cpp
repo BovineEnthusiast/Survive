@@ -206,6 +206,15 @@ void SpatialPartition::update(const sf::Time& dT)
 	      if (pClosestTurret != nullptr)
 		iZombie->setTurretPtr(pClosestTurret);
 	    }
+        
+	  sf::Vector2f playerPos(player_->getPositionGlobal());
+	  sf::Vector2f playerPosTile(playerPos.x - fmod(playerPos.x, 32.0f) + 16, playerPos.y - fmod(playerPos.y, 32.0f) + 16);
+	  if(playerPosTile != lastPlayerPos_)
+	    {
+	      lastPlayerPos_ = playerPosTile;
+	      iZombie->findPath(pVTiles_);
+	    }
+	  
 	  iZombie->update(dT);
 	  
 	  //Adds blood splats if it is sliding on the floor

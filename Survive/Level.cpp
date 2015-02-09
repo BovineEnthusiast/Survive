@@ -457,12 +457,15 @@ void Level::generateLevel(const int width, const int height)
 			int row = (ring << 1) | saddle;
 			int col = shape - (ring & 1);
 
+
+			bool hasItem = false;
 			//Places trees and dens
-			 if (row > 5 && row <= 9 && std::rand() % 100 <= 1)
+			 if (row > 5 && row <= 9 && std::rand() % 25 <= 1)
 			 {
 				 Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
 				 tree.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
 				 spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
+				 hasItem = true;
 			 }
 			 if (row > 5 && row <= 9 && std::rand() % 500 < 1)
 			 {
@@ -476,8 +479,12 @@ void Level::generateLevel(const int width, const int height)
 				type = "unwalkable";
 			else
 				type = "walkable";
-			tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
 
+			
+			tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
+			if(hasItem)
+			  tiles[xPos][yPos].setHasItem(true);
+			  
 			if (type == "walkable")
 				player_.setPosition(sf::Vector2f(32 * xPos, 32 * yPos));
 		}

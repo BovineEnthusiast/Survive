@@ -21,10 +21,10 @@ public:
     Level(sf::RenderWindow*, SoundManager*);
     
     void update(const sf::Time&);
-	void updateGUI(const sf::Time&);
+    void updateGUI(const sf::Time&);
     void generateLevel(const int width, const int height); //Fills the tiles vector with procedural tiles
     std::vector< std::vector<Tile> > tiles;
-
+    
     //Camera
     void moveCamera(const sf::Vector2f&);
     void zoomCamera(const int);
@@ -36,47 +36,47 @@ public:
     Player getPlayer() const;
     std::vector<std::vector<SpatialPartition>> getSpatialPartitions() const;
     GUIManager getGUIManager() const;
-	bool hasLost();
-
+    bool hasLost();
+    
     
     //Setters
-	void setPoints(const int points);
+    void setPoints(const int points);
     void setCameraPosition(const sf::Vector2f&);
-private:
+ private:
     sf::RenderWindow* pWindow_;
     sf::Texture tileSpriteSheet_;
     ImageManager imageManager_;    
     SoundManager* pSoundManager_;
     Player player_ = Player(&imageManager_.humanoidPlayerTexture, &imageManager_, pSoundManager_);
-
-	int points_ = 0;
-	int wave_ = 1;
-	int zombiesToSpawn_ = 10;
-	int zombiesAlive_ = 0;
-
+    
+    int points_ = 0;
+    int wave_ = 1;
+    int zombiesToSpawn_ = 10;
+    int zombiesAlive_ = 0;
+    
     GUIManager GUIManager_ = GUIManager(pWindow_, &player_, &wave_, &zombiesAlive_);
-
+    
     Camera camera_;    
-
-	//Used as money
-	int credits = 0;
-	//True if the player dies
-	bool lost_ = false;
+    
+    //Used as money
+    int credits = 0;
+    //True if the player dies
+    bool lost_ = false;
     //The amount of time between zombie spawns in ms
     int zombieSpawnTime_ = 5.0f;
     
-	//Time between waves
-	float waveTime_ = 5.0f;
-	bool beetweenWaves_ = false;
+    //Time between waves
+    float waveTime_ = 5.0f;
+    bool beetweenWaves_ = false;
     //A map of IntRect locations on the sprite that take a name key.
     std::map<std::string, sf::IntRect> tileSprites_; 
     
-     //Stores all the different objects in the level
+    //Stores all the different objects in the level
     std::vector<std::vector<SpatialPartition>> spatialPartitions_;
     
     //Clocks
     sf::Clock zombieSpawnClock_;
-	sf::Clock waveClock_;
+    sf::Clock waveClock_;
 };
 
 #endif

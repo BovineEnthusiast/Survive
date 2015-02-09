@@ -51,7 +51,7 @@ public:
 
   int xPos_;
   int yPos_;
-  
+  sf::Vector2f lastPlayerPos_;
   bool firstUpdate_ = true;
   //Neighboring partitions
   std::array<SpatialPartition*, 8> pSpatialPartitions_;
@@ -74,10 +74,12 @@ public:
   SoundManager* pSoundManager_;
   std::vector<std::vector<Tile>>* pVTiles_;
   
-  //temp maybe 
+  //Clocks
   sf::Clock turretClock_; 
   sf::Clock barricadeClock_;
   sf::Clock targetClock_;
+  sf::Clock pathClock_;
+  
 };
 
 #endif	
