@@ -37,7 +37,7 @@ public:
     Player* pPlayer_;
 
     //A stack of nodes that leads to the target
-    std::stack<std::shared_ptr<Node>> sPNodes_;
+    std::stack<Node> sPNodes_;
     
     //A pointer to the nearest attackable item
     Turret* pTurret_ = nullptr;
@@ -73,5 +73,10 @@ public:
     sf::Clock bleedClock_;
 };
 
+//Functor used to compare Node pointers
+struct compNode
+{
+	bool operator() (Node*, Node*);
+};
 #endif	
 

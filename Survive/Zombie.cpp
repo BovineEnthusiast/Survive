@@ -1,9 +1,14 @@
 #include <set>
+#include <queue>
 #include "Zombie.h"
 #include <iostream>
 #include "Collision.h"
+
+//Functor to compare Node pointers
+bool compNode::operator() (Node* lhv, Node* rhv) { return lhv->getTotalValue() > rhv->getTotalValue(); }
+
 Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture, const int health, const int speed)
-: Humanoid(texture), pCorpseTexture_(pCorpseTexture), pPlayer_(player)
+	: Humanoid(texture), pCorpseTexture_(pCorpseTexture), pPlayer_(player)
 {
 	corpseSprite_.setTexture(*pCorpseTexture_);
 	corpseSprite_.setOrigin(17.0f, 14.0f);
@@ -13,12 +18,12 @@ Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture
 }
 void Zombie::update(const sf::Time& dT)
 {
-  if(pTurret_ != nullptr && pTurret_->isDead())
-    pTurret_ = nullptr;
+	if (pTurret_ != nullptr && pTurret_->isDead())
+		pTurret_ = nullptr;
 
-  if(pBarricade_ != nullptr && pBarricade_->isDead())
-    pBarricade_ = nullptr;
-  
+	if (pBarricade_ != nullptr && pBarricade_->isDead())
+		pBarricade_ = nullptr;
+
 	if (!dead_)
 	{
 		float playerDistance = sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2));
@@ -27,51 +32,51 @@ void Zombie::update(const sf::Time& dT)
 		float closerDistance = playerDistance;
 
 		if (pTurret_ != nullptr)
-		  turretDistance = sqrt(pow(positionGlobal_.y - pTurret_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pTurret_->getPositionGlobal().x, 2));
-		if(pBarricade_ != nullptr)
-		  barricadeDistance = sqrt(pow(positionGlobal_.x - pBarricade_->getPositionGlobal().x, 2) + pow(positionGlobal_.y - pBarricade_->getPositionGlobal().y, 2));
+			turretDistance = sqrt(pow(positionGlobal_.y - pTurret_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pTurret_->getPositionGlobal().x, 2));
+		if (pBarricade_ != nullptr)
+			barricadeDistance = sqrt(pow(positionGlobal_.x - pBarricade_->getPositionGlobal().x, 2) + pow(positionGlobal_.y - pBarricade_->getPositionGlobal().y, 2));
 
 		if (pTurret_ != nullptr && turretDistance < closerDistance)
-		  {
-		    targetPosition_ = sf::Vector2i(pTurret_->getPositionGlobal().x - fmod(pTurret_->getPositionGlobal().x, 32.0f) + 16.0f, pTurret_->getPositionGlobal().y - fmod(pTurret_->getPositionGlobal().y, 32.0f) + 16.0f);
-		    closerDistance = turretDistance;
-		  }
-		if(pBarricade_ != nullptr && barricadeDistance < closerDistance)
-		  {
-		    targetPosition_ = sf::Vector2i(pBarricade_->getPositionGlobal().x - fmod(pBarricade_->getPositionGlobal().x, 32.0f) + 16.0f, pBarricade_->getPositionGlobal().y - fmod(pBarricade_->getPositionGlobal().y, 32.0f) + 16.0f);	   
-		    closerDistance = barricadeDistance;				       
-		  }
+		{
+			targetPosition_ = sf::Vector2i(pTurret_->getPositionGlobal().x - fmod(pTurret_->getPositionGlobal().x, 32.0f) + 16.0f, pTurret_->getPositionGlobal().y - fmod(pTurret_->getPositionGlobal().y, 32.0f) + 16.0f);
+			closerDistance = turretDistance;
+		}
+		if (pBarricade_ != nullptr && barricadeDistance < closerDistance)
+		{
+			targetPosition_ = sf::Vector2i(pBarricade_->getPositionGlobal().x - fmod(pBarricade_->getPositionGlobal().x, 32.0f) + 16.0f, pBarricade_->getPositionGlobal().y - fmod(pBarricade_->getPositionGlobal().y, 32.0f) + 16.0f);
+			closerDistance = barricadeDistance;
+		}
 		else
-		  targetPosition_ = sf::Vector2i(pPlayer_->getPositionGlobal().x - fmod(pPlayer_->getPositionGlobal().x, 32.0f) + 16.0f, pPlayer_->getPositionGlobal().y - fmod(pPlayer_->getPositionGlobal().y, 32.0f) + 16.0f);
-		
+			targetPosition_ = sf::Vector2i(pPlayer_->getPositionGlobal().x - fmod(pPlayer_->getPositionGlobal().x, 32.0f) + 16.0f, pPlayer_->getPositionGlobal().y - fmod(pPlayer_->getPositionGlobal().y, 32.0f) + 16.0f);
+
 
 		if (closerDistance > 33.5f)
 		{
-		  if(!sPNodes_.empty())
-		    {
-		      auto node = sPNodes_.top();
-		      sf::Vector2i nodePos = node->getPosition();
-		      if(positionGlobal_.x <= nodePos.x + 16 && positionGlobal_.x >= nodePos.x - 16 && positionGlobal_.y <= nodePos.y + 16 && positionGlobal_.y >= nodePos.y - 16)
+			if (!sPNodes_.empty())
 			{
-			  sPNodes_.pop();
-			  if(!sPNodes_.empty())
-			    {
-			      node = sPNodes_.top();
-			      nodePos = node->getPosition();
-			    }
+				Node node = sPNodes_.top();
+				sf::Vector2i nodePos = node.getPosition();
+				if (positionGlobal_.x <= nodePos.x + 16 && positionGlobal_.x >= nodePos.x - 16 && positionGlobal_.y <= nodePos.y + 16 && positionGlobal_.y >= nodePos.y - 16)
+				{
+					sPNodes_.pop();
+					if (!sPNodes_.empty())
+					{
+						node = sPNodes_.top();
+						nodePos = node.getPosition();
+					}
+				}
+
+				targetVector_ = (sf::Vector2f)nodePos - positionGlobal_;
 			}
-		      
-		      targetVector_ = (sf::Vector2f)nodePos - positionGlobal_;
-		    }
-		  else
-		    {
-		      targetVector_ = sf::Vector2f(0.01f, 0.01f);
-		    }
-		  
-		  targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
-		  velocity_ = targetVector_ * speed_;
+			else
+			{
+				targetVector_ = sf::Vector2f(0.01f, 0.01f);
+			}
+
+			targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
+			velocity_ = targetVector_ * speed_;
 		}
-		
+
 		else
 			velocity_ = sf::Vector2f(0, 0);
 
@@ -108,16 +113,16 @@ void Zombie::update(const sf::Time& dT)
 					{
 						if (closerDistance == playerDistance)
 						{
-						  pPlayer_->setHealth(pPlayer_->getHealth() - 10);
-						  pPlayer_->injure();
+							pPlayer_->setHealth(pPlayer_->getHealth() - 10);
+							pPlayer_->injure();
 						}
-						else if(closerDistance == barricadeDistance)
-						  {
-						    pBarricade_->setHealth(pBarricade_->getHealth() - 10);
-						  }
+						else if (closerDistance == barricadeDistance)
+						{
+							pBarricade_->setHealth(pBarricade_->getHealth() - 10);
+						}
 						else
-						  pTurret_->setHealth(pTurret_->getHealth() - 10);
-						
+							pTurret_->setHealth(pTurret_->getHealth() - 10);
+
 					}
 					hit_ = true;
 				}
@@ -155,118 +160,127 @@ void Zombie::update(const sf::Time& dT)
 		else if (still_ && deathClock_.getElapsedTime().asSeconds() >= 3.0f)
 			delete_ = true;
 		//else if (still_)
-			//corpseSprite_.setColor
-		
-		
+		//corpseSprite_.setColor
+
+
 	}
 }
 
 void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 {
-  //Clears the stack
-  while(!sPNodes_.empty())
-    sPNodes_.pop();
-  
-  if(targetPosition_ != sf::Vector2i(0.0f, 0.0f))
-    {
-      //Initiates lists
-      std::vector<std::shared_ptr<Node>> openList;
-      std::vector<std::shared_ptr<Node>> closedList;
-      std::shared_ptr<Node> currentNode;     
-      bool pathFound = false;
-      
-      //Initiates the great journey
-      openList.push_back(std::make_shared<Node>(sf::Vector2i(positionGlobal_.x - fmod(positionGlobal_.x,  32.0f) + 16.0f, positionGlobal_.y - fmod(positionGlobal_.y, 32.0f) + 16.0f)));
-      openList.back()->setIsStartNode(true);
-      std::push_heap(openList.begin(), openList.end(), [](std::shared_ptr<Node> lhv, std::shared_ptr<Node> rhv) {return lhv->getTotalValue() > rhv->getTotalValue();});
+	//Creates a matrix of nodes
+	std::vector< std::vector<Node> > mNodes_(257, std::vector<Node>(257, Node(sf::Vector2i(0, 0))));
 
-      while(!pathFound)
+	//Clears the stack
+	while (!sPNodes_.empty())
+		sPNodes_.pop();
+
+	if (targetPosition_ != sf::Vector2i(0.0f, 0.0f))
 	{
-	  //Gets the a pointer to the top item in the openList, then moves it to the closed list
-	  std::pop_heap(openList.begin(), openList.end(), [](std::shared_ptr<Node> lhv, std::shared_ptr<Node> rhv) {return lhv->getTotalValue() > rhv->getTotalValue();}); //NEED COMPARISON FOR THE POINTERS HERE	  
-	  currentNode = openList.back();
-	  closedList.push_back(currentNode);
-	  openList.pop_back();
+		
+		//Initiates lists
+		std::priority_queue<Node*, std::vector<Node*>, compNode> openList;
+		std::vector<Node*> closedList;
+		Node* currentNode;
+		bool pathFound = false;
 
-	  //For the eight neighboring tiles/nodes
-	  for (int i = 0; i < 8; ++i)
-	    {
-	      int xPos;
-	      int yPos;	 
-	      
-	      //xPos
-	      if(i == 0 || i == 4)
-		xPos = 0;
-	      else if(i > 0 && i < 4)
-		xPos = 1;
-	      else
-		xPos = -1;
-	      
-	      //yPos
-	      if(i == 2 || i == 6)
-		yPos = 0;
-	      else if(i < 2 || i > 6)
-		yPos = 1;
-	      else
-		yPos = -1;
-	      
-	      sf::Vector2i nodePosition = currentNode->getPosition() + sf::Vector2i(xPos * 32, yPos * 32);
+		//Initiates the great journey
+		Node* pStartNode = &mNodes_.at((int)(positionGlobal_.x / 32)).at((int)(positionGlobal_.y / 32));
+		pStartNode->setPosition(sf::Vector2i(positionGlobal_.x - fmod(positionGlobal_.x, 32.0f) + 16, positionGlobal_.y - fmod(positionGlobal_.y, 32.0f) + 16));
+		pStartNode->setIsStartNode(true);
+		pStartNode->setIsOnOpen(true);
+		openList.push(pStartNode);
 
-	      //Stop working if the node/tile is a wall or contains a tree
-	      if(pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable" || pVTiles->at(nodePosition.y / 32).at(nodePosition.x / 32).hasItem())		
-		  continue;
-
-	      //Creates a node for the tile
-	      auto node = std::make_shared<Node>(currentNode, sf::Vector2i(xPos, yPos));
-
-	      //Checks to see if it is the target adds node to stack and breaks if so
-	      if(node->getPosition() == targetPosition_)
+		while (!pathFound)
 		{
-		  pathFound = true;
-		  sPNodes_.push(node);
-		  break;
+			//Gets the a pointer to the top item in the openList, then moves it to the closed list
+			currentNode = openList.top();
+			closedList.push_back(currentNode);
+			currentNode->setIsOnClosed(true);
+			currentNode->setIsOnOpen(true);
+			openList.pop();
+
+			//For the eight neighboring tiles/nodes
+			for (int i = 0; i < 8; ++i)
+			{
+				std::cout << i << std::endl;
+				int xPos;
+				int yPos;
+
+				//xPos
+				if (i == 0 || i == 4)
+					xPos = 0;
+				else if (i > 0 && i < 4)
+					xPos = 1;
+				else
+					xPos = -1;
+
+				//yPos
+				if (i == 2 || i == 6)
+					yPos = 0;
+				else if (i < 2 || i > 6)
+					yPos = 1;
+				else
+					yPos = -1;
+
+				sf::Vector2i nodePosition = currentNode->getPosition() + sf::Vector2i(xPos * 32, yPos * 32);
+
+				//Stop working if the node/tile is a wall or contains a tree
+				if (pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable" || pVTiles->at(nodePosition.y / 32).at(nodePosition.x / 32).hasItem())
+					continue;
+
+				//Creates a node for the tile
+				Node node(currentNode, sf::Vector2i(xPos, yPos));
+
+				//Checks to see if it is the target adds node to stack and breaks if so
+				if (node.getPosition() == targetPosition_)
+				{
+					pathFound = true;
+					sPNodes_.push(node);
+					break;
+				}
+
+				//If it's not the target
+				if (!pathFound)
+				{
+					float parentDistanceValue = node.getParentNodePtr()->getDistanceValue();
+
+					//Distance is 1.4f x 32 if diagonal, 1 x 32 otherwise
+					if (xPos == yPos)
+						node.setDistanceValue(parentDistanceValue + 44.8f);
+					else
+						node.setDistanceValue(parentDistanceValue + 32.0f);
+
+					//Gets the distance to the target(Heuristic) and then gets the total(Distance + Heuristic)
+					node.setHeuristicValue(abs(targetPosition_.x - nodePosition.x) + abs(targetPosition_.y - nodePosition.y));
+					node.setTotalValue(node.getHeuristicValue() + node.getDistanceValue());
+
+					//If the node is not already on the open/closed list
+					Node listCheckNode = mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32));
+					if (!listCheckNode.isOnClosed() && !listCheckNode.isOnOpen())
+					{
+						std::cout << "Node value: " << node.getTotalValue() << std::endl;
+						mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32)) = node;
+						openList.push(&mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32)));
+					}
+				}
+			}
 		}
 
-	      //If it's not the target
-	      if(!pathFound)
+		//Keeps stacking parent nodes until the start is reached
+		while (!sPNodes_.top().isStartNode())
 		{
-		  float parentDistanceValue = node->getParentNodePtr()->getDistanceValue();
-
-		  //Distance is 1.4f x 32 if diagonal, 1 x 32 otherwise
-		  if(xPos == yPos)
-		    node->setDistanceValue(parentDistanceValue + 44.8f);
-		  else
-		    node->setDistanceValue(parentDistanceValue + 32.0f);
-
-		  //Gets the distance to the target(Heuristic) and then gets the total(Distance + Heuristic)
-		  node->setHeuristicValue(abs(targetPosition_.x - nodePosition.x) + abs(targetPosition_.y - nodePosition.y));
-		  node->setTotalValue(node->getHeuristicValue() + node->getDistanceValue());
-		  
-		  //Makes sure the node is not already in the open or closed list (NEED TO COMPARE VALUE OF WHAT THE POINTERS POINT TO HERE)
-		  if(std::find_if(openList.begin(), openList.end(), [node](std::shared_ptr<Node> comparisonNode){return comparisonNode->getPosition() == node->getPosition();}) == openList.end()
-		     && std::find_if(closedList.begin(), closedList.end(), [node](std::shared_ptr<Node> comparisonNode){return comparisonNode->getPosition() == node->getPosition();}) == closedList.end())
-		    {	    
-		      openList.push_back(node);
-		      std::push_heap(openList.begin(), openList.end(), [](std::shared_ptr<Node> lhv, std::shared_ptr<Node> rhv) {return lhv->getTotalValue() > rhv->getTotalValue();});
-		    }	  
+			Node parent = *sPNodes_.top().getParentNodePtr();
+			sPNodes_.push(parent);
 		}
-	    }
 	}
-
-      //Keeps stacking parent nodes until the start is reached
-      while(!sPNodes_.empty() && !sPNodes_.top()->isStartNode())
-	{
-	  auto parent = sPNodes_.top()->getParentNodePtr();
-	  sPNodes_.push(parent);    
-	}
-    }
 }
-    
-  
- //Operator overloading
+
+
+//Operator overloading
 bool Zombie::operator== (const Zombie& rhv) const { return positionGlobal_ == rhv.positionGlobal_; }
 bool Zombie::bled()
-		     {
+{
 	if (dead_ && !still_ && bleedClock_.getElapsedTime().asSeconds() > 0.1f)
 	{
 		bleedClock_.restart();
@@ -292,4 +306,4 @@ sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
 
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
-void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; } 
+void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; }
