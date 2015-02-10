@@ -43,7 +43,7 @@ protected:
     sf::Sprite armRightSprite_;
     sf::Sprite headSprite_;
     
-    sf::Vector2f velocity_;
+    sf::Vector2f velocity_ = sf::Vector2f(0.0f, 0.0f);
     sf::Vector2f lookPosition_;
     sf::Vector2f armLeftTarget_;
     sf::Vector2f armRightTarget_;

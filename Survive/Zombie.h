@@ -24,6 +24,7 @@ public:
     bool isStill() const;
     bool isDead() const;
     bool isDeletable() const;
+    bool isReadyToRepath() const;
     sf::Sprite getCorpseSprite() const;
     
     //Setters
@@ -48,6 +49,10 @@ public:
     
     //A normalized vector that points towards the player, from the zombie
     sf::Vector2f targetVector_;
+
+    //Used to find out when pathing should run
+    sf::Vector2i lastTargetPosition_;
+    bool readyToRepath_ = true;
     
     //The corpse texture
     sf::Texture* pCorpseTexture_;

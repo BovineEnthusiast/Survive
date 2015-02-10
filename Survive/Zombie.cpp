@@ -49,7 +49,12 @@ void Zombie::update(const sf::Time& dT)
 		else
 			targetPosition_ = sf::Vector2i(pPlayer_->getPositionGlobal().x - fmod(pPlayer_->getPositionGlobal().x, 32.0f) + 16.0f, pPlayer_->getPositionGlobal().y - fmod(pPlayer_->getPositionGlobal().y, 32.0f) + 16.0f);
 
-
+		if(targetPosition_ != lastTargetPosition_)
+		{
+		    readyToRepath_ = true;
+		    lastTargetPosition_ = targetPosition_;
+		}
+		
 		if (closerDistance > 33.5f)
 		{
 			if (!sPNodes_.empty())
@@ -64,21 +69,20 @@ void Zombie::update(const sf::Time& dT)
 						node = sPNodes_.top();
 						nodePos = node.getPosition();
 					}
-				}
-
+				}				
 				targetVector_ = (sf::Vector2f)nodePos - positionGlobal_;
 			}
-			else
-			{
-				targetVector_ = sf::Vector2f(0.01f, 0.01f);
-			}
+			else			
+				targetVector_ = sf::Vector2f(0.0f, 0.0f);			
 
-			targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
+			if(targetVector_ != sf::Vector2f(0.0f, 0.0f))
+			   targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
+
 			velocity_ = targetVector_ * speed_;
 		}
 
 		else
-			velocity_ = sf::Vector2f(0, 0);
+			velocity_ = sf::Vector2f(0.0f, 0.0f);
 
 		if (closerDistance <= 43.5f && !attacking_)
 		{
@@ -158,11 +162,7 @@ void Zombie::update(const sf::Time& dT)
 			deathClock_.restart();
 		}
 		else if (still_ && deathClock_.getElapsedTime().asSeconds() >= 3.0f)
-			delete_ = true;
-		//else if (still_)
-		//corpseSprite_.setColor
-
-
+			delete_ = true;		
 	}
 }
 
@@ -177,6 +177,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 	if (targetPosition_ != sf::Vector2i(0.0f, 0.0f))
 	{
+	  readyToRepath_ = false;
 		
 		//Initiates lists
 		std::priority_queue<Node*, std::vector<Node*>, compNode> openList;
@@ -193,6 +194,9 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 		while (!pathFound)
 		{
+		        std::cout << "openList size: " << openList.size() << std::endl;
+		        std::cout << "closedList size: " << closedList.size() << std::endl;
+		  
 			//Gets the a pointer to the top item in the openList, then moves it to the closed list
 			currentNode = openList.top();
 			closedList.push_back(currentNode);
@@ -202,7 +206,8 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 			//For the eight neighboring tiles/nodes
 			for (int i = 0; i < 8; ++i)
-			{
+
+			  {
 				std::cout << i << std::endl;
 				int xPos;
 				int yPos;
@@ -225,10 +230,6 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 				sf::Vector2i nodePosition = currentNode->getPosition() + sf::Vector2i(xPos * 32, yPos * 32);
 
-				//Stop working if the node/tile is a wall or contains a tree
-				if (pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable" || pVTiles->at(nodePosition.y / 32).at(nodePosition.x / 32).hasItem())
-					continue;
-
 				//Creates a node for the tile
 				Node node(currentNode, sf::Vector2i(xPos, yPos));
 
@@ -239,6 +240,10 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 					sPNodes_.push(node);
 					break;
 				}
+
+				//Stop working if the node/tile is a wall or contains a tree
+				if (pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable" || pVTiles->at(nodePosition.y / 32).at(nodePosition.x / 32).hasItem())
+					continue;
 
 				//If it's not the target
 				if (!pathFound)
@@ -302,6 +307,7 @@ bool Zombie::countedDead()
 bool Zombie::isStill() const { return still_; }
 bool Zombie::isDead() const { return dead_; }
 bool Zombie::isDeletable() const { return delete_; }
+bool Zombie::isReadyToRepath() const { return readyToRepath_; }
 sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
 
 //Setters

@@ -1,4 +1,3 @@
-
 #include "Humanoid.h"
 #include <math.h>
 #include <iostream>
@@ -46,12 +45,16 @@ void Humanoid::animate(const sf::Time& dT)
         legRightSprite_.setColor(sf::Color(255, 255, 255));
         speed_ = finalSpeed_;
     }
-    //Sets global variables
-    sf::Vector2f normalizedVelocity = velocity_ / (float)sqrt( velocity_.x * velocity_.x + velocity_.y * velocity_.y );
+    sf::Vector2f normalizedVelocity(0.0f, 0.0f);
     
-    //Moves the humanoid
-    positionGlobal_ += velocity_ * dT.asSeconds() * 13.5f;
-    
+    if(velocity_ != sf::Vector2f(0.0f, 0.0f))
+      {
+	//Sets global variables
+	normalizedVelocity = velocity_ / (float)sqrt( velocity_.x * velocity_.x + velocity_.y * velocity_.y );
+	
+	//Moves the humanoid
+	positionGlobal_ += velocity_ * dT.asSeconds() * 13.5f;
+      }
     //Checks to see if it was moved to an illegal tile
     std::string tile = pTiles->at((positionGlobal_.x - fmod(positionGlobal_.x, 32)) / 32).at((positionGlobal_.y - fmod(positionGlobal_.y, 32)) / 32).getType();
     if(tile == "unwalkable")

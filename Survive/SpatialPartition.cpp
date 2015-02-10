@@ -86,7 +86,9 @@ void SpatialPartition::update(const sf::Time& dT)
 			++(*pZombiesAlive_);
 			Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, &imageManager_->zombieCorpseTexture, (*pWave_ - 1) * 10, (*pWave_ + 10));
 			zombie.pTiles = pVTiles_;
+			std::cout << "Den position global: " << den.getPositionGlobal().x << ", " << den.getPositionGlobal().y << std::endl;
 			zombie.setPositionGlobal(den.getPositionGlobal());
+			std::cout << "Zombie position post-den: " << zombie.getPositionGlobal().x << ", " << zombie.getPositionGlobal().y << std::endl;
 			vZombies_.push_back(zombie);
 		}
 	}
@@ -206,14 +208,11 @@ void SpatialPartition::update(const sf::Time& dT)
 			if (pClosestTurret != nullptr)
 				iZombie->setTurretPtr(pClosestTurret);
 		}
-
-		sf::Vector2f playerPos(player_->getPositionGlobal());
-		sf::Vector2f playerPosTile(playerPos.x - fmod(playerPos.x, 32.0f) + 16, playerPos.y - fmod(playerPos.y, 32.0f) + 16);
-		if (playerPosTile != lastPlayerPos_)
-		{
-			lastPlayerPos_ = playerPosTile;
+		
+		if (iZombie->isReadyToRepath())		
 			iZombie->findPath(pVTiles_);
-		}
+		
+		
 
 		iZombie->update(dT);
 
