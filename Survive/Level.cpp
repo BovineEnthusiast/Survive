@@ -480,10 +480,11 @@ void Level::generateLevel(const int width, const int height)
 			else
 				type = "walkable";
 
-			
-			tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
 			if(hasItem)
-			  tiles[xPos][yPos].setHasItem(true);
+			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "unwalkable");
+			else
+			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
+			 
 			  
 			if (type == "walkable")
 				player_.setPosition(sf::Vector2f(32 * xPos, 32 * yPos));

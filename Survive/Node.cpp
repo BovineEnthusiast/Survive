@@ -24,7 +24,7 @@ bool Node::isOnClosed() const { return isOnClosed_; }
 //Setters
 void Node::setDistanceValue(float distanceValue) { distanceValue_ = distanceValue; }
 void Node::setHeuristicValue(float heuristicValue) { heuristicValue_ = heuristicValue; }
-void Node::setTotalValue(float totalValue) { totalValue_ = totalValue; }
+void Node::setTotalValue() { totalValue_ = distanceValue_ + heuristicValue_; }
 void Node::setIsStartNode(bool startNode) { startNode_ = startNode; }
 void Node::setIsOnOpen(bool isOn) { isOnOpen_ = isOn; }
 void Node::setIsOnClosed(bool isOn) { isOnClosed_ = isOn; }

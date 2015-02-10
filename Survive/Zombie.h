@@ -26,7 +26,7 @@ public:
     bool isDeletable() const;
     bool isReadyToRepath() const;
     sf::Sprite getCorpseSprite() const;
-    
+    std::stack<Node> getNodes() const;
     //Setters
     void setTurretPtr(Turret*);
     void setBarricadePtr(Barricade*);

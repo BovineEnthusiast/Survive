@@ -1,3 +1,5 @@
+#include <stack>
+#include "Node.h"
 #include "Engine.h"
 #include "Camera.h"
 #include "SpatialPartition.h"
@@ -16,6 +18,9 @@ bool Engine::initialize()
 
 void Engine::update()
 {
+  if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+    drawPath_ = !drawPath_;
+  
 	if (inMenu_)
 		menuManager_.update(_dT);
 	else
@@ -132,6 +137,7 @@ void Engine::draw()
 				std::vector<Zombie> vZombies = iPartition->getZombies();
 				for (auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
 				{
+				  std::stack<Node> nodes = iZombie->getNodes();
 					if (!iZombie->isDead())
 					{
 						window_.draw(iZombie->getLegLeftSprite());
@@ -139,6 +145,17 @@ void Engine::draw()
 						window_.draw(iZombie->getArmLeftSprite());
 						window_.draw(iZombie->getArmRightSprite());
 						window_.draw(iZombie->getHeadSprite());
+
+						while(!nodes.empty() && drawPath_)
+						  {
+						    sf::Vector2i pos = nodes.top().getPosition();
+						    nodes.pop();
+						    sf::RectangleShape visualNode(sf::Vector2f(32.0f, 32.0f));
+						    visualNode.setOrigin(16.0f, 16.0f);
+						    visualNode.setFillColor(sf::Color(255,0,0,25));
+						    visualNode.setPosition(pos.x, pos.y);
+						    window_.draw(visualNode);
+						  }
 					}
 					else
 						window_.draw(iZombie->getCorpseSprite());

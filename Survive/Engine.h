@@ -19,6 +19,7 @@ private:
     sf::RenderWindow window_;
     sf::Time _dT;
     sf::Clock _dTClock;
+    bool drawPath_ = false;
     Level level_;
 	SettingsManager settingsManager_;
 	SoundManager soundManager_;

@@ -22,7 +22,7 @@ public:
   //Setters
   void setDistanceValue(float);
   void setHeuristicValue(float);
-  void setTotalValue(float);
+  void setTotalValue();
   void setIsStartNode(bool);
   void setIsOnOpen(bool);
   void setIsOnClosed(bool);

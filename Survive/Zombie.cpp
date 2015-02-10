@@ -61,7 +61,7 @@ void Zombie::update(const sf::Time& dT)
 			{
 				Node node = sPNodes_.top();
 				sf::Vector2i nodePos = node.getPosition();
-				if (positionGlobal_.x <= nodePos.x + 16 && positionGlobal_.x >= nodePos.x - 16 && positionGlobal_.y <= nodePos.y + 16 && positionGlobal_.y >= nodePos.y - 16)
+				if (positionGlobal_.x <= nodePos.x + 1 && positionGlobal_.x >= nodePos.x - 1 && positionGlobal_.y <= nodePos.y + 1 && positionGlobal_.y >= nodePos.y - 1)
 				{
 					sPNodes_.pop();
 					if (!sPNodes_.empty())
@@ -193,10 +193,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 		openList.push(pStartNode);
 
 		while (!pathFound)
-		{
-		        std::cout << "openList size: " << openList.size() << std::endl;
-		        std::cout << "closedList size: " << closedList.size() << std::endl;
-		  
+		{		  
 			//Gets the a pointer to the top item in the openList, then moves it to the closed list
 			currentNode = openList.top();
 			closedList.push_back(currentNode);
@@ -208,7 +205,6 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 			for (int i = 0; i < 8; ++i)
 
 			  {
-				std::cout << i << std::endl;
 				int xPos;
 				int yPos;
 
@@ -229,6 +225,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 					yPos = -1;
 
 				sf::Vector2i nodePosition = currentNode->getPosition() + sf::Vector2i(xPos * 32, yPos * 32);
+			       
 
 				//Creates a node for the tile
 				Node node(currentNode, sf::Vector2i(xPos, yPos));
@@ -242,8 +239,9 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 				}
 
 				//Stop working if the node/tile is a wall or contains a tree
-				if (pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable" || pVTiles->at(nodePosition.y / 32).at(nodePosition.x / 32).hasItem())
+				  if (pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable")
 					continue;
+			     
 
 				//If it's not the target
 				if (!pathFound)
@@ -258,13 +256,12 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 					//Gets the distance to the target(Heuristic) and then gets the total(Distance + Heuristic)
 					node.setHeuristicValue(abs(targetPosition_.x - nodePosition.x) + abs(targetPosition_.y - nodePosition.y));
-					node.setTotalValue(node.getHeuristicValue() + node.getDistanceValue());
+					node.setTotalValue();
 
 					//If the node is not already on the open/closed list
 					Node listCheckNode = mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32));
 					if (!listCheckNode.isOnClosed() && !listCheckNode.isOnOpen())
 					{
-						std::cout << "Node value: " << node.getTotalValue() << std::endl;
 						mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32)) = node;
 						openList.push(&mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32)));
 					}
@@ -278,6 +275,8 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 			Node parent = *sPNodes_.top().getParentNodePtr();
 			sPNodes_.push(parent);
 		}
+		//Pops the top node as the zombie is already on it
+		sPNodes_.pop();
 	}
 }
 
@@ -309,7 +308,7 @@ bool Zombie::isDead() const { return dead_; }
 bool Zombie::isDeletable() const { return delete_; }
 bool Zombie::isReadyToRepath() const { return readyToRepath_; }
 sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
-
+std::stack<Node> Zombie::getNodes() const { return sPNodes_; }
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
 void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; }
