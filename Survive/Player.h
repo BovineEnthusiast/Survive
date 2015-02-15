@@ -16,11 +16,32 @@ public:
     //Getters
     std::vector<Gun> getGuns();
     int getCurrentGunIndex() const;
+    int getPoints() const;
+    int getTurrets() const;
+    int getBarricades() const;
+    bool hasMagnum() const;
+    bool hasShotgun() const;
+    bool hasRifle() const;
     
     //Setters
+    void setPoints(const int);
     void setPosition(const sf::Vector2f&);
     void setGunBulletPointers(std::list<Bullet>*);
-private:
+    void setTurrets(const int);
+    void setBarricades(const int);
+    void setHasMagnum(const bool);
+    void setHasShotgun(const bool);
+    void setHasRifle(const bool);
+ private:
+    //Weapon unlocks/amounts
+    bool hasMagnum_ = false;
+    bool hasShotgun_ = false;
+    bool hasRifle_ = false;
+    
+    int turrets_ = 0;
+    int barricades_ = 0;
+    
+    int points_ = 0;
     int currentGun_ = 0;
     std::vector<Gun> vGuns_;
     SoundManager* pSoundManager_;

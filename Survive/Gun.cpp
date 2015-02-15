@@ -28,7 +28,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		recoilAmount_ = 8.0f;
 		fireRate_ = 0.15f; // ~12rps 
 		auto_ = false;
-		bulletDamage_ = 50;
+		bulletDamage_ = 100;
 		bulletSpawnPos_ = sf::Vector2f(15.5f, 0.0f);
 	}
 	else if (type == "rifle")

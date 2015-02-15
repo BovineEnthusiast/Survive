@@ -88,17 +88,18 @@ void Engine::draw()
 			bottomRightY = (camBottomRight.y + (32 - fmod(camBottomRight.y, tileSize_))) / tileSize_;
 
 		//Prevents out of bounds exception
-		if (bottomRightX > 256)
-			bottomRightX = 256;
+		if (bottomRightX > 255)
+			bottomRightX = 255;
 		if (bottomRightY > 256)
-			bottomRightY = 256;
+			bottomRightY = 255;
 
 
 		//Draws Tiles inside the range of the camera
 		for (size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
 			for (size_t tile = topLeftY; tile <= bottomRightY; ++tile)
 			{
-				level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_, (float)tile * tileSize_));
+			  std::cout << "x: " << vTile << " y: " << tile << std::endl;
+				level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_ + 16, (float)tile * tileSize_ + 16));
 				window_.draw(level_.tiles[vTile][tile].getSprite());
 			}
 
@@ -200,7 +201,8 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getWaveBackground());
 		window_.draw(GUIManagerCopy.getWaveText());
 		window_.draw(GUIManagerCopy.getZombiesText());
-
+		window_.draw(GUIManagerCopy.getPointsText());
+		
 		window_.draw(GUIManagerCopy.getHealthOutOf());
 		window_.draw(GUIManagerCopy.getHealthCurrent());
 
@@ -209,8 +211,9 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getReloadCurrent());
 		window_.draw(GUIManagerCopy.getTotalAmmo());
 
-		//Store
+		//Store		
 		window_.draw(GUIManagerCopy.getBuyMenuBackground());
+		window_.draw(GUIManagerCopy.getStoreText());
 		window_.draw(GUIManagerCopy.getSelectionRect());
 		window_.draw(GUIManagerCopy.getPistolText());
 		window_.draw(GUIManagerCopy.getMagnumText());

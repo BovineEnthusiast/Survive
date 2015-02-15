@@ -45,11 +45,9 @@ void Level::update(const sf::Time& dT)
 	}
 	
     for(auto iPartitionRow = spatialPartitions_.begin(); iPartitionRow != spatialPartitions_.end(); ++iPartitionRow)
-		for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
-		{ 
+		for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)		
 			iPartition->update(dT);
-			points_ += iPartition->getPoints();
-		}
+		
 
 
 	if (player_.getHealth() <= 0)
@@ -415,7 +413,7 @@ void Level::generateLevel(const int width, const int height)
 			   }
            }
            
-            heightmap[xPos][yPos] -= gradientArray[xPos][yPos];
+	   heightmap[xPos][yPos] -= gradientArray[xPos][yPos];
             float height = heightmap[xPos][yPos];
             
 			//Sets the heightmap to the tiles' numbers (0 = deep water, 1 = shallow water, etc...)
@@ -460,7 +458,7 @@ void Level::generateLevel(const int width, const int height)
 
 			bool hasItem = false;
 			//Places trees and dens
-			 if (row > 5 && row <= 9 && std::rand() % 25 <= 1)
+			 if (row > 5 && row <= 9 && std::rand() % 100 <= 1)
 			 {
 				 Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
 				 tree.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
@@ -481,7 +479,7 @@ void Level::generateLevel(const int width, const int height)
 				type = "walkable";
 
 			if(hasItem)
-			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "unwalkable");
+			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "tree");
 			else
 			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
 			 
@@ -514,5 +512,4 @@ bool Level::hasLost()
 		return false;
 }
 //Setters
-void Level::setPoints(const int points) { points_ = points; }
 void Level::setCameraPosition(const sf::Vector2f& position) {camera_.setPosition(position);}

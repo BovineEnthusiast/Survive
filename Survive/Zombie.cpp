@@ -49,31 +49,37 @@ void Zombie::update(const sf::Time& dT)
 		else
 			targetPosition_ = sf::Vector2i(pPlayer_->getPositionGlobal().x - fmod(pPlayer_->getPositionGlobal().x, 32.0f) + 16.0f, pPlayer_->getPositionGlobal().y - fmod(pPlayer_->getPositionGlobal().y, 32.0f) + 16.0f);
 
-		if(targetPosition_ != lastTargetPosition_)
+		if(targetPosition_ != lastTargetPosition_ && pathClock_.getElapsedTime().asSeconds() > 1.5f)
 		{
+		  pathClock_.restart();
 		    readyToRepath_ = true;
 		    lastTargetPosition_ = targetPosition_;
 		}
 		
 		if (closerDistance > 33.5f)
 		{
-			if (!sPNodes_.empty())
+			if (!sPNodes_.empty() && !readyToRepath_)
 			{
 				Node node = sPNodes_.top();
 				sf::Vector2i nodePos = node.getPosition();
 				if (positionGlobal_.x <= nodePos.x + 1 && positionGlobal_.x >= nodePos.x - 1 && positionGlobal_.y <= nodePos.y + 1 && positionGlobal_.y >= nodePos.y - 1)
 				{
+				        //Locks sPNodes_
+				        //std::lock_guard<std::mutex> stackLock(stackMutex_);
 					sPNodes_.pop();
 					if (!sPNodes_.empty())
 					{
 						node = sPNodes_.top();
 						nodePos = node.getPosition();
-					}
+					}					
 				}				
 				targetVector_ = (sf::Vector2f)nodePos - positionGlobal_;
 			}
-			else			
-				targetVector_ = sf::Vector2f(0.0f, 0.0f);			
+			else
+			  {
+			    targetVector_ = (sf::Vector2f)targetPosition_ - positionGlobal_;
+			  }
+						
 
 			if(targetVector_ != sf::Vector2f(0.0f, 0.0f))
 			   targetVector_ /= (float)sqrt(pow(targetVector_.x, 2) + pow(targetVector_.y, 2)); // Normalize
@@ -168,8 +174,14 @@ void Zombie::update(const sf::Time& dT)
 
 void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 {
+  if(readyToRepath_)
+    {
+      pathClock_.restart();
+      
+        //Creates the stack that will be copied to sPNodes_
+        std::stack<Node> sPNodes;
 	//Creates a matrix of nodes
-	std::vector< std::vector<Node> > mNodes_(257, std::vector<Node>(257, Node(sf::Vector2i(0, 0))));
+	std::vector<Node> mNodes_(66049, Node(sf::Vector2i(0, 0)));
 
 	//Clears the stack
 	while (!sPNodes_.empty())
@@ -181,12 +193,11 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 		
 		//Initiates lists
 		std::priority_queue<Node*, std::vector<Node*>, compNode> openList;
-		std::vector<Node*> closedList;
 		Node* currentNode;
 		bool pathFound = false;
 
 		//Initiates the great journey
-		Node* pStartNode = &mNodes_.at((int)(positionGlobal_.x / 32)).at((int)(positionGlobal_.y / 32));
+		Node* pStartNode = &mNodes_.at((int)(positionGlobal_.x / 32) * 257 + (int)(positionGlobal_.y / 32));
 		pStartNode->setPosition(sf::Vector2i(positionGlobal_.x - fmod(positionGlobal_.x, 32.0f) + 16, positionGlobal_.y - fmod(positionGlobal_.y, 32.0f) + 16));
 		pStartNode->setIsStartNode(true);
 		pStartNode->setIsOnOpen(true);
@@ -194,9 +205,8 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 		while (!pathFound)
 		{		  
-			//Gets the a pointer to the top item in the openList, then moves it to the closed list
+		        //Gets the a pointer to the top item in the openList, then moves it to the closed list
 			currentNode = openList.top();
-			closedList.push_back(currentNode);
 			currentNode->setIsOnClosed(true);
 			currentNode->setIsOnOpen(true);
 			openList.pop();
@@ -225,7 +235,27 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 					yPos = -1;
 
 				sf::Vector2i nodePosition = currentNode->getPosition() + sf::Vector2i(xPos * 32, yPos * 32);
-			       
+
+				//Checks for "pinches"
+				/*if(xPos != 0 && yPos != 0)
+				  {
+				    if(xPos == 1 && xPos == 1
+				       && pVTiles->at(nodePosition.x / 32 - 1).at(nodePosition.y / 32).getType() == "unwalkable"
+				       && pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32 + 1).getType() == "unwalkable")
+				      break;
+				    else if(xPos == -1 && yPos == -1
+					    && pVTiles->at(nodePosition.x / 32 + 1).at(nodePosition.y / 32).getType() == "unwalkable"
+					    && pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32 - 1).getType() == "unwalkable")
+				      break;
+				    else if(xPos == -1 && yPos == 1
+					    && pVTiles->at(nodePosition.x / 32 + 1).at(nodePosition.y / 32).getType() == "unwalkable"
+					    && pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32 + 1).getType() == "unwalkable")
+				      break;
+				    else if(xPos == 1 && yPos == -1
+					    && pVTiles->at(nodePosition.x / 32 - 1).at(nodePosition.y / 32).getType() == "unwalkable"
+					    && pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32 - 1).getType() == "unwalkable")
+				      break;
+				  }*/
 
 				//Creates a node for the tile
 				Node node(currentNode, sf::Vector2i(xPos, yPos));
@@ -234,12 +264,13 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 				if (node.getPosition() == targetPosition_)
 				{
 					pathFound = true;
-					sPNodes_.push(node);
+					sPNodes.push(node);
 					break;
 				}
 
 				//Stop working if the node/tile is a wall or contains a tree
-				  if (pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType() == "unwalkable")
+				std::string type = pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType();
+				if (type  == "tree" || type == "unwalkable")
 					continue;
 			     
 
@@ -259,30 +290,53 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 					node.setTotalValue();
 
 					//If the node is not already on the open/closed list
-					Node listCheckNode = mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32));
+					Node listCheckNode = mNodes_.at((int)(node.getPosition().x / 32) * 257 + (int)(node.getPosition().y / 32));
 					if (!listCheckNode.isOnClosed() && !listCheckNode.isOnOpen())
 					{
-						mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32)) = node;
-						openList.push(&mNodes_.at((int)(node.getPosition().x / 32)).at((int)(node.getPosition().y / 32)));
+						mNodes_.at((int)(node.getPosition().x / 32) * 257 + (int)(node.getPosition().y / 32)) = node;
+						openList.push(&mNodes_.at((int)(node.getPosition().x / 32) * 257 + (int)(node.getPosition().y / 32)));
 					}
 				}
 			}
 		}
 
 		//Keeps stacking parent nodes until the start is reached
-		while (!sPNodes_.top().isStartNode())
+		while (!sPNodes.top().isStartNode())
 		{
-			Node parent = *sPNodes_.top().getParentNodePtr();
-			sPNodes_.push(parent);
+			Node parent = *sPNodes.top().getParentNodePtr();
+			sPNodes.push(parent);
 		}
 		//Pops the top node as the zombie is already on it
-		sPNodes_.pop();
+		sPNodes.pop();
+
+		//Locks actual stack
+		//std::lock_guard<std::mutex> lock(mutexStack);
+		sPNodes_ = sPNodes;		
 	}
+    }
 }
 
 
 //Operator overloading
 bool Zombie::operator== (const Zombie& rhv) const { return positionGlobal_ == rhv.positionGlobal_; }
+/*Zombie& Zombie::operator= (Zombie&& other)
+{
+  std::lock(mutexStack_, other.mutexStack_);
+  std::lock_guard<std::mutex> self_lock(mutexStack_, std::adopt_lock);
+  std::lock_guard<std::mutex> other_lock(other.mutexStack_, std::adopt_lock);
+  sPStack_ = std::move(other.sPStack_);
+  other.value = std::stack<Node>();
+  return *this;
+}
+Zombie& Zombie::operator= (const Zombie& other)
+{
+  std::lock(mutexStack_, other.mutexStack_);
+  std::lock_guard<std::mutex> self_lock(mutexStack_, std::adopt_lock);
+  std::lock_guard<std::mutex> other_lock(other.mutexStack_, std::adopt_lock);
+  sPStack_ = other.sPStack_;
+  return *this;
+}*/
+//Other functions
 bool Zombie::bled()
 {
 	if (dead_ && !still_ && bleedClock_.getElapsedTime().asSeconds() > 0.1f)
@@ -309,6 +363,18 @@ bool Zombie::isDeletable() const { return delete_; }
 bool Zombie::isReadyToRepath() const { return readyToRepath_; }
 sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
 std::stack<Node> Zombie::getNodes() const { return sPNodes_; }
+bool Zombie::needsPath()
+{
+  if(needsPath_)
+    {
+      needsPath_ = false;
+      return true;
+    }
+  else
+    return false;
+      
+}
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
 void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; }
+void Zombie::setNeedsPath(bool needsPath) { needsPath_ = needsPath; }

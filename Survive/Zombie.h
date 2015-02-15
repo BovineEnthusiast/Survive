@@ -1,6 +1,7 @@
 #ifndef ZOMBIE_H
 #define	ZOMBIE_H
 #include <memory>
+#include <mutex>
 #include <stack>
 #include "Humanoid.h"
 #include "Player.h"
@@ -19,6 +20,7 @@ public:
     void findPath(std::vector< std::vector<Tile> >*);
 
     //Getters
+    bool needsPath();
     bool countedDead();
     bool bled();
     bool isStill() const;
@@ -27,18 +29,29 @@ public:
     bool isReadyToRepath() const;
     sf::Sprite getCorpseSprite() const;
     std::stack<Node> getNodes() const;
+
     //Setters
     void setTurretPtr(Turret*);
     void setBarricadePtr(Barricade*);
-
+    void setNeedsPath(bool);
+    
     //Operator overloading
     bool operator== (const Zombie&) const;
+    /*Zombie& operator= (Zombie&& other);
+    Zombie& operator= (const Zombie& other);*/
  private:
+
+    //Protects the path node stack from being accessed concurrently
+    //std::mutex mutexStack_;
+    
     //A pointer to the player used to get information such as position
     Player* pPlayer_;
 
     //A stack of nodes that leads to the target
     std::stack<Node> sPNodes_;
+
+    //Needs path if stuck
+    bool needsPath_ = false;
     
     //A pointer to the nearest attackable item
     Turret* pTurret_ = nullptr;
@@ -76,6 +89,7 @@ public:
     //Clocks
     sf::Clock deathClock_;
     sf::Clock bleedClock_;
+    sf::Clock pathClock_;
 };
 
 //Functor used to compare Node pointers

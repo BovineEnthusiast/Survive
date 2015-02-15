@@ -106,7 +106,7 @@ sf::Vector2f isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTw
 }
 
 //Checks to see if a bullet has collided
-bool isColliding(const sf::Sprite& squareOne, const sf::RectangleShape& bulletNew, const sf::Vector2f& bulletOldPosition)
+bool isColliding(const sf::Sprite& bulletNew, const sf::RectangleShape& squareOne, const sf::Vector2f& bulletOldPosition)
 {
     sf::Vector2f axis[4];
     

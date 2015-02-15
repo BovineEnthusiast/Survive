@@ -5,6 +5,7 @@ Tile::Tile(sf::Texture* pTexture, const sf::IntRect& intRect, const std::string&
 {
     sprite_.setTexture(*pTexture_);
     sprite_.setTextureRect(intRect);
+    sprite_.setOrigin(sprite_.getLocalBounds().width / 2.0f, sprite_.getLocalBounds().height / 2.0f);
 }
 
 //Getters

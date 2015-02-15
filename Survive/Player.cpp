@@ -18,19 +18,19 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 
 void Player::update(const sf::Time& dT)
 { 
-    
-    
+  
+  
     if(health_ > 0)
-    {
+      {
         //Switches out the gun if number is pressed
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-            currentGun_ = 0;
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
-			currentGun_ = 1;
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
-			currentGun_ = 2;
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
-			currentGun_ = 3;
+	  currentGun_ = 0;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && hasMagnum_)
+	  currentGun_ = 1;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && hasShotgun_)
+	  currentGun_ = 2;
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) && hasRifle_)
+	  currentGun_ = 3;
         
         vGuns_[currentGun_].window = window;
 
@@ -82,9 +82,21 @@ void Player::update(const sf::Time& dT)
 //Getters
 std::vector<Gun> Player::getGuns() {return vGuns_;}
 int Player::getCurrentGunIndex() const {return currentGun_;}
+int Player::getPoints() const {return points_;}
+int Player::getTurrets() const { return turrets_; }
+int Player::getBarricades() const { return barricades_; }
+bool Player::hasMagnum() const { return hasMagnum_; }
+bool Player::hasShotgun() const { return hasShotgun_; }
+bool Player::hasRifle() const { return hasRifle_; }
 
 //Setters 
+void Player::setPoints(const int points) { points_ = points; }
 void Player::setPosition(const sf::Vector2f& position) {positionGlobal_ = position;}
+void Player::setTurrets(const int turrets) { turrets_ = turrets; }
+void Player::setBarricades(const int barricades) { barricades_ = barricades; }
+void Player::setHasMagnum(const bool hasMagnum) { hasMagnum_ = hasMagnum; }
+void Player::setHasShotgun(const bool hasShotgun) { hasShotgun_ = hasShotgun; }
+void Player::setHasRifle(const bool hasRifle) { hasRifle_ = hasRifle; }
 void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 {
     for(auto iGun = vGuns_.begin(); iGun != vGuns_.end(); ++iGun)

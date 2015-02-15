@@ -55,11 +55,6 @@ void Humanoid::animate(const sf::Time& dT)
 	//Moves the humanoid
 	positionGlobal_ += velocity_ * dT.asSeconds() * 13.5f;
       }
-    //Checks to see if it was moved to an illegal tile
-    std::string tile = pTiles->at((positionGlobal_.x - fmod(positionGlobal_.x, 32)) / 32).at((positionGlobal_.y - fmod(positionGlobal_.y, 32)) / 32).getType();
-    if(tile == "unwalkable")
-        positionGlobal_ -= velocity_ * dT.asSeconds() * 13.5f;
- 
     if(velocity_ != sf::Vector2f(0.0f,0.0f))
         rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358;
     

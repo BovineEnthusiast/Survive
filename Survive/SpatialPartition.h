@@ -38,7 +38,7 @@ public:
   std::vector<Barricade> getBarricades() const;
   std::deque<BloodSplat> getBloodSplats() const;
   std::array<SpatialPartition*, 8> getNeigborPartitions() const;
-  int getPoints();
+
   //Pushers
   void pushZombie(const Zombie&);
   void pushBullet(const Bullet&);
