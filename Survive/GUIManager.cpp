@@ -6,7 +6,7 @@
 GUIManager::GUIManager(sf::RenderWindow* pWindow, Player* pPlayer, int* pWave, int* pZombiesAlive) 
   :pWindow_(pWindow), pPlayer_(pPlayer), pWave_(pWave), pZombiesAlive_(pZombiesAlive)
 {
-  if(!font_.loadFromFile("font.otf"))
+  if(!font_.loadFromFile("assets/fonts/font.otf"))
     std::cout << "Failed to load font." << std::endl;
   
   //Wave

@@ -5,68 +5,68 @@ SoundManager::SoundManager()
 {
     //----------------Loads all of the sounds--------------
     //Pistol
-    if(!bufferPistolOne_.loadFromFile("sounds/gun/pistol/pistol_1.ogg"))
-        std::cout << "Failed to load: sounds/gun/pistol/pistol_1.ogg" << std::endl;
+    if(!bufferPistolOne_.loadFromFile("assets/sounds/gun/pistol/pistol_1.ogg"))
+        std::cout << "Failed to load: assets/sounds/gun/pistol/pistol_1.ogg" << std::endl;
     
-    if(!bufferPistolTwo_.loadFromFile("sounds/gun/pistol/pistol_2.ogg"))
-        std::cout << "Failed to load: sounds/gun/pistol/pistol_2.ogg" << std::endl;
+    if(!bufferPistolTwo_.loadFromFile("assets/sounds/gun/pistol/pistol_2.ogg"))
+        std::cout << "Failed to load: assets/sounds/gun/pistol/pistol_2.ogg" << std::endl;
 
-    if(!bufferPistolThree_.loadFromFile("sounds/gun/pistol/pistol_3.ogg"))
-        std::cout << "Failed to load: sounds/gun/pistol/pistol_3.ogg" << std::endl;
+    if(!bufferPistolThree_.loadFromFile("assets/sounds/gun/pistol/pistol_3.ogg"))
+        std::cout << "Failed to load: assets/sounds/gun/pistol/pistol_3.ogg" << std::endl;
 
     //Rifle
-    if(!bufferRifleOne_.loadFromFile("sounds/gun/rifle/rifle_1.ogg"))
-        std::cout << "Failed to load: sounds/gun/rifle/rifle_1.ogg" << std::endl;
+    if(!bufferRifleOne_.loadFromFile("assets/sounds/gun/rifle/rifle_1.ogg"))
+        std::cout << "Failed to load: assets/sounds/gun/rifle/rifle_1.ogg" << std::endl;
 
-    if(!bufferRifleTwo_.loadFromFile("sounds/gun/rifle/rifle_2.ogg"))
-        std::cout << "Failed to load: sounds/gun/rifle/rifle_2.ogg" << std::endl;
+    if(!bufferRifleTwo_.loadFromFile("assets/sounds/gun/rifle/rifle_2.ogg"))
+        std::cout << "Failed to load: assets/sounds/gun/rifle/rifle_2.ogg" << std::endl;
     
-    if(!bufferRifleThree_.loadFromFile("sounds/gun/rifle/rifle_3.ogg"))
+    if(!bufferRifleThree_.loadFromFile("assets/sounds/gun/rifle/rifle_3.ogg"))
         std::cout << "Failed to load: sounds/gun/rifle/rifle_3.ogg" << std::endl;
 
-    if(!bufferRifleFour_.loadFromFile("sounds/gun/rifle/rifle_4.ogg"))
-        std::cout << "Failed to load: sounds/gun/rifle/rifle_4.ogg" << std::endl;
+    if(!bufferRifleFour_.loadFromFile("assets/sounds/gun/rifle/rifle_4.ogg"))
+        std::cout << "Failed to load: assets/sounds/gun/rifle/rifle_4.ogg" << std::endl;
 
     
     //Grass
-    if(!bufferGrassOne_.loadFromFile("sounds/footstep/grass/grass_1.ogg"))
-        std::cout << "Failed to load: sounds/footstep/grass/grass_1.ogg" << std::endl;
+    if(!bufferGrassOne_.loadFromFile("assets/sounds/footstep/grass/grass_1.ogg"))
+        std::cout << "Failed to load: assets/sounds/footstep/grass/grass_1.ogg" << std::endl;
 
-    if(!bufferGrassTwo_.loadFromFile("sounds/footstep/grass/grass_2.ogg"))
-        std::cout << "Failed to load: sounds/footstep/grass/grass_2.ogg" << std::endl;
+    if(!bufferGrassTwo_.loadFromFile("assets/sounds/footstep/grass/grass_2.ogg"))
+        std::cout << "Failed to load: assets/sounds/footstep/grass/grass_2.ogg" << std::endl;
 
-    if(!bufferGrassThree_.loadFromFile("sounds/footstep/grass/grass_3.ogg"))
-        std::cout << "Failed to load: sounds/footstep/grass/grass_3.ogg" << std::endl;
+    if(!bufferGrassThree_.loadFromFile("assets/sounds/footstep/grass/grass_3.ogg"))
+        std::cout << "Failed to load: assets/sounds/footstep/grass/grass_3.ogg" << std::endl;
 
-    if(!bufferGrassFour_.loadFromFile("sounds/footstep/grass/grass_4.ogg"))
-        std::cout << "Failed to load: sounds/footstep/grass/grass_4.ogg" << std::endl;
+    if(!bufferGrassFour_.loadFromFile("assets/sounds/footstep/grass/grass_4.ogg"))
+        std::cout << "Failed to load: assets/sounds/footstep/grass/grass_4.ogg" << std::endl;
 
-    if(!bufferGrassFive_.loadFromFile("sounds/footstep/grass/grass_5.ogg"))
-        std::cout << "Failed to load: sounds/footstep/grass/grass_5.ogg" << std::endl;
+    if(!bufferGrassFive_.loadFromFile("assets/sounds/footstep/grass/grass_5.ogg"))
+        std::cout << "Failed to load: assets/sounds/footstep/grass/grass_5.ogg" << std::endl;
 
-    if(!bufferGrassSix_.loadFromFile("sounds/footstep/grass/grass_6.ogg"))
+    if(!bufferGrassSix_.loadFromFile("assets/sounds/footstep/grass/grass_6.ogg"))
         std::cout << "Failed to load: sounds/footstep/grass/grass_6.ogg" << std::endl;
 
-    if(!bufferGrassSeven_.loadFromFile("sounds/footstep/grass/grass_7.ogg"))
-        std::cout << "Failed to load: sounds/footstep/grass/grass_7.ogg" << std::endl;
+    if(!bufferGrassSeven_.loadFromFile("assets/sounds/footstep/grass/grass_7.ogg"))
+        std::cout << "Failed to load: assets/sounds/footstep/grass/grass_7.ogg" << std::endl;
     
     
     //Hits
-    if(!bufferCrunch_.loadFromFile("sounds/hit/crunch.ogg"))
-        std::cout << "Failed to load: sounds/hit/crunch.ogg" << std::endl;
+    if(!bufferCrunch_.loadFromFile("assets/sounds/hit/crunch.ogg"))
+        std::cout << "Failed to load: assets/sounds/hit/crunch.ogg" << std::endl;
     
-    if(!bufferCrunchySplat_.loadFromFile("sounds/hit/crunchy_splat.ogg"))
-        std::cout << "Failed to load: sounds/hit/crunchy_splat.ogg" << std::endl;
+    if(!bufferCrunchySplat_.loadFromFile("assets/sounds/hit/crunchy_splat.ogg"))
+        std::cout << "Failed to load: assets/sounds/hit/crunchy_splat.ogg" << std::endl;
 
 	//UI
-	if (!bufferHover_.loadFromFile("sounds/ui/hover.wav"))
-		std::cout << "Failed to load: sounds/ui/hover.wav";
-	if (!bufferClick_.loadFromFile("sounds/ui/click.wav"))
-		std::cout << "Failed to load: sounds/ui/click.wav";
+	if (!bufferHover_.loadFromFile("assets/sounds/ui/hover.wav"))
+		std::cout << "Failed to load: assets/sounds/ui/hover.wav";
+	if (!bufferClick_.loadFromFile("assets/sounds/ui/click.wav"))
+		std::cout << "Failed to load: assets/sounds/ui/click.wav";
     
     //--------------Music--------------
-    if(!musicBackgroundNature_.openFromFile("sounds/background/nature.ogg"))
-        std::cout << "Failed to load: sounds/background/nature.ogg" << std::endl;
+    if(!musicBackgroundNature_.openFromFile("assets/sounds/background/nature.ogg"))
+        std::cout << "Failed to load: assets/sounds/background/nature.ogg" << std::endl;
     
     musicBackgroundNature_.setLoop(true);
     musicBackgroundNature_.play();

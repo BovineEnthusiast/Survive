@@ -4,9 +4,9 @@
 MenuManager::MenuManager(sf::RenderWindow* pWindow, SettingsManager* pSettingsManager, SoundManager* pSoundManager)
 	:pWindow_(pWindow), pSettingsManager_(pSettingsManager), pSoundManager_(pSoundManager)
 {
-	if (!font_.loadFromFile("font.otf"))
+	if (!font_.loadFromFile("assets/fonts/font.otf"))
 	{
-		//std::cout << "Failed to load font." << std::endl;
+		std::cout << "Failed to load font." << std::endl;
 	}
 	selectionRect_.setOrigin(sf::Vector2f(0, 0));
 
