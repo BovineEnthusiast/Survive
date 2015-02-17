@@ -14,7 +14,6 @@ Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture
 	corpseSprite_.setOrigin(17.0f, 14.0f);
 	finalSpeed_ = 3 + std::rand() % (int)(speed * 1.5);
 	health_ = 100 + health;
-
 }
 void Zombie::update(const sf::Time& dT)
 {
@@ -270,7 +269,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 				//Stop working if the node/tile is a wall or contains a tree
 				std::string type = pVTiles->at(nodePosition.x / 32).at(nodePosition.y / 32).getType();
-				if (type  == "tree" || type == "unwalkable")
+				if (type  == "tree" || type == "rock" || type == "water")
 					continue;
 			     
 

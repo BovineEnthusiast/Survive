@@ -13,11 +13,28 @@ private:
     
     //------------------Buffers-----------------------
     //Pistol
+    sf::SoundBuffer bufferPistolSelect_;
     sf::SoundBuffer bufferPistolOne_;
     sf::SoundBuffer bufferPistolTwo_;
     sf::SoundBuffer bufferPistolThree_;
+
+    //Magnum
+    sf::SoundBuffer bufferMagnumSelect_;
+    sf::SoundBuffer bufferMagnumOne_;
+    sf::SoundBuffer bufferMagnumTwo_;
+    sf::SoundBuffer bufferMagnumThree_;
+    sf::SoundBuffer bufferMagnumFour_;
+    sf::SoundBuffer bufferMagnumFive_;
+    sf::SoundBuffer bufferMagnumSix_;
+    sf::SoundBuffer bufferMagnumSeven_;
+    sf::SoundBuffer bufferMagnumEight_;
+
+    //Shotgun
+    sf::SoundBuffer bufferShotgunSelect_;
+    sf::SoundBuffer bufferShotgunOne_;
     
     //Rifle
+    sf::SoundBuffer bufferRifleSelect_;
     sf::SoundBuffer bufferRifleOne_;
     sf::SoundBuffer bufferRifleTwo_;
     sf::SoundBuffer bufferRifleThree_;

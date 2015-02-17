@@ -64,6 +64,12 @@ void Level::generateLevel(const int width, const int height)
 {
 	//Resets the level in case of replay
 	player_.setHealth(100);
+	player_.setPoints(10000);
+	player_.setHasMagnum(false);
+	player_.setHasShotgun(false);
+	player_.setHasRifle(false);
+	player_.setTurrets(0);
+	player_.setBarricades(0);
 	spatialPartitions_.clear();
 	tiles.clear();
 	wave_ = 1;
@@ -81,33 +87,34 @@ void Level::generateLevel(const int width, const int height)
     //Seeds random
     std::srand(time(0));
     
-    float rangeDeepWater = -0.8f;
-    float rangeShallowWater = -0.6f;
-    float rangeSand = -0.4f;
-    float rangeDirt = -0.2f;
-    float rangeGrass = 0.75f;
-    float rangeHill = 1.0f;
+    float rangeDeepWater = -0.25f;
+    float rangeShallowWater = 0.0f;
+    float rangeSand = 0.10f;
+    float rangeDirt = 0.15f;
+    float rangeGrass = 0.7f;
     
     //A heightmap array that will (hopefully) end up being between -1 to 1
-	std::vector<std::vector<float>> heightmap;
-	heightmap.resize(width);
-	for (int i = 0; i < heightmap.size(); ++i)
-		heightmap[i].resize(width);
+    std::vector<std::vector<float> > heightmap;
+    heightmap.resize(width);
+    for (int i = 0; i < heightmap.size(); ++i)
+      heightmap[i].resize(width);
     
     //Initial fill of four corners -1 to 0.99
     for(int xPos = 0; xPos < width; ++xPos)
-        for(int yPos = 0; yPos < height; ++yPos)
-            heightmap[xPos][yPos] = -10;
+      for(int yPos = 0; yPos < height; ++yPos)
+	if(xPos == 0 || yPos == 0 || xPos == width - 1 || yPos == height - 1)
+	  heightmap[xPos][yPos] = -1.0f;
+	else
+	  heightmap[xPos][yPos] = -10;
     
     //Initial circle of deep water to guarantee island
    
-    heightmap[0][0] = (std::rand() % 200) / 100 * - 1.0f;
-    heightmap[width - 1][0] = (std::rand() % 200) / 100 * - 1.0f;
-    heightmap[0][height - 1] = (std::rand() % 200) / 100 * - 1.0f;
-    heightmap[width - 1][height - 1] = (std::rand() % 200) / 100 * - 1.0f;
+    heightmap[0][0] = -1.0f;
+    heightmap[width - 1][0] = -1.0f;
+    heightmap[0][height - 1] = -1.0f;
+    heightmap[width - 1][height - 1] = -1.0f;
     heightmap[(width - 1) / 2][(height - 1) / 2] = 1.0f;
    
-    //Island seeds
     
 
 
@@ -329,7 +336,7 @@ void Level::generateLevel(const int width, const int height)
     }
     
     //Initializes gradientArray to 1's
-	std::vector<std::vector<float>> gradientArray;
+	std::vector<std::vector<float> > gradientArray;
 	gradientArray.resize(width);
 	for (int i = 0; i < gradientArray.size(); ++i)
 		gradientArray[i].resize(width);
@@ -413,7 +420,7 @@ void Level::generateLevel(const int width, const int height)
 			   }
            }
            
-	   heightmap[xPos][yPos] -= gradientArray[xPos][yPos];
+	   //heightmap[xPos][yPos] -= gradientArray[xPos][yPos];
             float height = heightmap[xPos][yPos];
             
 			//Sets the heightmap to the tiles' numbers (0 = deep water, 1 = shallow water, etc...)
@@ -473,10 +480,12 @@ void Level::generateLevel(const int width, const int height)
 			 }
 
 			 std::string type;
-			if (row <= 3 || row >= 10)
-				type = "unwalkable";
+			if (row <= 3)
+			  type = "water";
+			else if(row >= 10)
+			  type = "rock";
 			else
-				type = "walkable";
+			  type = "walkable";
 
 			if(hasItem)
 			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "tree");

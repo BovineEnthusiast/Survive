@@ -69,7 +69,7 @@ private:
 	int bulletsPerMag_ = 15; //How much per reload
 	int currentBullets_ = 15; //In current reload
 	int totalBullets_ = 9999; //Total ammo
-	float recoilAmount_ = 0.1f; //In game "pixels"
+	float recoilAmount_ = 4.0f; //In game "pixels"
 	float fireRate_ = 0.1f; // bullets/sec
 	bool reloading_ = false;
 	bool auto_ = false;

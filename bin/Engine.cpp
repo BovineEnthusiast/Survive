@@ -90,7 +90,7 @@ void Engine::draw()
 		//Prevents out of bounds exception
 		if (bottomRightX > 255)
 			bottomRightX = 255;
-		if (bottomRightY > 256)
+		if (bottomRightY > 255)
 			bottomRightY = 255;
 
 
@@ -98,7 +98,6 @@ void Engine::draw()
 		for (size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
 			for (size_t tile = topLeftY; tile <= bottomRightY; ++tile)
 			{
-			  std::cout << "x: " << vTile << " y: " << tile << std::endl;
 				level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_ + 16, (float)tile * tileSize_ + 16));
 				window_.draw(level_.tiles[vTile][tile].getSprite());
 			}

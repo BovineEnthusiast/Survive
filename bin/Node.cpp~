@@ -1,0 +1,30 @@
+#include "Node.h"
+
+Node::Node(Node* parentNodePtr, const sf::Vector2i& position)
+  :parentNodePtr_(parentNodePtr)
+{
+  if(parentNodePtr_ != nullptr)
+    {
+      sf::Vector2i parentPosition = parentNodePtr_->getPosition();
+      position_ = sf::Vector2i(parentPosition.x + position.x * 32, parentPosition.y + position.y * 32);
+    }
+  else
+    position_ = position;
+}
+
+//Getters
+Node* Node::getParentNodePtr() const { return parentNodePtr_; }
+float Node::getDistanceValue() const { return distanceValue_; }
+float Node::getHeuristicValue() const { return heuristicValue_; }
+float Node::getTotalValue() const { return totalValue_; }
+bool Node::isStartNode() const { return startNode_; }
+sf::Vector2i Node::getPosition() const { return position_; }
+//Setters
+void Node::setDistanceValue(float distanceValue) { distanceValue_ = distanceValue; }
+void Node::setHeuristicValue(float heuristicValue) { heuristicValue_ = heuristicValue; }
+void Node::setTotalValue(float totalValue) { totalValue_ = totalValue; }
+void Node::setIsStartNode(bool startNode) { startNode_ = startNode; }
+//Comparison functor
+bool Node::operator() (const Node& lhv, const Node& rhv) const {return lhv.totalValue_ < rhv.totalValue_; }
+bool Node::operator== (const Node& rhv) const {return position_ == rhv.position_; }
+bool Node::operator< (const Node& rhv) const { return totalValue_ < rhv.totalValue_; }

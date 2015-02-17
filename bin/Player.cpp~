@@ -22,6 +22,10 @@ void Player::update(const sf::Time& dT)
   
     if(health_ > 0)
       {
+	//Resets the gun if replaying
+	if((currentGun_ == 1 && !hasMagnum_) || (currentGun_ == 2 && !hasShotgun_) || (currentGun_ == 3 && !hasRifle_))
+	  currentGun_ = 0;
+	
         //Switches out the gun if number is pressed
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
 	  currentGun_ = 0;

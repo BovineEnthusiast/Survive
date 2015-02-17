@@ -1,0 +1,9 @@
+CC = g++
+COMPILER_FLAGS = -std=c++1 -pthread -g -c
+FILES = *.cpp
+LINKER_FLAGS = -lsfml-audio -lsfml-graphics -lsfml-window -lsfml-system
+OBJS = *.o
+BIN = 
+#Compile(output into error.txt if there is an error), link, then run
+all:
+	$(CC) $(COMPILER_FLAGS) $(FILES) 2> "errors.txt"
