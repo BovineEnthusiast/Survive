@@ -52,7 +52,15 @@ void Level::update(const sf::Time& dT)
 
 	if (player_.getHealth() <= 0)
 		lost_ = true;
-    //Adds zombies if current amount is less than max
+
+
+	//Camera shake
+	float cameraShake = player_.getShake();
+	if(cameraShake != 0)
+	  camera_.setShake(cameraShake);
+	camera_.setPosition(player_.getPositionGlobal());
+	camera_.update(dT);
+	
 }
 void Level::updateGUI(const sf::Time& dT)
 {
@@ -64,7 +72,7 @@ void Level::generateLevel(const int width, const int height)
 {
 	//Resets the level in case of replay
 	player_.setHealth(100);
-	player_.setPoints(10000);
+	player_.setPoints(111110);
 	player_.setHasMagnum(false);
 	player_.setHasShotgun(false);
 	player_.setHasRifle(false);
@@ -72,6 +80,7 @@ void Level::generateLevel(const int width, const int height)
 	player_.setBarricades(0);
 	spatialPartitions_.clear();
 	tiles.clear();
+	GUIManager_.reset();
 	wave_ = 1;
 	zombiesAlive_ = 0;
 	zombiesToSpawn_ = 10;

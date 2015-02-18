@@ -6,9 +6,11 @@ class Camera
 {
 public:
     Camera();
+    void update(const sf::Time&);
     void resizeView(const sf::Vector2u&);
     void move(const sf::Vector2f&);
     void changeSize(const int);
+    void setShake(const float);
     
     //Setters
     void setPosition(const sf::Vector2f&);
@@ -26,6 +28,15 @@ private:
     //The view to send to the window
     sf::View view_;
 
+    //The view that stores the position view
+    sf::View posView_;
+
+    //Camera shake
+    float shakeRadius_ = 0.0f;
+    sf::Clock shakeClock_;
+    float radians_ = 0.0f;
+    bool firstShake_ = true;
+    sf::Vector2f shakeDirection_;
 };
 
 #endif	

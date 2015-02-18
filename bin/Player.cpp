@@ -18,13 +18,26 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 
 void Player::update(const sf::Time& dT)
 { 
-  
+  if(downSwapLeft_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+    downSwapLeft_ = false;
+  else if(downSwapRight_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+    downSwapRight_ = false;
   
     if(health_ > 0)
       {
 	//Resets the gun if replaying
 	if((currentGun_ == 1 && !hasMagnum_) || (currentGun_ == 2 && !hasShotgun_) || (currentGun_ == 3 && !hasRifle_))
 	  currentGun_ = 0;
+	if(!downSwapLeft_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+	  {
+	    downSwapLeft_ = true;
+	    swapGun(true);
+	  }
+	else if(!downSwapRight_ && sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+	  {
+	    downSwapRight_ = true;
+	    swapGun(false);
+	  }
 	
         //Switches out the gun if number is pressed
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && currentGun_ != 0)
@@ -82,6 +95,7 @@ void Player::update(const sf::Time& dT)
         vGuns_[currentGun_].setPlayerPosition(positionGlobal_);
         vGuns_[currentGun_].setPlayerVelocity(velocity_);
         vGuns_[currentGun_].update(dT);
+	shake_ = vGuns_[currentGun_].getShake();
 
         float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358 / 180;
         sf::Vector2f perpVec = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
@@ -101,6 +115,12 @@ int Player::getCurrentGunIndex() const {return currentGun_;}
 int Player::getPoints() const {return points_;}
 int Player::getTurrets() const { return turrets_; }
 int Player::getBarricades() const { return barricades_; }
+float Player::getShake()
+{
+  float shake = shake_;
+  shake_ = 0.0f;
+  return shake;
+}
 bool Player::hasMagnum() const { return hasMagnum_; }
 bool Player::hasShotgun() const { return hasShotgun_; }
 bool Player::hasRifle() const { return hasRifle_; }
@@ -117,4 +137,45 @@ void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 {
     for(auto iGun = vGuns_.begin(); iGun != vGuns_.end(); ++iGun)
         iGun->setBulletsPtr(pointer);
+}
+
+//Helper functions
+void Player::swapGun(const bool left)
+{
+  if(left)
+    {
+      if(currentGun_ != 0)
+	currentGun_ -= 1;
+      else
+	currentGun_ = 3;
+    }
+  else
+    {
+      if(currentGun_ != 3)
+	currentGun_ += 1;
+      else
+	currentGun_ = 0;
+    }
+
+  
+  
+  //Check for invalid gun, recurse if invalid, play sound if valid
+  bool recurse = false;
+  if((currentGun_ == 1 && !hasMagnum_)
+     || (currentGun_ == 2 && !hasShotgun_)
+     || (currentGun_ == 3 && !hasRifle_))
+    recurse = true;
+  else if(currentGun_ == 0)
+    pSoundManager_->playSound("pistol_select");
+  else if(currentGun_ == 1)
+    pSoundManager_->playSound("magnum_select");
+  else if(currentGun_ == 2)
+    pSoundManager_->playSound("shotgun_select");
+  else if(currentGun_ == 3)
+    pSoundManager_->playSound("rifle_select");
+  
+  if(recurse && left)
+    swapGun(true);
+  else if(recurse && !left)
+    swapGun(false);
 }

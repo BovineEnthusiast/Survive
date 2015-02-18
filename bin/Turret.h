@@ -4,12 +4,13 @@
 #include <vector>
 #include <array>
 #include "ImageManager.h"
+#include "SoundManager.h"
 #include "GameObject.h"
 #include "Bullet.h"
 class Turret : public GameObject
 {
 public:
-	Turret(const sf::Vector2f&, std::list<Bullet>*, ImageManager*);
+  Turret(const sf::Vector2f&, std::list<Bullet>*, ImageManager*, SoundManager*);
 	void update(const sf::Time&);
 	void preUpdate(const std::vector<sf::Vector2f>&); //Horrible workaround to not being able to throw this into update
 
@@ -25,6 +26,7 @@ public:
 private:
 	//Stores all active bullets
 	std::list<Bullet>* pLBullets_;
+	SoundManager* pSoundManager_;
 	sf::Texture* pBaseTexture_;
 	sf::Texture* pTurretTexture_;
 	sf::Sprite baseSprite_;

@@ -48,7 +48,6 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		auto_ = true;
 		bulletDamage_ = 35;
 		bulletSpawnPos_ = sf::Vector2f(27.0f, 0.0f);
-
 	}
 	else if (type == "shotgun")
 	{
@@ -143,6 +142,8 @@ void Gun::update(const sf::Time& dT)
 			    }
 			  currentBullets_ -= 1;
 			  fireRateClock_.restart();
+
+			  shake_ = 2.5f;
 			  
 			}
 			else
@@ -152,6 +153,13 @@ void Gun::update(const sf::Time& dT)
 				fireRateClock_.restart();
 				pSoundManager_->playSound(gunType_);
 				currentBullets_ -= 1;
+
+				if(gunType_ == "pistol")
+				  shake_ = 1.0f;
+				else if(gunType_ == "magnum")
+				  shake_ = 2.0f;
+				else if(gunType_ == "rifle")
+				  shake_ = 1.5f;
 
 			}
 		}
@@ -194,7 +202,12 @@ int Gun::getTotalAmmo() const { return totalBullets_; }
 sf::Time Gun::getCurrentReloadTime() const { return reloadClock_.getElapsedTime(); }
 float Gun::getReloadTime() const { return reloadTime_; }
 bool Gun::isReloading() const { return reloading_; }
-
+float Gun::getShake()
+{
+  float shake = shake_;
+  shake_ = 0.0f;
+  return shake;
+}
 //Setters 
 void Gun::setLocalPosition(const sf::Vector2f& position) { positionLocal_ = position; }
 void Gun::setPlayerPosition(const sf::Vector2f& position) { playerPos_ = position; }

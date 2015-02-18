@@ -12,13 +12,17 @@ public:
     void setHit(bool);
     
     //Getters
-    sf::RectangleShape getSprite();
+    sf::RectangleShape getSprite() const;
+    sf::CircleShape getLight() const;
     int getDamage() const;
     bool isDead();
     bool isHit();
     sf::Vector2f getLastPosition();
  
 private:
+    //Light caused by the bullet
+    sf::CircleShape light_;
+    
     sf::RectangleShape bullet_;
     sf::Vector2f velocity_;
     sf::Vector2f lastPosition_;

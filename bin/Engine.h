@@ -29,6 +29,10 @@ private:
 	bool inMenu_ = true;
     void update();
     void draw();
+
+    //Shaders
+    sf::RenderTexture renderTexture_;
+    sf::Shader shaderGlow_;
 };
 
 #endif	

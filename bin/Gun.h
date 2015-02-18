@@ -28,7 +28,7 @@ public:
 	sf::Time getCurrentReloadTime() const;
 	float getReloadTime() const;
 	bool isReloading() const;
-
+	float getShake();
 	//Setters
 	void setLocalPosition(const sf::Vector2f&);
 	void setPlayerPosition(const sf::Vector2f&);
@@ -76,7 +76,7 @@ private:
 	bool clicked_ = false; //Used to enforce semi-auto
 	bool ptrSet_ = false;
 	bool shotgun_ = false;
-
+	float shake_ = 0.0f;
 	//Animation variables
 	sf::Vector2f swayOffset_;
 	sf::Vector2f recoilOffset_;

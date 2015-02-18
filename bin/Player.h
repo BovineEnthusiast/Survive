@@ -19,6 +19,7 @@ public:
     int getPoints() const;
     int getTurrets() const;
     int getBarricades() const;
+    float getShake();
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
@@ -33,6 +34,10 @@ public:
     void setHasShotgun(const bool);
     void setHasRifle(const bool);
  private:
+    //Button clicks
+    bool downSwapRight_ = false;
+    bool downSwapLeft_ = false;
+    
     //Weapon unlocks/amounts
     bool hasMagnum_ = false;
     bool hasShotgun_ = false;
@@ -45,8 +50,11 @@ public:
     int currentGun_ = 0;
     std::vector<Gun> vGuns_;
     SoundManager* pSoundManager_;
+    float shake_;
     sf::Clock footstepClock_;
-    
+
+    //Helper functions
+    void swapGun(const bool);
 };
 
 #endif	

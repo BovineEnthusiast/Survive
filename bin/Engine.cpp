@@ -12,8 +12,9 @@ Engine::Engine()
 {}
 bool Engine::initialize()
 {
-	window_.create(sf::VideoMode(1440, 720), "Survive");
-	return true;
+  shaderGlow_.loadFromFile("shaders/frag/glow.frag", sf::Shader::Fragment);
+  window_.create(sf::VideoMode(1440, 720), "Survive");
+  return true;
 }
 
 void Engine::update()
@@ -34,7 +35,7 @@ void Engine::update()
 
 void Engine::draw()
 {
-	if (inMenu_)
+  if (inMenu_)
 	{
 		window_.draw(menuManager_.getTitleRect());
 		if (menuManager_.getCurrentMenu() == 0)
@@ -97,7 +98,13 @@ void Engine::draw()
 		//Draws Tiles inside the range of the camera
 		for (size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
 			for (size_t tile = topLeftY; tile <= bottomRightY; ++tile)
-			{
+			{/*
+			  shaderGlow_.setParameter("frag_LightOrigin", level_.getPlayer().getPositionGlobal());
+			  shaderGlow_.setParameter("frag_LightColor", sf::Color(255.0f, 0.0f, 0.0f, 255.0f));
+			  shaderGlow_.setParameter("frag_LightLuminosity", 10.0f);
+			  sf::RenderStates rs;
+			  rs.shader = &shaderGlow_;
+			  rs.blendMode = sf::BlendAdd;*/
 				level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_ + 16, (float)tile * tileSize_ + 16));
 				window_.draw(level_.tiles[vTile][tile].getSprite());
 			}
@@ -174,8 +181,26 @@ void Engine::draw()
 				//Draws bullets
 				std::list<Bullet> vBullets = iPartition->getBullets();
 				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
-				{
+				{			      
 					window_.draw(iBullet->getSprite());
+
+					//Light
+
+					//Calculating the light position in window coordinates
+					sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
+					sf::View view = window_.getView();
+					sf::Vector2f viewSize = view.getSize();
+					sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
+					sf::Vector2f windowCoord((iBullet->getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
+					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
+					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
+					shaderGlow_.setParameter("frag_Radius", 64.0f * (windowSize.x / viewSize.x));
+
+					sf::RenderStates rs;
+					rs.shader = &shaderGlow_;
+					rs.blendMode = sf::BlendAdd;
+
+					window_.draw(iBullet->getLight(), rs);
 				}
 
 				//Draws trees
@@ -241,7 +266,6 @@ int Engine::run()
 	{
 		// delta time
 		_dT = _dTClock.restart();
-
 		update();
 
 		if (inMenu_)
@@ -257,7 +281,7 @@ int Engine::run()
 		{
 
 			//update cam
-			level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
+		  //	level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
 			//Clamps the camera to edges
 			if (level_.getCameraView().getCenter().x - level_.getCameraView().getSize().x / 2 < 0)
 				level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getSize().x / 2, level_.getCameraView().getCenter().y));

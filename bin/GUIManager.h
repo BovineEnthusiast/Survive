@@ -1,3 +1,4 @@
+
 #ifndef GUIMANAGER_H
 #define	GUIMANAGER_H
 #include <SFML/Graphics.hpp>
@@ -7,6 +8,7 @@ class GUIManager
 public:
     GUIManager(sf::RenderWindow*, Player*, int*, int*);
     void update(const sf::Time&);
+    void reset();
     
     //Getters
     sf::RectangleShape getHealthOutOf() const;
@@ -42,6 +44,9 @@ public:
     sf::Text getPointsText() const;
     
  private:
+    //Allows only clicks to buy
+    bool clickDown_ = false;
+    
     //Helpers for text
     void setUpText(sf::Text&, const std::string&);
     void showInStore(sf::Text&, const int, const int, const float);
@@ -115,10 +120,10 @@ public:
     float titleTextSize_ = 0.1f;
     //Gun/Item prices
     int priceMagnum_ = 1250;
-    int priceShotgun_ = 3000;
-    int priceRifle_ = 5000;
-    int priceBarricade_ = 300;
-    int priceTurret_ = 2500;
+    int priceShotgun_ = 2000;
+    int priceRifle_ = 3000;
+    int priceBarricade_ = 100;
+    int priceTurret_ = 1000;
 
     //Buy button texts
     sf::Text buyMagnumText_;

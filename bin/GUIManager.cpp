@@ -8,63 +8,15 @@ GUIManager::GUIManager(sf::RenderWindow* pWindow, Player* pPlayer, int* pWave, i
 {
   if(!font_.loadFromFile("assets/fonts/font.otf"))
     std::cout << "Failed to load font." << std::endl;
-  
-  //Wave
-  waveText_.setFont(font_);
-  zombiesText_.setFont(font_);
-  waveText_.setColor(sf::Color(226, 232, 235));
-  zombiesText_.setColor(sf::Color(226, 232, 235));
-  waveBackground_.setFillColor(sf::Color(0, 0, 0, 50));
-  waveBackground_.setSize(sf::Vector2f(1.0f, 1.0f));
-  waveBackground_.setOrigin(sf::Vector2f(1.0f, 0.0f));
-  pointsText_.setFont(font_);
- 
-  //Health
-  healthOutOf_.setFillColor(sf::Color(214, 34, 34));
-  healthCurrent_.setFillColor(sf::Color(78, 213, 116));
-  healthOutOf_.setSize(sf::Vector2f(3.0f,3.0f));
-  healthCurrent_.setSize(sf::Vector2f(3.0f, 3.0f));
-  healthOutOf_.setOrigin(0.0f, 3.0f);
-  healthCurrent_.setOrigin(0.0f, 3.0f);
-  
-  //Ammo
-  ammo_.setFont(font_);
-  ammo_.setColor(sf::Color::Black);
-  
-  //Reload
-  reloadOutOf_.setFillColor(sf::Color(23, 24, 25));
-  reloadCurrent_.setFillColor(sf::Color(141, 191, 215));
-  reloadCurrent_.setSize(sf::Vector2f(3.0f, 3.0f));
-  reloadOutOf_.setSize(sf::Vector2f(3.0f, 3.0f));
-  reloadCurrent_.setOrigin(sf::Vector2f(3.0f, 3.0f));
-  reloadOutOf_.setOrigin(sf::Vector2f(3.0f, 3.0f));
-  
-  //---------------------Store------------------------
-  buyMenuBackground_.setSize(sf::Vector2f(1.0f, 1.0f));
-  buyMenuBackground_.setOrigin(0.5f, 0.5f);
-  exitButton_.setFillColor(sf::Color(255, 0, 55, 200));
-  selectionRect_.setFillColor(sf::Color::Transparent);
-  setUpText(storeText_, "Store");  
-  setUpText(pistolText_, "Pistol");
-  setUpText(magnumText_, "Magnum");
-  setUpText(shotgunText_, "Shotgun");
-  setUpText(rifleText_, "Rifle");
-  setUpText(rocketText_, "Rocket");
-  setUpText(barricadeText_, "Barricade");
-  setUpText(turretText_, "Turret");
-  setUpText(rocketTurretText_, "Rocket Turret");
-  setUpText(mineText_, "Mine");
-  setUpText(buyMagnumText_, "Buy: " + std::to_string(priceMagnum_));
-  setUpText(buyShotgunText_, "Buy: " + std::to_string(priceShotgun_));
-  setUpText(buyRifleText_, "Buy: " + std::to_string(priceRifle_));
-  setUpText(buyRocketText_, "Buy: ");
-  setUpText(buyBarricadeText_, "Buy: " + std::to_string(priceBarricade_));
-  setUpText(buyTurretText_, "Buy: " + std::to_string(priceTurret_));
-  setUpText(buyRocketTurretText_, "Buy: ");
-  setUpText(buyMineText_, "Buy: ");
+
+  reset();
+
 }
 void GUIManager::update(const sf::Time& dT)
 {
+  if(clickDown_ && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    clickDown_ = false;
+  
   if (toggled_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::B))
     toggled_ = false;
   sf::Vector2f viewSize(pWindow_->getView().getSize());
@@ -157,21 +109,21 @@ void GUIManager::update(const sf::Time& dT)
 	  showInStore(buyRocketTurretText_, 8.0f, 8.0f, itemTextSize_);
 	  showInStore(buyMineText_, 9.0f, 8.0f, itemTextSize_);
 	  
-	  if (hover(buyMagnumText_) && !pPlayer_->hasMagnum() && pPlayer_->getPoints() > priceMagnum_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	    {	      
+	  if (hover(buyMagnumText_) && !pPlayer_->hasMagnum() && pPlayer_->getPoints() > priceMagnum_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	    {
 	      pPlayer_->setHasMagnum(true);
 	      pPlayer_->setPoints(pPlayer_->getPoints() - priceMagnum_);
 	      buyMagnumText_.setString("Bought");
 	      buyMagnumText_.setOrigin(buyMagnumText_.getLocalBounds().width / 2.0f, buyMagnumText_.getLocalBounds().height / 2.0f);
 	    }
-	  else if (hover(buyShotgunText_) && pPlayer_->getPoints() > priceShotgun_ && !pPlayer_->hasShotgun() && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	  else if (hover(buyShotgunText_) && pPlayer_->getPoints() > priceShotgun_ && !pPlayer_->hasShotgun() && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	    {
 	      pPlayer_->setHasShotgun(true);
 	      pPlayer_->setPoints(pPlayer_->getPoints() - priceShotgun_);
 	      buyShotgunText_.setString("Bought");
 	      buyShotgunText_.setOrigin(buyShotgunText_.getLocalBounds().width / 2.0f, buyShotgunText_.getLocalBounds().height / 2.0f);
 	    }
-	  else if (hover(buyRifleText_) && !pPlayer_->hasRifle() && pPlayer_->getPoints() > priceRifle_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	  else if (hover(buyRifleText_) && !pPlayer_->hasRifle() && pPlayer_->getPoints() > priceRifle_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	    {
 	      pPlayer_->setHasRifle(true);
 	      pPlayer_->setPoints(pPlayer_->getPoints() - priceRifle_);
@@ -182,12 +134,12 @@ void GUIManager::update(const sf::Time& dT)
 	    {
 	  
 	    }
-	  else if (hover(buyBarricadeText_) && pPlayer_->getPoints() > priceBarricade_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	  else if (hover(buyBarricadeText_) && pPlayer_->getPoints() > priceBarricade_ && !clickDown_ &&  sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	    {
 	      pPlayer_->setBarricades(pPlayer_->getBarricades() + 1);
 	      pPlayer_->setPoints(pPlayer_->getPoints() - priceBarricade_);
 	    }
-	  else if (hover(buyTurretText_) && pPlayer_->getPoints() > priceTurret_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	  else if (hover(buyTurretText_) && pPlayer_->getPoints() > priceTurret_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	    {
 	      pPlayer_->setTurrets(pPlayer_->getTurrets() + 1);
 	      pPlayer_->setPoints(pPlayer_->getPoints() - priceTurret_);
@@ -234,9 +186,67 @@ void GUIManager::update(const sf::Time& dT)
       buyMineText_.setColor(sf::Color::Transparent);
       selectionRect_.setFillColor(sf::Color::Transparent);
     }
+  if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    clickDown_ = true;
 }
 
 //Helpers
+void GUIManager::reset()
+{
+    //Wave
+  waveText_.setFont(font_);
+  zombiesText_.setFont(font_);
+  waveText_.setColor(sf::Color(226, 232, 235));
+  zombiesText_.setColor(sf::Color(226, 232, 235));
+  waveBackground_.setFillColor(sf::Color(0, 0, 0, 50));
+  waveBackground_.setSize(sf::Vector2f(1.0f, 1.0f));
+  waveBackground_.setOrigin(sf::Vector2f(1.0f, 0.0f));
+  pointsText_.setFont(font_);
+ 
+  //Health
+  healthOutOf_.setFillColor(sf::Color(214, 34, 34));
+  healthCurrent_.setFillColor(sf::Color(78, 213, 116));
+  healthOutOf_.setSize(sf::Vector2f(3.0f,3.0f));
+  healthCurrent_.setSize(sf::Vector2f(3.0f, 3.0f));
+  healthOutOf_.setOrigin(0.0f, 3.0f);
+  healthCurrent_.setOrigin(0.0f, 3.0f);
+  
+  //Ammo
+  ammo_.setFont(font_);
+  ammo_.setColor(sf::Color::Black);
+  
+  //Reload
+  reloadOutOf_.setFillColor(sf::Color(23, 24, 25));
+  reloadCurrent_.setFillColor(sf::Color(141, 191, 215));
+  reloadCurrent_.setSize(sf::Vector2f(3.0f, 3.0f));
+  reloadOutOf_.setSize(sf::Vector2f(3.0f, 3.0f));
+  reloadCurrent_.setOrigin(sf::Vector2f(3.0f, 3.0f));
+  reloadOutOf_.setOrigin(sf::Vector2f(3.0f, 3.0f));
+  
+  //---------------------Store------------------------
+  buyMenuBackground_.setSize(sf::Vector2f(1.0f, 1.0f));
+  buyMenuBackground_.setOrigin(0.5f, 0.5f);
+  exitButton_.setFillColor(sf::Color(255, 0, 55, 200));
+  selectionRect_.setFillColor(sf::Color::Transparent);
+  setUpText(storeText_, "Store");  
+  setUpText(pistolText_, "Pistol");
+  setUpText(magnumText_, "Magnum");
+  setUpText(shotgunText_, "Shotgun");
+  setUpText(rifleText_, "Rifle");
+  setUpText(rocketText_, "Rocket");
+  setUpText(barricadeText_, "Barricade");
+  setUpText(turretText_, "Turret");
+  setUpText(rocketTurretText_, "Rocket Turret");
+  setUpText(mineText_, "Mine");
+  setUpText(buyMagnumText_, "Buy: " + std::to_string(priceMagnum_));
+  setUpText(buyShotgunText_, "Buy: " + std::to_string(priceShotgun_));
+  setUpText(buyRifleText_, "Buy: " + std::to_string(priceRifle_));
+  setUpText(buyRocketText_, "Buy: ");
+  setUpText(buyBarricadeText_, "Buy: " + std::to_string(priceBarricade_));
+  setUpText(buyTurretText_, "Buy: " + std::to_string(priceTurret_));
+  setUpText(buyRocketTurretText_, "Buy: ");
+  setUpText(buyMineText_, "Buy: ");
+}
 void GUIManager::setUpText(sf::Text& text, const std::string& string)
 {
   text.setFont(font_);
@@ -270,6 +280,7 @@ bool GUIManager::hover(const sf::Text& text)
     }
   else
     return false;
+
 }
 //Getters
 sf::RectangleShape GUIManager::getHealthOutOf() const {return healthOutOf_;}

@@ -305,7 +305,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	  {
 	    player_->setTurrets(player_->getTurrets() - 1);
 	    turretClock_.restart();
-	    vTurrets_.push_back(Turret(player_->getPositionGlobal() + sf::Vector2f(16.0f, 16.0f) - sf::Vector2f(fmod(player_->getPositionGlobal().x, 32.0f), fmod(player_->getPositionGlobal().y, 32.0f)), &lBullets_, imageManager_));
+	    vTurrets_.push_back(Turret(player_->getPositionGlobal() + sf::Vector2f(16.0f, 16.0f) - sf::Vector2f(fmod(player_->getPositionGlobal().x, 32.0f), fmod(player_->getPositionGlobal().y, 32.0f)), &lBullets_, imageManager_, pSoundManager_));
 	  }
 	
 	//Barricade Addition

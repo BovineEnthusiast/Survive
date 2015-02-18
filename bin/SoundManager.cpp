@@ -124,135 +124,138 @@ void SoundManager::update(const sf::Time& dT)
 }
 void SoundManager::playSound(const std::string& type)
 {
-    if(type == "pistol")
+  if(lSounds_.size() < 255)
     {
-        sf::Sound sound;
-        int random = std::rand() % 3;
-        if(random == 0)
+      if(type == "pistol")
+	{
+	  sf::Sound sound;
+	  int random = std::rand() % 3;
+	  if(random == 0)
             sound = sf::Sound(bufferPistolOne_);
-        else if(random == 1)
+	  else if(random == 1)
             sound = sf::Sound(bufferPistolTwo_);
-        else
+	  else
             sound = sf::Sound(bufferPistolThree_);
-        
-        lSounds_.push_back(sound);
-        lSounds_.back().play();
-    }
-    else if(type == "pistol_select")
-      {
-	sf::Sound sound(bufferPistolSelect_);
-	lSounds_.push_back(sound);
-	lSounds_.back().play();
-      }
-    else if(type == "magnum")
-      {
-	sf::Sound sound;
-	int random = std::rand() % 8;
-	if(random == 0)
-	  sound = sf::Sound(bufferMagnumOne_);
-	else if(random == 1)
-	  sound = sf::Sound(bufferMagnumTwo_);
-	else if(random == 2)
-	  sound = sf::Sound(bufferMagnumThree_);
-	else if(random == 3)
-	  sound = sf::Sound(bufferMagnumFour_);
-	else if(random == 4)
-	  sound = sf::Sound(bufferMagnumFive_);
-	else if(random == 5)
-	  sound = sf::Sound(bufferMagnumSix_);
-	else if(random == 6)
-	  sound = sf::Sound(bufferMagnumSeven_);
-	else
-	  sound = sf::Sound(bufferMagnumEight_);
-
-	lSounds_.push_back(sound);
-	lSounds_.back().play();
-      }
-    else if(type == "magnum_select")
-      {
-	sf::Sound sound(bufferMagnumSelect_);
-	lSounds_.push_back(sound);
-	lSounds_.back().play();
-      }
-    else if(type == "shotgun")
-      {
-	sf::Sound sound(bufferShotgunOne_);
-	lSounds_.push_back(sound);
-	lSounds_.back().play();
-      }
-    else if(type == "shotgun_select")
-      {
-	sf::Sound sound(bufferShotgunSelect_);
-	lSounds_.push_back(sound);
-	lSounds_.back().play();
-      }	  
-    else if(type == "rifle")
-    {
-        sf::Sound sound;
-        int random = std::rand() % 4;
-        if(random == 0)
+	  
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "pistol_select")
+	{
+	  sf::Sound sound(bufferPistolSelect_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "magnum")
+	{
+	  sf::Sound sound;
+	  int random = std::rand() % 8;
+	  if(random == 0)
+	    sound = sf::Sound(bufferMagnumOne_);
+	  else if(random == 1)
+	    sound = sf::Sound(bufferMagnumTwo_);
+	  else if(random == 2)
+	    sound = sf::Sound(bufferMagnumThree_);
+	  else if(random == 3)
+	    sound = sf::Sound(bufferMagnumFour_);
+	  else if(random == 4)
+	    sound = sf::Sound(bufferMagnumFive_);
+	  else if(random == 5)
+	    sound = sf::Sound(bufferMagnumSix_);
+	  else if(random == 6)
+	    sound = sf::Sound(bufferMagnumSeven_);
+	  else
+	    sound = sf::Sound(bufferMagnumEight_);
+	  
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "magnum_select")
+	{
+	  sf::Sound sound(bufferMagnumSelect_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "shotgun")
+	{
+	  sf::Sound sound(bufferShotgunOne_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "shotgun_select")
+	{
+	  sf::Sound sound(bufferShotgunSelect_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}	  
+      else if(type == "rifle")
+	{
+	  sf::Sound sound;
+	  int random = std::rand() % 4;
+	  if(random == 0)
             sound = sf::Sound(bufferRifleOne_);
-        else if(random == 1)
+	  else if(random == 1)
             sound = sf::Sound(bufferRifleTwo_);
-        else if(random == 2)
+	  else if(random == 2)
             sound = sf::Sound(bufferRifleThree_);
-        else
+	  else
             sound = sf::Sound(bufferRifleFour_);
-        
-        lSounds_.push_back(sound);
-        lSounds_.back().play();
-    }
-    else if(type == "rifle_select")
-      {
-	sf::Sound sound(bufferRifleSelect_);
-	lSounds_.push_back(sound);
-	lSounds_.back().play();
-      }
-    else if(type == "grass")
-    {
-
-        sf::Sound sound;
-        int random = std::rand() % 7;
-        if(random == 0)
+	  
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "rifle_select")
+	{
+	  sf::Sound sound(bufferRifleSelect_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if(type == "grass")
+	{
+	  
+	  sf::Sound sound;
+	  int random = std::rand() % 7;
+	  if(random == 0)
             sound = sf::Sound(bufferGrassOne_);
-        else if(random == 1)
+	  else if(random == 1)
             sound = sf::Sound(bufferGrassTwo_);
-        else if(random == 2)
+	  else if(random == 2)
             sound = sf::Sound(bufferGrassThree_);
-        else if(random == 3)
+	  else if(random == 3)
             sound = sf::Sound(bufferGrassFour_);
-        else if(random == 4)
+	  else if(random == 4)
             sound = sf::Sound(bufferGrassFive_);
-        else if(random == 5)
+	  else if(random == 5)
             sound = sf::Sound(bufferGrassSix_);
-        else
+	  else
             sound = sf::Sound(bufferGrassSeven_);
-   
-        
-        lSounds_.push_back(sound);
-        lSounds_.back().play();
-    }
-    else if(type == "hit")
-    {
-   
-        sf::Sound sound = sf::Sound(bufferCrunch_);
-        lSounds_.push_back(sound);
-        lSounds_.back().play();
-    }
-    else if(type == "zombie_death")
-    {
-        sf::Sound sound = sf::Sound(bufferCrunchySplat_);
-        lSounds_.push_back(sound);
-        lSounds_.back().play();
-    }
-	else if (type == "hover")
-	{
-		lSounds_.push_back(sf::Sound(bufferHover_));
-		lSounds_.back().play();
+	  
+	  
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
 	}
-	else if (type == "click")
+      else if(type == "hit")
 	{
-		lSounds_.push_back(sf::Sound(bufferClick_));
-		lSounds_.back().play();
+	  
+	  sf::Sound sound = sf::Sound(bufferCrunch_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
 	}
+      else if(type == "zombie_death")
+	{
+	  sf::Sound sound = sf::Sound(bufferCrunchySplat_);
+	  lSounds_.push_back(sound);
+	  lSounds_.back().play();
+	}
+      else if (type == "hover")
+	{
+	  lSounds_.push_back(sf::Sound(bufferHover_));
+	  lSounds_.back().play();
+	}
+      else if (type == "click")
+	{
+	  lSounds_.push_back(sf::Sound(bufferClick_));
+	  lSounds_.back().play();
+	}
+    }
 }
