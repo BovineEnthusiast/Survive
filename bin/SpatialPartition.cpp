@@ -1,14 +1,22 @@
 #include <queue>
+#include <cmath>
 #include <thread>
 #include "SpatialPartition.h"
 #include "Collision.h"
 #include <iostream>
+
+bool SpatialPartition::clickTurretDown_;
+bool SpatialPartition::clickBarricadeDown_;
 
 SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<std::vector<SpatialPartition>>* partitions, SoundManager* pSoundManager, int* pZombiesAlive, int* pZombiesToSpawn, int* pWave)
 	:partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager), pZombiesAlive_(pZombiesAlive), pZombiesToSpawn_(pZombiesToSpawn), pWave_(pWave)
 {
 	xPos_ = partitionSpace.left / 320;
 	yPos_ = partitionSpace.top / 320;
+
+	//Static variable initialization
+	clickTurretDown_ = false;
+	clickBarricadeDown_ = false;
 
 }
 void SpatialPartition::update(const sf::Time& dT)
@@ -301,20 +309,34 @@ void SpatialPartition::update(const sf::Time& dT)
 	  }
 	
 	//Turret Addition
-	if (hasPlayer_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && turretClock_.getElapsedTime().asSeconds() > 1.0f && player_->getTurrets() > 0)
+	if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && player_->getTurrets() > 0)
 	  {
-	    player_->setTurrets(player_->getTurrets() - 1);
-	    turretClock_.restart();
-	    vTurrets_.push_back(Turret(player_->getPositionGlobal() + sf::Vector2f(16.0f, 16.0f) - sf::Vector2f(fmod(player_->getPositionGlobal().x, 32.0f), fmod(player_->getPositionGlobal().y, 32.0f)), &lBullets_, imageManager_, pSoundManager_));
-	  }
-	
+	    sf::Vector2f playerPosition = player_->getPositionGlobal();
+	    Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32) - 1;
+
+	    if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+	      {
+		pAboveTile->setHasItem(true);
+		clickTurretDown_ = true;
+		player_->setTurrets(player_->getTurrets() - 1);
+		vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
+	    
+	      }
+	  }	
 	//Barricade Addition
-	if (hasPlayer_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && barricadeClock_.getElapsedTime().asSeconds() > 1.0f && player_->getBarricades() > 0)
+	if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && player_->getBarricades() > 0)
 	  {
-	    player_->setBarricades(player_->getBarricades() - 1);
-	    barricadeClock_.restart();
-	    vBarricades_.push_back(Barricade(player_->getPositionGlobal() + sf::Vector2f(16.0f, 16.0f) - sf::Vector2f(fmod(player_->getPositionGlobal().x, 32.0f), fmod(player_->getPositionGlobal().y, 32.0f)), &imageManager_->barricadeTexture));
-	    vBarricades_.back().setHealth(100);
+	    sf::Vector2f playerPosition = player_->getPositionGlobal();
+	    Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32) - 1;
+
+	    if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+	      {
+		pAboveTile->setHasItem(true);
+		clickBarricadeDown_ = true;
+		player_->setBarricades(player_->getBarricades() - 1);
+		vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
+		vBarricades_.back().setHealth(100);
+	      }
 	  }
 	
 	std::vector<sf::Vector2f> zomPositions;
@@ -537,6 +559,11 @@ void SpatialPartition::update(const sf::Time& dT)
 		  }
 	      }	
 	  }
+
+	if(clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
+	  clickTurretDown_ = false;
+	if(clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))
+	  clickBarricadeDown_ = false;
 }
 
 //Setters
