@@ -33,15 +33,12 @@ void Level::update(const sf::Time& dT)
 	{
 		waveClock_.restart();
 		beetweenWaves_ = true;
-		std::cout << "Wave ended!" << std::endl;
 	}
 	if (waveClock_.getElapsedTime().asSeconds() > waveTime_ && beetweenWaves_)
 	{
 		++wave_;
 		zombiesToSpawn_ = wave_ * 10;
 		beetweenWaves_ = false;
-		std::cout << "Wave " << wave_ <<  "started!" << std::endl;
-
 	}
 	
     for(auto iPartitionRow = spatialPartitions_.begin(); iPartitionRow != spatialPartitions_.end(); ++iPartitionRow)
@@ -481,7 +478,7 @@ void Level::generateLevel(const int width, const int height)
 				 spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
 				 hasItem = true;
 			 }
-			 if (row > 5 && row <= 9 && std::rand() % 500 < 1)
+			 if (row > 5 && row <= 9 && std::rand() % 500 < 2)
 			 {
 				 Den den = Den(&imageManager_.zombieDenTexture);
 				 den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));

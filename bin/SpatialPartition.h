@@ -38,6 +38,7 @@ public:
   std::vector<Barricade> getBarricades() const;
   std::deque<BloodSplat> getBloodSplats() const;
   std::array<SpatialPartition*, 8> getNeigborPartitions() const;
+  sf::RectangleShape getSelectionRect() const;
 
   //Pushers
   void pushZombie(const Zombie&);
@@ -48,6 +49,10 @@ public:
   
 
  private:
+  //Used to select the area to place items before placing them
+  static sf::RectangleShape selectionRect_;
+  static bool selecting_;
+  
   //Used to determine clicks for turret/barricade placement
   static bool clickTurretDown_;
   static bool clickBarricadeDown_;

@@ -115,6 +115,7 @@ void Engine::draw()
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
+			  window_.draw(iPartition->getSelectionRect());
 				//Dens
 				std::vector<Den> vDens = iPartition->getDens();
 				for (auto iDen = vDens.begin(); iDen != vDens.end(); ++iDen)

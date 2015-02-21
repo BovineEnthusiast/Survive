@@ -17,7 +17,7 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 }
 
 void Player::update(const sf::Time& dT)
-{ 
+{
   if(downSwapLeft_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
     downSwapLeft_ = false;
   else if(downSwapRight_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::E))

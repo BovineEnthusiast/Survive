@@ -5,6 +5,8 @@
 #include "Collision.h"
 #include <iostream>
 
+sf::RectangleShape SpatialPartition::selectionRect_;
+bool SpatialPartition::selecting_;
 bool SpatialPartition::clickTurretDown_;
 bool SpatialPartition::clickBarricadeDown_;
 
@@ -14,10 +16,14 @@ SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* 
 	xPos_ = partitionSpace.left / 320;
 	yPos_ = partitionSpace.top / 320;
 
-	//Static variable initialization
+	//Static variable initialization      
+	selecting_ = false;
 	clickTurretDown_ = false;
 	clickBarricadeDown_ = false;
 
+	selectionRect_.setSize(sf::Vector2f(32.0f, 32.0f));
+	selectionRect_.setOrigin(16.0f, 16.0f);
+	selectionRect_.setFillColor(sf::Color(0, 255, 0, 255));
 }
 void SpatialPartition::update(const sf::Time& dT)
 {
@@ -307,36 +313,92 @@ void SpatialPartition::update(const sf::Time& dT)
 		  ++iBullet;
 	      }
 	  }
+
+	sf::Vector2f playerPosition = player_->getPositionGlobal();
+	int xPos = 0;
+	int yPos = 0;
 	
+	int rotation = (int)player_->getHeadSprite().getRotation() % 360;
+	if(rotation <= 23 || rotation > 338)
+	  {
+	    xPos = 1;
+	    yPos = 0;
+	  }
+	else if(rotation <= 68)
+	  {
+	    xPos = 1;
+	    yPos = 1;
+	  }
+	else if(rotation <= 113)
+	  {
+	    xPos = 0;
+	    yPos = 1;
+	  }
+	else if(rotation <= 158)
+	  {
+	    xPos = -1;
+	    yPos = 1;
+	  }
+	else if(rotation <= 203)
+	  {
+	    xPos = -1;
+	    yPos = 0;
+	  }
+	else if(rotation <= 248)
+	  {
+	    xPos = -1;
+	    yPos = -1;
+	  }
+	else if(rotation <= 293)
+	  {
+	    xPos = 0;
+	    yPos = -1;
+	  }
+	else if(rotation <= 338)
+	  {
+	    xPos = 1;
+	    yPos = -1;
+	  }
+	
+	Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32 + xPos).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32 + yPos);
+	
+		
 	//Turret Addition
 	if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && player_->getTurrets() > 0)
 	  {
-	    sf::Vector2f playerPosition = player_->getPositionGlobal();
-	    Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32) - 1;
-
-	    if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-	      {
-		pAboveTile->setHasItem(true);
-		clickTurretDown_ = true;
-		player_->setTurrets(player_->getTurrets() - 1);
-		vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
-	    
-	      }
-	  }	
+	    if(!selecting_)
+	      selecting_ = true;
+	    else
+		{
+		  selecting_ = false;		
+		  if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+		    {
+		      pAboveTile->setHasItem(true);
+		      clickTurretDown_ = true;
+		      player_->setTurrets(player_->getTurrets() - 1);
+		      vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
+		      
+		    }
+		}
+	  }
+	
 	//Barricade Addition
 	if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && player_->getBarricades() > 0)
 	  {
-	    sf::Vector2f playerPosition = player_->getPositionGlobal();
-	    Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32) - 1;
-
-	    if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-	      {
-		pAboveTile->setHasItem(true);
-		clickBarricadeDown_ = true;
-		player_->setBarricades(player_->getBarricades() - 1);
-		vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
-		vBarricades_.back().setHealth(100);
-	      }
+	    //if(!selecting_)
+	    //selecting_ = true;
+	    //else
+	    //{
+		selecting_ = false;		
+		if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+		  {
+		    pAboveTile->setHasItem(true);
+		    clickBarricadeDown_ = true;
+		    player_->setBarricades(player_->getBarricades() - 1);
+		    vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
+		    vBarricades_.back().setHealth(100);
+		  }
+		//}
 	  }
 	
 	std::vector<sf::Vector2f> zomPositions;
@@ -560,10 +622,23 @@ void SpatialPartition::update(const sf::Time& dT)
 	      }	
 	  }
 
+	//Draw selection rect
+	if(selecting_)
+	{
+	  selectionRect_.setPosition(pAboveTile->getSprite().getPosition());
+	}
 	if(clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
-	  clickTurretDown_ = false;
+	  {
+	    if(selecting_)
+	      selecting_ = false;
+	    clickTurretDown_ = false;
+	  }
 	if(clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))
-	  clickBarricadeDown_ = false;
+	  {
+	    if(selecting_)
+	      selecting_ = false;
+	    clickBarricadeDown_ = false;
+	  } 
 }
 
 //Setters
@@ -573,6 +648,7 @@ void SpatialPartition::setTilesPointer(std::vector<std::vector<Tile> >* pTiles) 
 
 //Getters
 sf::FloatRect SpatialPartition::getPartitionSpace() const { return partitionSpace_; }
+sf::RectangleShape SpatialPartition::getSelectionRect() const { return selectionRect_; }
 std::vector<Zombie> SpatialPartition::getZombies() const { return vZombies_; }
 std::list<Bullet> SpatialPartition::getBullets() const { return lBullets_; }
 std::vector<Tree> SpatialPartition::getTrees() const { return vTrees_; }
