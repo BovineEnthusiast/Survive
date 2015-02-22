@@ -10,638 +10,646 @@ bool SpatialPartition::selecting_;
 bool SpatialPartition::clickTurretDown_;
 bool SpatialPartition::clickBarricadeDown_;
 
-SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<std::vector<SpatialPartition>>* partitions, SoundManager* pSoundManager, int* pZombiesAlive, int* pZombiesToSpawn, int* pWave)
-	:partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager), pZombiesAlive_(pZombiesAlive), pZombiesToSpawn_(pZombiesToSpawn), pWave_(pWave)
+SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<std::vector<SpatialPartition> >* partitions, SoundManager* pSoundManager, int* pZombiesAlive, int* pZombiesToSpawn, int* pWave)
+    :partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager), pZombiesAlive_(pZombiesAlive), pZombiesToSpawn_(pZombiesToSpawn), pWave_(pWave)
 {
-	xPos_ = partitionSpace.left / 320;
-	yPos_ = partitionSpace.top / 320;
-
-	//Static variable initialization      
-	selecting_ = false;
-	clickTurretDown_ = false;
-	clickBarricadeDown_ = false;
-
-	selectionRect_.setSize(sf::Vector2f(32.0f, 32.0f));
-	selectionRect_.setOrigin(16.0f, 16.0f);
-	selectionRect_.setFillColor(sf::Color(0, 255, 0, 255));
+    xPos_ = partitionSpace.left / 320;
+    yPos_ = partitionSpace.top / 320;
+    
+    //Static variable initialization      
+    selecting_ = false;
+    clickTurretDown_ = false;
+    clickBarricadeDown_ = false;
+    
+    selectionRect_.setSize(sf::Vector2f(32.0f, 32.0f));
+    selectionRect_.setOrigin(16.0f, 16.0f);
+    selectionRect_.setFillColor(sf::Color(0, 255, 0, 255));
 }
 void SpatialPartition::update(const sf::Time& dT)
 {
-	if (firstUpdate_)
-	{
-		if (xPos_ - 1 >= 0 && yPos_ - 1 >= 0)
-			pSpatialPartitions_[0] = &partitions_->at(yPos_ - 1).at(xPos_ - 1);
-		else
-			pSpatialPartitions_[0] = nullptr;
-		if (yPos_ - 1 >= 0)
-			pSpatialPartitions_[1] = &partitions_->at(yPos_ - 1).at(xPos_);
-		else
-			pSpatialPartitions_[1] = nullptr;
-		if (xPos_ + 1 < partitions_->size() && yPos_ - 1 >= 0)
-			pSpatialPartitions_[2] = &partitions_->at(yPos_ - 1).at(xPos_ + 1);
-		else
-			pSpatialPartitions_[2] = nullptr;
-		if (xPos_ + 1 < partitions_->size())
-			pSpatialPartitions_[3] = &partitions_->at(yPos_).at(xPos_ + 1);
-		else
-			pSpatialPartitions_[3] = nullptr;
-		if (xPos_ + 1 < partitions_->size() && yPos_ + 1 < partitions_->size())
-			pSpatialPartitions_[4] = &partitions_->at(yPos_ + 1).at(xPos_ + 1);
-		else
-			pSpatialPartitions_[4] = nullptr;
-		if (yPos_ + 1 < partitions_->size())
-			pSpatialPartitions_[5] = &partitions_->at(yPos_ + 1).at(xPos_);
-		else
-			pSpatialPartitions_[5] = nullptr;
-		if (xPos_ - 1 >= 0 && yPos_ + 1 < partitions_->size())
-			pSpatialPartitions_[6] = &partitions_->at(yPos_ + 1).at(xPos_ - 1);
-		else
-			pSpatialPartitions_[6] = nullptr;
-		if (xPos_ - 1 >= 0)
-			pSpatialPartitions_[7] = &partitions_->at(yPos_).at(xPos_ - 1);
-		else
-			pSpatialPartitions_[7] = nullptr;
-
-		firstUpdate_ = false;
-	}
-	//Checks if the player is within this partition
-	if (partitionSpace_.contains(player_->getPositionGlobal()))
-		hasPlayer_ = true;
+    if (firstUpdate_)
+    {
+	if (xPos_ - 1 >= 0 && yPos_ - 1 >= 0)
+	    pSpatialPartitions_[0] = &partitions_->at(yPos_ - 1).at(xPos_ - 1);
 	else
-		hasPlayer_ = false;
-
-	if (hasPlayer_)
-	{
-		player_->update(dT);
-		player_->setGunBulletPointers(&lBullets_);
-	}
-
-	//--------------------------------------------UPDATE--------------------------------	
+	    pSpatialPartitions_[0] = nullptr;
+	if (yPos_ - 1 >= 0)
+	    pSpatialPartitions_[1] = &partitions_->at(yPos_ - 1).at(xPos_);
+	else
+	    pSpatialPartitions_[1] = nullptr;
+	if (xPos_ + 1 < partitions_->size() && yPos_ - 1 >= 0)
+	    pSpatialPartitions_[2] = &partitions_->at(yPos_ - 1).at(xPos_ + 1);
+	else
+	    pSpatialPartitions_[2] = nullptr;
+	if (xPos_ + 1 < partitions_->size())
+	    pSpatialPartitions_[3] = &partitions_->at(yPos_).at(xPos_ + 1);
+	else
+	    pSpatialPartitions_[3] = nullptr;
+	if (xPos_ + 1 < partitions_->size() && yPos_ + 1 < partitions_->size())
+	    pSpatialPartitions_[4] = &partitions_->at(yPos_ + 1).at(xPos_ + 1);
+	else
+	    pSpatialPartitions_[4] = nullptr;
+	if (yPos_ + 1 < partitions_->size())
+	    pSpatialPartitions_[5] = &partitions_->at(yPos_ + 1).at(xPos_);
+	else
+	    pSpatialPartitions_[5] = nullptr;
+	if (xPos_ - 1 >= 0 && yPos_ + 1 < partitions_->size())
+	    pSpatialPartitions_[6] = &partitions_->at(yPos_ + 1).at(xPos_ - 1);
+	else
+	    pSpatialPartitions_[6] = nullptr;
+	if (xPos_ - 1 >= 0)
+	    pSpatialPartitions_[7] = &partitions_->at(yPos_).at(xPos_ - 1);
+	else
+	    pSpatialPartitions_[7] = nullptr;
 	
-	//Blood
-	for (auto iBloodSplat = dBloodSplats_.begin(); iBloodSplat != dBloodSplats_.end();)
+	firstUpdate_ = false;
+    }
+    //Checks if the player is within this partition
+    if (partitionSpace_.contains(player_->getPositionGlobal()))
+	hasPlayer_ = true;
+    else
+	hasPlayer_ = false;
+    
+    if (hasPlayer_)
+    {
+	player_->update(dT);
+	player_->setGunBulletPointers(&lBullets_);
+    }
+    
+    //--------------------------------------------UPDATE--------------------------------	
+    
+    //Blood
+    for (auto iBloodSplat = dBloodSplats_.begin(); iBloodSplat != dBloodSplats_.end();)
+    {
+	iBloodSplat->update(dT);
+	
+	//Removes the blood if it is old enough, increments iterator
+	if (iBloodSplat->isFaded())
+	    iBloodSplat = dBloodSplats_.erase(iBloodSplat);
+	else
+	    iBloodSplat++;
+    }
+    
+    //Dens
+    for (auto& den : vDens_)
+    {
+	den.update(dT);
+	
+	//Spawn a zombie if time is ready
+	if (den.isReadyToSpawn() && *pZombiesToSpawn_ > 0)
 	{
-		iBloodSplat->update(dT);
-
-		//Removes the blood if it is old enough, increments iterator
-		if (iBloodSplat->isFaded())
-			iBloodSplat = dBloodSplats_.erase(iBloodSplat);
-		else
-			iBloodSplat++;
+	    --(*pZombiesToSpawn_);
+	    ++(*pZombiesAlive_);
+	    Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, &imageManager_->zombieCorpseTexture, (*pWave_ - 1) * 10, (*pWave_ + 10));
+	    zombie.pTiles = pVTiles_;
+	    zombie.setPositionGlobal(den.getPositionGlobal());
+	    vZombies_.push_back(zombie);
 	}
-
-	//Dens
-	for (auto& den : vDens_)
+    }
+    
+    //Zombies
+    for (auto iZombie = vZombies_.begin(); iZombie != vZombies_.end();)
+    {	  
+	if(iZombie->needsPath())
+	    iZombie->findPath(pVTiles_);
+	
+	// std::thread pathThread(&Zombie::findPath, iZombie, pVTiles_);
+	if (targetClock_.getElapsedTime().asSeconds() >= 1.0f)
 	{
-		den.update(dT);
-
-		//Spawn a zombie if time is ready
-		if (den.isReadyToSpawn() && *pZombiesToSpawn_ > 0)
+	    targetClock_.restart();
+	    std::deque<SpatialPartition*> openList;
+	    std::vector<SpatialPartition*> closedList;
+	    bool foundTurret = false;
+	    bool foundBarricade = false;
+	    float closestDistance = 9999.9f;
+	    Turret* pClosestTurret = nullptr;
+	    Barricade* pClosestBarricade = nullptr;
+	    sf::Vector2f zombiePos = iZombie->getPositionGlobal();
+	    for (auto& turret : vTurrets_)
+	    {
+		foundTurret = true;
+		sf::Vector2f turretPos = turret.getPositionGlobal();
+		float distance = abs(turretPos.x - zombiePos.x) + abs(turretPos.y - zombiePos.y);
+		if (distance < closestDistance)
 		{
-			--(*pZombiesToSpawn_);
-			++(*pZombiesAlive_);
-			Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, &imageManager_->zombieCorpseTexture, (*pWave_ - 1) * 10, (*pWave_ + 10));
-			zombie.pTiles = pVTiles_;
-			zombie.setPositionGlobal(den.getPositionGlobal());
-			vZombies_.push_back(zombie);
+		    closestDistance = distance;
+		    pClosestTurret = &turret;
 		}
-	}
-
-	//Zombies
-	for (auto iZombie = vZombies_.begin(); iZombie != vZombies_.end();)
-	  {	  
-	    if(iZombie->needsPath())
-	      iZombie->findPath(pVTiles_);
-	    
-	    // std::thread pathThread(&Zombie::findPath, iZombie, pVTiles_);
-	    if (targetClock_.getElapsedTime().asSeconds() >= 1.0f)
-	      {
-		targetClock_.restart();
-		std::deque<SpatialPartition*> openList;
-		std::vector<SpatialPartition*> closedList;
-		bool foundTurret = false;
-		bool foundBarricade = false;
-		float closestDistance = 9999.9f;
-		Turret* pClosestTurret = nullptr;
-		Barricade* pClosestBarricade = nullptr;
-		sf::Vector2f zombiePos = iZombie->getPositionGlobal();
-		for (auto& turret : vTurrets_)
-		  {
-		    foundTurret = true;
-		    sf::Vector2f turretPos = turret.getPositionGlobal();
-		    float distance = abs(turretPos.x - zombiePos.x) + abs(turretPos.y - zombiePos.y);
-				if (distance < closestDistance)
-				  {
-				    closestDistance = distance;
-				    pClosestTurret = &turret;
-				  }
+	    }
+	    for (auto& barricade : vBarricades_)
+	    {
+		foundBarricade = true;
+		sf::Vector2f barricadePos = barricade.getPositionGlobal();
+		float distance = abs(barricadePos.x - zombiePos.x) + (barricadePos.y - zombiePos.y);
+		if (distance < closestDistance)
+		{
+		    closestDistance = distance;
+		    pClosestBarricade = &barricade;
+		}
+	    }
+	    for (auto& partition : pSpatialPartitions_)
+	    {
+		if(partition != nullptr)
+		{
+		    openList.push_back(partition);
+		    for (auto& turret : partition->vTurrets_)
+		    {
+			foundTurret = true;
+			sf::Vector2f turretPos = turret.getPositionGlobal();
+			float distance = abs(turretPos.x - zombiePos.x) + abs(turretPos.y - zombiePos.y);				
+			if (distance < closestDistance)
+			{
+			    closestDistance = distance;
+			    pClosestTurret = &turret;
 			}
-		for (auto& barricade : vBarricades_)
-		  {
-				foundBarricade = true;
-				sf::Vector2f barricadePos = barricade.getPositionGlobal();
-				float distance = abs(barricadePos.x - zombiePos.x) + (barricadePos.y - zombiePos.y);
-				if (distance < closestDistance)
-				{
-				  closestDistance = distance;
-				  pClosestBarricade = &barricade;
-				}
-		  }
-			for (auto& partition : pSpatialPartitions_)
-			  {
-			    if(partition != nullptr)
-			      {
+		    }
+		    
+		    for (auto& barricade : partition->vBarricades_)
+		    {
+			foundBarricade = true;
+			sf::Vector2f barricadePos = barricade.getPositionGlobal();
+			float distance = abs(barricadePos.x - zombiePos.x) + (barricadePos.y - zombiePos.y);
+			if (distance < closestDistance)
+			{
+			    closestDistance = distance;
+			    pClosestBarricade = &barricade;
+			}
+		    }
+		}
+	    }
+	    //No zombies were found in the initial ring of partitions
+	    const int MIN_NUM_PART_CHECK = 16; //The number of partitions to check at least beyond the initial ring if the initial ring contained no zombie
+	    int partitionsChecked = 0;
+	    while ((!foundTurret || !foundBarricade) && closedList.size() != 100)
+	    {
+		++partitionsChecked;
+		SpatialPartition* pPartition = openList.front();
+		openList.pop_front();
+		if(pPartition != nullptr)
+		{
+		    for (auto& turret : pPartition->vTurrets_)
+		    {
+			if (partitionsChecked >= MIN_NUM_PART_CHECK)
+			    foundTurret = true;
+			sf::Vector2f turretPos = turret.getPositionGlobal();
+			float distance = abs(turretPos.x - zombiePos.x) + abs(turretPos.y - zombiePos.y);
+			if (distance < closestDistance)
+			{
+			    closestDistance = distance;
+			    pClosestTurret = &turret;
+			}
+			
+		    }
+		    for (auto& barricade : pPartition->vBarricades_)
+		    {
+			if (partitionsChecked >= MIN_NUM_PART_CHECK)
+			    foundBarricade = true;
+			sf::Vector2f barricadePos = barricade.getPositionGlobal();
+			float distance = abs(barricadePos.x - zombiePos.x) + (barricadePos.y - zombiePos.y);
+			if (distance < closestDistance)
+			{
+			    closestDistance = distance;
+			    pClosestBarricade = &barricade;
+			}
+		    }
+		    for (auto& partition : pPartition->pSpatialPartitions_)
+		    {
+			if (partition != nullptr)
+			{
+			    bool isOnList = false;
+			    for (auto& listPartition : openList)
+				if (listPartition == partition)
+				    isOnList = true;
+			    for (auto& listPartition : closedList)
+				if (listPartition == partition)
+				    isOnList = true;
+			    if (!isOnList)
 				openList.push_back(partition);
-				for (auto& turret : partition->vTurrets_)
-				  {
-				    foundTurret = true;
-				    sf::Vector2f turretPos = turret.getPositionGlobal();
-				    float distance = abs(turretPos.x - zombiePos.x) + abs(turretPos.y - zombiePos.y);				
-					if (distance < closestDistance)
-					  {
-					    closestDistance = distance;
-					    pClosestTurret = &turret;
-					  }
-				  }
-				
-				for (auto& barricade : partition->vBarricades_)
-				  {
-				    foundBarricade = true;
-				    sf::Vector2f barricadePos = barricade.getPositionGlobal();
-				    float distance = abs(barricadePos.x - zombiePos.x) + (barricadePos.y - zombiePos.y);
-				    if (distance < closestDistance)
-				      {
-					closestDistance = distance;
-					pClosestBarricade = &barricade;
-				      }
-				  }
-			      }
-			  }
-			//No zombies were found in the initial ring of partitions
-			const int MIN_NUM_PART_CHECK = 16; //The number of partitions to check at least beyond the initial ring if the initial ring contained no zombie
-			int partitionsChecked = 0;
-			while ((!foundTurret || !foundBarricade) && closedList.size() != 100)
-			  {
-			    ++partitionsChecked;
-			    SpatialPartition* pPartition = openList.front();
-			    openList.pop_front();
-			    if(pPartition != nullptr)
-			      {
-				for (auto& turret : pPartition->vTurrets_)
-				  {
-				    if (partitionsChecked >= MIN_NUM_PART_CHECK)
-				      foundTurret = true;
-				    sf::Vector2f turretPos = turret.getPositionGlobal();
-				    float distance = abs(turretPos.x - zombiePos.x) + abs(turretPos.y - zombiePos.y);
-				    if (distance < closestDistance)
-				      {
-					closestDistance = distance;
-					pClosestTurret = &turret;
-				      }
-				    
-				  }
-				for (auto& barricade : pPartition->vBarricades_)
-				  {
-				    if (partitionsChecked >= MIN_NUM_PART_CHECK)
-				      foundBarricade = true;
-				    sf::Vector2f barricadePos = barricade.getPositionGlobal();
-				    float distance = abs(barricadePos.x - zombiePos.x) + (barricadePos.y - zombiePos.y);
-				    if (distance < closestDistance)
-				      {
-					closestDistance = distance;
-					pClosestBarricade = &barricade;
-				      }
-				  }
-				for (auto& partition : pPartition->pSpatialPartitions_)
-				  {
-				    if (partition != nullptr)
-				      {
-					bool isOnList = false;
-					for (auto& listPartition : openList)
-					  if (listPartition == partition)
-					    isOnList = true;
-					for (auto& listPartition : closedList)
-					  if (listPartition == partition)
-					    isOnList = true;
-					if (!isOnList)
-					  openList.push_back(partition);
-				      }
-				    
-				  }
-				
-				closedList.push_back(pPartition);
-			      }
-			  }
-			if (pClosestBarricade != nullptr)
-			  iZombie->setBarricadePtr(pClosestBarricade);
-			if (pClosestTurret != nullptr)
-			  iZombie->setTurretPtr(pClosestTurret);
-	      }				
-	    //pathThread.join();					
-	    iZombie->update(dT);
-
-	    //Adds blood splats if it is sliding on the floor
-	    if (iZombie->bled())
-	      {
-		dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures[0]));
-		dBloodSplats_.back().setPositionGlobal(iZombie->getPositionGlobal());
-		
-	      }
-	    if (iZombie->countedDead())
-	      --(*pZombiesAlive_);
-
-	    //Removes the zombie if it is dead, increments iterator
-	    if (iZombie->isDeletable())
+			}
+			
+		    }
+		    
+		    closedList.push_back(pPartition);
+		}
+	    }
+	    if (pClosestBarricade != nullptr)
+		iZombie->setBarricadePtr(pClosestBarricade);
+	    if (pClosestTurret != nullptr)
+		iZombie->setTurretPtr(pClosestTurret);
+	}				
+	//pathThread.join();					
+	iZombie->update(dT);
+	
+	//Adds blood splats if it is sliding on the floor
+	if (iZombie->bled())
+	{
+	    dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures[0]));
+	    dBloodSplats_.back().setPositionGlobal(iZombie->getPositionGlobal());
+	    
+	}
+	if (iZombie->countedDead())
+	    --(*pZombiesAlive_);
+	
+	//Removes the zombie if it is dead, increments iterator
+	if (iZombie->isDeletable())
+	    iZombie = vZombies_.erase(iZombie);
+	
+	else
+	{
+	    //If outside this partition, move it
+	    sf::Vector2f zomPos = iZombie->getPositionGlobal();
+	    if (!partitionSpace_.contains(zomPos))
+	    {
+		bool found = false;
+		for (auto& partition : pSpatialPartitions_)
+		    if (partition != nullptr && partition->getPartitionSpace().contains(zomPos))
+		    {
+			partition->pushZombie(*iZombie);
 			iZombie = vZombies_.erase(iZombie);
-	    
+			found = true;
+			break;
+		    }
+		if (!found)
+		    iZombie = vZombies_.erase(iZombie);
+	    }
 	    else
-	      {
-		//If outside this partition, move it
-		sf::Vector2f zomPos = iZombie->getPositionGlobal();
-		if (!partitionSpace_.contains(zomPos))
-		  {
-		    bool found = false;
-		    for (auto& partition : pSpatialPartitions_)
-		      if (partition != nullptr && partition->getPartitionSpace().contains(zomPos))
-			{
-			  partition->pushZombie(*iZombie);
-			  iZombie = vZombies_.erase(iZombie);
-			  found = true;
-			  break;
-			}
-		    if (!found)
-		      iZombie = vZombies_.erase(iZombie);
-		  }
-		else
-		  iZombie++;
-	      }
-	  }
-
-	//Tree
-	for (auto& tree : vTrees_)	
-	  tree.update(dT);	
-
-	for (auto iBullet = lBullets_.begin(); iBullet != lBullets_.end();)
-	  {
-	    iBullet->update(dT);
-	    
-	    sf::Vector2f bulletPos(iBullet->getPositionGlobal());
-	    sf::Vector2i bulletTilePos((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32, (bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32);
-	    
-	    //If hit or dead, remove, else increments iterater
-	    if (iBullet->isHit() || iBullet->isHit() || ((bulletTilePos.x >= 0 && bulletTilePos.y >= 0 && bulletTilePos.x < 255 && bulletTilePos.y < 255) && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock"))
-	      iBullet = lBullets_.erase(iBullet);
+		iZombie++;
+	}
+    }
+    
+    //Tree
+    for (auto& tree : vTrees_)	
+	tree.update(dT);	
+    
+    for (auto iBullet = lBullets_.begin(); iBullet != lBullets_.end();)
+    {
+	iBullet->update(dT);
+	
+	sf::Vector2f bulletPos(iBullet->getPositionGlobal());
+	sf::Vector2i bulletTilePos((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32, (bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32);
+	
+	//If hit or dead, remove, else increments iterater
+	if (iBullet->isHit() || iBullet->isHit() || ((bulletTilePos.x >= 0 && bulletTilePos.y >= 0 && bulletTilePos.x < 255 && bulletTilePos.y < 255) && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock"))
+	    iBullet = lBullets_.erase(iBullet);
+	else
+	{
+	    //If outside partition, move it
+	    sf::Vector2f bulletPos = iBullet->getPositionGlobal();
+	    if (!partitionSpace_.contains(bulletPos))
+	    {
+		bool found = false;
+		for (auto& partition : pSpatialPartitions_)
+		    if (partition != nullptr && partition->getPartitionSpace().contains(bulletPos))
+		    {
+			partition->pushBullet(*iBullet);
+			iBullet = lBullets_.erase(iBullet);
+			found = true;
+			break;
+		    }
+		if (!found)
+		    iBullet = lBullets_.erase(iBullet);
+	    }
 	    else
-	      {
-		//If outside partition, move it
-		sf::Vector2f bulletPos = iBullet->getPositionGlobal();
-		if (!partitionSpace_.contains(bulletPos))
-		  {
-		    bool found = false;
-		    for (auto& partition : pSpatialPartitions_)
-		      if (partition != nullptr && partition->getPartitionSpace().contains(bulletPos))
-			{
-			  partition->pushBullet(*iBullet);
-			  iBullet = lBullets_.erase(iBullet);
-			  found = true;
-			  break;
-			}
-		    if (!found)
-		      iBullet = lBullets_.erase(iBullet);
-		  }
-		else
-		  ++iBullet;
-	      }
-	  }
+		++iBullet;
+	}
+    }
 
-	sf::Vector2f playerPosition = player_->getPositionGlobal();
-	int xPos = 0;
-	int yPos = 0;
+    sf::Vector2f playerPosition = player_->getPositionGlobal();
+    int xPos = 0;
+    int yPos = 0;
 	
-	int rotation = (int)player_->getHeadSprite().getRotation() % 360;
-	if(rotation <= 23 || rotation > 338)
-	  {
-	    xPos = 1;
-	    yPos = 0;
-	  }
-	else if(rotation <= 68)
-	  {
-	    xPos = 1;
-	    yPos = 1;
-	  }
-	else if(rotation <= 113)
-	  {
-	    xPos = 0;
-	    yPos = 1;
-	  }
-	else if(rotation <= 158)
-	  {
-	    xPos = -1;
-	    yPos = 1;
-	  }
-	else if(rotation <= 203)
-	  {
-	    xPos = -1;
-	    yPos = 0;
-	  }
-	else if(rotation <= 248)
-	  {
-	    xPos = -1;
-	    yPos = -1;
-	  }
-	else if(rotation <= 293)
-	  {
-	    xPos = 0;
-	    yPos = -1;
-	  }
-	else if(rotation <= 338)
-	  {
-	    xPos = 1;
-	    yPos = -1;
-	  }
+    int rotation = (int)player_->getHeadSprite().getRotation() % 360;
+    if(rotation <= 23 || rotation > 338)
+    {
+	xPos = 1;
+	yPos = 0;
+    }
+    else if(rotation <= 68)
+    {
+	xPos = 1;
+	yPos = 1;
+    }
+    else if(rotation <= 113)
+    {
+	xPos = 0;
+	yPos = 1;
+    }
+    else if(rotation <= 158)
+    {
+	xPos = -1;
+	yPos = 1;
+    }
+    else if(rotation <= 203)
+    {
+	xPos = -1;
+	yPos = 0;
+    }
+    else if(rotation <= 248)
+    {
+	xPos = -1;
+	yPos = -1;
+    }
+    else if(rotation <= 293)
+    {
+	xPos = 0;
+	yPos = -1;
+    }
+    else if(rotation <= 338)
+    {
+	xPos = 1;
+	yPos = -1;
+    }
 	
-	Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32 + xPos).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32 + yPos);
+    Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32 + xPos).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32 + yPos);
 	
 		
-	//Turret Addition
-	if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && player_->getTurrets() > 0)
+    //Turret Addition
+    if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && player_->getTurrets() > 0)
+    {
+	clickTurretDown_ = true;
+	if (!selecting_)
+	    selecting_ = true;
+	else
 	{
-		clickTurretDown_ = true;
-		if (!selecting_)
-			selecting_ = true;
-		else
-		{
-			selecting_ = false;
-			if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-			{
-				pAboveTile->setHasItem(true);
-				player_->setTurrets(player_->getTurrets() - 1);
-				vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
-			}
-		}
+	    selecting_ = false;
+	    if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+	    {
+		pAboveTile->setHasItem(true);
+		player_->setTurrets(player_->getTurrets() - 1);
+		vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
+	    }
 	}
+    }
 
-	//Barricade Addition
-	if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && player_->getBarricades() > 0)
+    //Barricade Addition
+    if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && player_->getBarricades() > 0)
+    {
+	clickBarricadeDown_ = true;
+	if (!selecting_)
+	    selecting_ = true;
+	else
 	{
+	    selecting_ = false;
+	    if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+	    {
+		pAboveTile->setHasItem(true);
 		clickBarricadeDown_ = true;
-		if (!selecting_)
-			selecting_ = true;
-		else
-		{
-			selecting_ = false;
-			if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-			{
-				pAboveTile->setHasItem(true);
-				clickBarricadeDown_ = true;
-				player_->setBarricades(player_->getBarricades() - 1);
-				vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
-				vBarricades_.back().setHealth(100);
-			}
-		}
+		player_->setBarricades(player_->getBarricades() - 1);
+		vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
+		vBarricades_.back().setHealth(100);
+	    }
 	}
+    }
 	
-	std::vector<sf::Vector2f> zomPositions;
-	for (auto& zombie : vZombies_)
-	  if (!zombie.isDead())
+    std::vector<sf::Vector2f> zomPositions;
+    for (auto& zombie : vZombies_)
+	if (!zombie.isDead())
 	    zomPositions.push_back(zombie.getPositionGlobal());
 	
-	for (auto& partition : pSpatialPartitions_)
-	  if (partition != nullptr)
+    for (auto& partition : pSpatialPartitions_)
+	if (partition != nullptr)
 	    for (auto& zombie : partition->getZombies())
-	      if (!zombie.isDead())
-		zomPositions.push_back(zombie.getPositionGlobal());
+		if (!zombie.isDead())
+		    zomPositions.push_back(zombie.getPositionGlobal());
 	
-	for (auto iTurret = vTurrets_.begin(); iTurret != vTurrets_.end();)
-	  {
-	    iTurret->preUpdate(zomPositions);
-	    iTurret->update(dT);
-	    if (iTurret->isSafeToDelete())
-	      iTurret = vTurrets_.erase(iTurret);
-	    else
-	      ++iTurret;
-	  }
-	
-	for (auto iBarricade = vBarricades_.begin(); iBarricade != vBarricades_.end();)
-	  {
-	    iBarricade->update(dT);
-	    if (iBarricade->isSafeToDelete())
-	      iBarricade = vBarricades_.erase(iBarricade);
-	    else
-	      ++iBarricade;
-	  }
-	
-	
-	
-	//-----------------COLLISION--------------------------------
-	for (auto& bullet : lBullets_)
-	  {
-	    //This partition's zombies
-	    for (auto& zombie : vZombies_)
-	      if (isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) && zombie.getHealth() > 0)
-		{
-		  zombie.injure();
-		  zombie.setHealth(zombie.getHealth() - bullet.getDamage());
-		  dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
-		  dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
-		  bullet.setHit(true);
-		  pSoundManager_->playSound("hit");
-		  player_->setPoints(player_->getPoints() + 10);
-		}
-	    
-	    //Neighboring partition's zombies
-	    for (auto& partition : pSpatialPartitions_)
-	      if (partition != nullptr)
-		for (auto& zombie : partition->vZombies_)
-		  if (isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true && zombie.getHealth() > 0)
-		    {
-		      zombie.injure();
-		      zombie.setHealth(zombie.getHealth() - bullet.getDamage());
-		      dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
-		      dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
-		      bullet.setHit(true);
-		      pSoundManager_->playSound("hit");
-		    }
-	    
-	    //This partition's trees
-	    for (auto& tree : vTrees_)
-	      if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
-		bullet.setHit(true);
-	    
-	    //Neighboring partition's trees
-	    for (auto& partition : pSpatialPartitions_)
-	      if (partition != nullptr)
-		for (auto& tree : partition->vTrees_)
-		  if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
-		    bullet.setHit(true);
-	  }
-	for (auto& zombie : vZombies_)
-	  {
-	    if (!zombie.isDead())
-	      {
-		//This partition's zombies
-		for (auto& zombie2 : vZombies_)
-		  if (!zombie2.isDead() && &zombie != &zombie2 && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
-		    zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
-		
-		//Neigboring partition's zombies
-		for (auto& partition : pSpatialPartitions_)
-		  if(partition != nullptr)
-		    for (auto& zombie2 : partition->vZombies_)
-		      if (!zombie2.isDead() && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
-			zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
-	      }
-	    
-	    //These collision checks should still occur when dead
-	    
-	    //This partition's trees
-	    for (auto& tree : vTrees_)
-	      if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
-		{
-		  zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
-		  zombie.setNeedsPath(true);
-		}
-	    //Neighboring partitions's tree
-	    for (auto& partition : pSpatialPartitions_)
-	      if(partition != nullptr)
-		for (auto& tree : partition->vTrees_)
-		  if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
-		    {
-		      zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
-		      zombie.setNeedsPath(true);
-		    }
-	    //This partition's barricades
-	    for (auto& barricade : vBarricades_)
-	      {
-		zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
-	      }
-	    //Neighboring partition's barricades
-	    for (auto& partition : pSpatialPartitions_)
-	      if(partition != nullptr)
-		for (auto& barricade : partition->vBarricades_)
-		  {
-		    zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
-		  }
-	    
-	    //Unwalkable collision checks
-	    for(int i = 0; i < 8; ++i)
-	      {
-		int xPos;
-		int yPos;
-		
-		//xPos
-		if (i == 0 || i == 4)
-		  xPos = 0;
-		else if (i > 0 && i < 4)
-		  xPos = 1;
-		else
-		  xPos = -1;
-		
-		//yPos
-		if (i == 2 || i == 6)
-		  yPos = 0;
-		else if (i < 2 || i > 6)
-		  yPos = 1;
-		else
-		  yPos = -1;
-		
-		sf::Vector2f zombiePosition(zombie.getPositionGlobal());
-		sf::Vector2u zombieTilePos((zombiePosition.x - fmod(zombiePosition.x, 32.0f) + 16) / 32, (zombiePosition.y - fmod(zombiePosition.y, 32.0f) + 16) / 32);
-		std::string tileType = pVTiles_->at(zombieTilePos.x + xPos).at(zombieTilePos.y + yPos).getType();
-		if(tileType == "rock" || tileType == "water")
-		  {
-		    zombie.setPositionGlobal(zombiePosition + isColliding(pVTiles_->at(zombieTilePos.x + xPos).at(zombieTilePos.y + yPos).getSprite(), zombie.getHeadSprite()));
-		    zombie.setNeedsPath(true);
-		  }
-	      }
-	  }
-	
-	if (hasPlayer_)
-	  {	 
-	    //This partition's zombies
-	    for (auto& zombie : vZombies_)
-	      if (!zombie.isDead())
-		player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
-	    
-	    //Neigboring partition's zombies
-	    for (auto& partition : pSpatialPartitions_)
-	      if(partition != nullptr)
-		for (auto& zombie : partition->vZombies_)
-		  player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
-	    
-	    //This partition's trees
-	    for (auto& tree : vTrees_)
-	      player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
-	    
-	    //Neighboring partitions's tree
-	    for (auto& partition : pSpatialPartitions_)
-	      if(partition != nullptr)
-		for (auto& tree : partition->vTrees_)
-		  player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
-	    
-	    //This partition's barricades
-	    for (auto& barricade : vBarricades_)
-	      player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
-	    
-	    //Neighboring partition's barricades
-	    for (auto& partition : pSpatialPartitions_)
-	      if(partition != nullptr)
-		for (auto& barricade : partition->vBarricades_)
-		  player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
-
-	    //Unwalkable collision checks
-	    for(int i = 0; i < 8; ++i)
-	      {
-		int xPos;
-		int yPos;
-		    
-		//xPos
-		if (i == 0 || i == 4)
-		  xPos = 0;
-		else if (i > 0 && i < 4)
-		  xPos = 1;
-		else
-		  xPos = -1;
-		
-		//yPos
-		if (i == 2 || i == 6)
-		  yPos = 0;
-		else if (i < 2 || i > 6)
-		  yPos = 1;
-		else
-		  yPos = -1;
-		
-		sf::Vector2f playerPosition(player_->getPositionGlobal());
-		sf::Vector2u playerTilePos((playerPosition.x - fmod(playerPosition.x, 32.0f) + 16) / 32, (playerPosition.y - fmod(playerPosition.y, 32.0f) + 16) / 32);
-		if(playerTilePos.x + xPos >= 0 && playerTilePos.y + yPos >= 0 && playerTilePos.x + xPos < 256 && playerTilePos.y + yPos < 256)
-		  {
-		    std::string tileType = pVTiles_->at(playerTilePos.x + xPos).at(playerTilePos.y + yPos).getType();
-		    if(tileType == "rock" || tileType == "water")
-		      player_->setPositionGlobal(playerPosition + isColliding(pVTiles_->at(playerTilePos.x + xPos).at(playerTilePos.y + yPos).getSprite(), player_->getHeadSprite()));
-		  }
-	      }	
-	  }
-
-	//Draw selection rect
-	if (selecting_)
+    for (auto iTurret = vTurrets_.begin(); iTurret != vTurrets_.end();)
+    {
+	iTurret->preUpdate(zomPositions);
+	iTurret->update(dT);
+	if (iTurret->isSafeToDelete())
 	{
-		selectionRect_.setPosition(pAboveTile->getSprite().getPosition());
-		if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-			selectionRect_.setFillColor(sf::Color(0, 200, 50, 150));
-		else
-			selectionRect_.setFillColor(sf::Color(200, 0, 50, 150));
+	    sf::Vector2f turretPosition = iTurret->getPositionGlobal();
+	    pVTiles_->at((turretPosition.x - fmod(turretPosition.x, 32.0f)) / 32).at((turretPosition.y - fmod(turretPosition.y, 32.0f)) / 32).setHasItem(false);
+	    iTurret = vTurrets_.erase(iTurret);
 	}
 	else
-		selectionRect_.setFillColor(sf::Color(0, 0, 0, 0));
+	    ++iTurret;
+    }
+	
+    for (auto iBarricade = vBarricades_.begin(); iBarricade != vBarricades_.end();)
+    {
+	iBarricade->update(dT);
+	if (iBarricade->isSafeToDelete())
+	{
+	    sf::Vector2f barricadePosition = iBarricade->getPositionGlobal();
+	    pVTiles_->at((barricadePosition.x - fmod(barricadePosition.x, 32.0f)) / 32).at((barricadePosition.y - fmod(barricadePosition.y, 32.0f)) / 32).setHasItem(false);
+	    iBarricade = vBarricades_.erase(iBarricade);
+	}
+	else
+	    ++iBarricade;
+    }
+	
+	
+	
+    //-----------------COLLISION--------------------------------
+    for (auto& bullet : lBullets_)
+    {
+	//This partition's zombies
+	for (auto& zombie : vZombies_)
+	    if (isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) && zombie.getHealth() > 0)
+	    {
+		zombie.injure();
+		zombie.setHealth(zombie.getHealth() - bullet.getDamage());
+		dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
+		dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
+		bullet.setHit(true);
+		pSoundManager_->playSound("hit");
+		player_->setPoints(player_->getPoints() + 10);
+	    }
+	    
+	//Neighboring partition's zombies
+	for (auto& partition : pSpatialPartitions_)
+	    if (partition != nullptr)
+		for (auto& zombie : partition->vZombies_)
+		    if (isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true && zombie.getHealth() > 0)
+		    {
+			zombie.injure();
+			zombie.setHealth(zombie.getHealth() - bullet.getDamage());
+			dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
+			dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
+			bullet.setHit(true);
+			pSoundManager_->playSound("hit");
+		    }
+	    
+	//This partition's trees
+	for (auto& tree : vTrees_)
+	    if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
+		bullet.setHit(true);
+	    
+	//Neighboring partition's trees
+	for (auto& partition : pSpatialPartitions_)
+	    if (partition != nullptr)
+		for (auto& tree : partition->vTrees_)
+		    if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
+			bullet.setHit(true);
+    }
+    for (auto& zombie : vZombies_)
+    {
+	if (!zombie.isDead())
+	{
+	    //This partition's zombies
+	    for (auto& zombie2 : vZombies_)
+		if (!zombie2.isDead() && &zombie != &zombie2 && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
+		    zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
+		
+	    //Neigboring partition's zombies
+	    for (auto& partition : pSpatialPartitions_)
+		if(partition != nullptr)
+		    for (auto& zombie2 : partition->vZombies_)
+			if (!zombie2.isDead() && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
+			    zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
+	}
+	    
+	//These collision checks should still occur when dead
+	    
+	//This partition's trees
+	for (auto& tree : vTrees_)
+	    if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
+	    {
+		zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
+		zombie.setNeedsPath(true);
+	    }
+	//Neighboring partitions's tree
+	for (auto& partition : pSpatialPartitions_)
+	    if(partition != nullptr)
+		for (auto& tree : partition->vTrees_)
+		    if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
+		    {
+			zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
+			zombie.setNeedsPath(true);
+		    }
+	//This partition's barricades
+	for (auto& barricade : vBarricades_)
+	{
+	    zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
+	}
+	//Neighboring partition's barricades
+	for (auto& partition : pSpatialPartitions_)
+	    if(partition != nullptr)
+		for (auto& barricade : partition->vBarricades_)
+		{
+		    zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
+		}
+	    
+	//Unwalkable collision checks
+	for(int i = 0; i < 8; ++i)
+	{
+	    int xPos;
+	    int yPos;
+		
+	    //xPos
+	    if (i == 0 || i == 4)
+		xPos = 0;
+	    else if (i > 0 && i < 4)
+		xPos = 1;
+	    else
+		xPos = -1;
+		
+	    //yPos
+	    if (i == 2 || i == 6)
+		yPos = 0;
+	    else if (i < 2 || i > 6)
+		yPos = 1;
+	    else
+		yPos = -1;
+		
+	    sf::Vector2f zombiePosition(zombie.getPositionGlobal());
+	    sf::Vector2u zombieTilePos((zombiePosition.x - fmod(zombiePosition.x, 32.0f) + 16) / 32, (zombiePosition.y - fmod(zombiePosition.y, 32.0f) + 16) / 32);
+	    std::string tileType = pVTiles_->at(zombieTilePos.x + xPos).at(zombieTilePos.y + yPos).getType();
+	    if(tileType == "rock" || tileType == "water")
+	    {
+		zombie.setPositionGlobal(zombiePosition + isColliding(pVTiles_->at(zombieTilePos.x + xPos).at(zombieTilePos.y + yPos).getSprite(), zombie.getHeadSprite()));
+		zombie.setNeedsPath(true);
+	    }
+	}
+    }
+	
+    if (hasPlayer_)
+    {	 
+	//This partition's zombies
+	for (auto& zombie : vZombies_)
+	    if (!zombie.isDead())
+		player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
+	    
+	//Neigboring partition's zombies
+	for (auto& partition : pSpatialPartitions_)
+	    if(partition != nullptr)
+		for (auto& zombie : partition->vZombies_)
+		    player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
+	    
+	//This partition's trees
+	for (auto& tree : vTrees_)
+	    player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
+	    
+	//Neighboring partitions's tree
+	for (auto& partition : pSpatialPartitions_)
+	    if(partition != nullptr)
+		for (auto& tree : partition->vTrees_)
+		    player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
+	    
+	//This partition's barricades
+	for (auto& barricade : vBarricades_)
+	    player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
+	    
+	//Neighboring partition's barricades
+	for (auto& partition : pSpatialPartitions_)
+	    if(partition != nullptr)
+		for (auto& barricade : partition->vBarricades_)
+		    player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
 
-	if(clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
-	  {
-	    clickTurretDown_ = false;
-	  }
-	if(clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))
-	  {
-	    clickBarricadeDown_ = false;
-	  } 
+	//Unwalkable collision checks
+	for(int i = 0; i < 8; ++i)
+	{
+	    int xPos;
+	    int yPos;
+		    
+	    //xPos
+	    if (i == 0 || i == 4)
+		xPos = 0;
+	    else if (i > 0 && i < 4)
+		xPos = 1;
+	    else
+		xPos = -1;
+		
+	    //yPos
+	    if (i == 2 || i == 6)
+		yPos = 0;
+	    else if (i < 2 || i > 6)
+		yPos = 1;
+	    else
+		yPos = -1;
+		
+	    sf::Vector2f playerPosition(player_->getPositionGlobal());
+	    sf::Vector2u playerTilePos((playerPosition.x - fmod(playerPosition.x, 32.0f) + 16) / 32, (playerPosition.y - fmod(playerPosition.y, 32.0f) + 16) / 32);
+	    if(playerTilePos.x + xPos >= 0 && playerTilePos.y + yPos >= 0 && playerTilePos.x + xPos < 256 && playerTilePos.y + yPos < 256)
+	    {
+		std::string tileType = pVTiles_->at(playerTilePos.x + xPos).at(playerTilePos.y + yPos).getType();
+		if(tileType == "rock" || tileType == "water")
+		    player_->setPositionGlobal(playerPosition + isColliding(pVTiles_->at(playerTilePos.x + xPos).at(playerTilePos.y + yPos).getSprite(), player_->getHeadSprite()));
+	    }
+	}	
+    }
+
+    //Draw selection rect
+    if (selecting_)
+    {
+	selectionRect_.setPosition(pAboveTile->getSprite().getPosition());
+	if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+	    selectionRect_.setFillColor(sf::Color(0, 200, 50, 25));
+	else
+	    selectionRect_.setFillColor(sf::Color(200, 0, 50, 25));
+    }
+    else
+	selectionRect_.setFillColor(sf::Color::Transparent);
+
+    if(clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
+    {
+	clickTurretDown_ = false;
+    }
+    if(clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))
+    {
+	clickBarricadeDown_ = false;
+    } 
 }
 
 //Setters
