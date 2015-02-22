@@ -365,41 +365,41 @@ void SpatialPartition::update(const sf::Time& dT)
 		
 	//Turret Addition
 	if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && player_->getTurrets() > 0)
-	  {
-	    if(!selecting_)
-	      selecting_ = true;
-	    else
+	{
+		clickTurretDown_ = true;
+		if (!selecting_)
+			selecting_ = true;
+		else
 		{
-		  selecting_ = false;		
-		  if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-		    {
-		      pAboveTile->setHasItem(true);
-		      clickTurretDown_ = true;
-		      player_->setTurrets(player_->getTurrets() - 1);
-		      vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
-		      
-		    }
+			selecting_ = false;
+			if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+			{
+				pAboveTile->setHasItem(true);
+				player_->setTurrets(player_->getTurrets() - 1);
+				vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
+			}
 		}
-	  }
-	
+	}
+
 	//Barricade Addition
 	if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && player_->getBarricades() > 0)
-	  {
-	    //if(!selecting_)
-	    //selecting_ = true;
-	    //else
-	    //{
-		selecting_ = false;		
-		if(pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
-		  {
-		    pAboveTile->setHasItem(true);
-		    clickBarricadeDown_ = true;
-		    player_->setBarricades(player_->getBarricades() - 1);
-		    vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
-		    vBarricades_.back().setHealth(100);
-		  }
-		//}
-	  }
+	{
+		clickBarricadeDown_ = true;
+		if (!selecting_)
+			selecting_ = true;
+		else
+		{
+			selecting_ = false;
+			if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+			{
+				pAboveTile->setHasItem(true);
+				clickBarricadeDown_ = true;
+				player_->setBarricades(player_->getBarricades() - 1);
+				vBarricades_.push_back(Barricade(pAboveTile->getSprite().getPosition(), &imageManager_->barricadeTexture));
+				vBarricades_.back().setHealth(100);
+			}
+		}
+	}
 	
 	std::vector<sf::Vector2f> zomPositions;
 	for (auto& zombie : vZombies_)
@@ -623,20 +623,23 @@ void SpatialPartition::update(const sf::Time& dT)
 	  }
 
 	//Draw selection rect
-	if(selecting_)
+	if (selecting_)
 	{
-	  selectionRect_.setPosition(pAboveTile->getSprite().getPosition());
+		selectionRect_.setPosition(pAboveTile->getSprite().getPosition());
+		if (pAboveTile->getType() == "walkable" && !pAboveTile->hasItem())
+			selectionRect_.setFillColor(sf::Color(0, 200, 50, 150));
+		else
+			selectionRect_.setFillColor(sf::Color(200, 0, 50, 150));
 	}
+	else
+		selectionRect_.setFillColor(sf::Color(0, 0, 0, 0));
+
 	if(clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
 	  {
-	    if(selecting_)
-	      selecting_ = false;
 	    clickTurretDown_ = false;
 	  }
 	if(clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))
 	  {
-	    if(selecting_)
-	      selecting_ = false;
 	    clickBarricadeDown_ = false;
 	  } 
 }

@@ -166,6 +166,7 @@ void GUIManager::update(const sf::Time& dT)
     }
   else
     {
+		storeText_.setColor(sf::Color::Transparent);
       buyMenuBackground_.setFillColor(sf::Color::Transparent);
       pistolText_.setColor(sf::Color::Transparent);
       magnumText_.setColor(sf::Color::Transparent);
