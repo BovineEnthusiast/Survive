@@ -61,8 +61,8 @@ void Emitter::update(const sf::Time& dT)
 			
     for(auto iParticle = lParticles_.begin(); iParticle != lParticles_.end();)
     {
-		if (relativeParticles_)
-			iParticle->setEmitterOffset(offset);
+		//if(relativeParticles_)
+		iParticle->setEmitterOffset(offset);
 
 		//Updates the particle
 		iParticle->update(dT);
