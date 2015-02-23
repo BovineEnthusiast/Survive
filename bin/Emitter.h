@@ -1,22 +1,27 @@
 #ifndef EMITTER_H
 #define EMITTER_H
-#include "GameObject"
+#include "GameObject.h"
+#include <list>
 #include "Particle.h"
 
 class Emitter : public GameObject
 {
  public:
-  Emitter(const bool, const int, const int, const sf::Vector2f&, const sf::Vector2f&, const float, const float, const float, const float, const float, const float, const float, const sf::Color&, const sf::Color&);
+  Emitter(const bool, const sf::Vector2f&, const bool, const int, const int, const sf::Vector2f&, const sf::Vector2f&, const float, const float, const float, const float, const float, const float, const float, const sf::Color&, const sf::Color&);
   void update(const sf::Time&);
 
   //Getters
   std::list<Particle> getParticles() const;
-
+  bool isDead() const;
   //Setters
   void setDead(const bool);
   
  private:
   std::list<Particle> lParticles_;
+
+  //Are the particle positions relative to the emitter
+  bool relativeParticles_;
+  sf::Vector2f lastPos_;
 
   //Is it ready to be deleted
   bool dead_ = false;
@@ -43,7 +48,7 @@ class Emitter : public GameObject
   float maxSpeed_;
 
   //How fast the speed decays/accelerates
-  float speedAcceleration;
+  float speedAcceleration_;
 
   //How long the particles live in seconds
   float minLife_;

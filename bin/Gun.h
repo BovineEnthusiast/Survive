@@ -7,6 +7,7 @@
 #include "Bullet.h"
 #include "SoundManager.h"
 #include "ImageManager.h"
+#include "Emitter.h"
 
 class Gun : public GameObject
 {
@@ -29,6 +30,8 @@ public:
 	float getReloadTime() const;
 	bool isReloading() const;
 	float getShake();
+	std::vector<Emitter> getEmitters() const;
+
 	//Setters
 	void setLocalPosition(const sf::Vector2f&);
 	void setPlayerPosition(const sf::Vector2f&);
@@ -57,7 +60,7 @@ private:
 	sf::Vector2f armLeftPosLocal_;
 
 	//The position that the bullet spawns
-	sf::Vector2f bulletSpawnPos_ = sf::Vector2f(2.5, 0);
+	sf::Vector2f bulletSpawnPos_ = sf::Vector2f(10.0f, 0);
 
 	//Stores all active bullets
 	std::list<Bullet>* pLBullets_;
@@ -84,6 +87,9 @@ private:
 	//Bullet properties
 	float bulletSpeed_ = 1500.0f; //per second
 	int bulletDamage_ = 25;
+
+	//Used for muzzle flashes
+	std::vector<Emitter> vEmitters_;
 
 	//Clocks
 	sf::Clock fireRateClock_;

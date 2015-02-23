@@ -1,6 +1,8 @@
 #include "Emitter.h"
 
-Emitter::Emitter(const bool hasSpawnLimit,
+Emitter::Emitter(const bool relativeParticles,
+		 const sf::Vector2f& position,
+	     const bool hasSpawnLimit,
 		 const int particlesToSpawn,
 		 const int particlesPerSecond,
 		 const sf::Vector2f& startingParticleSize,
@@ -14,7 +16,8 @@ Emitter::Emitter(const bool hasSpawnLimit,
 		 const float maxLife,
 		 const sf::Color& startingColor,
 		 const sf::Color& endingColor)
-    :hasSpawnLimit_(hasSpawnLimit),
+    :relativeParticles_(relativeParticles),
+	 hasSpawnLimit_(hasSpawnLimit),
      particlesToSpawn_(particlesToSpawn),
      particlesPerSecond_(particlesPerSecond),
      startingParticleSize_(startingParticleSize),
@@ -28,38 +31,50 @@ Emitter::Emitter(const bool hasSpawnLimit,
      maxLife_(maxLife),
      startingColor_(startingColor),
      endingColor_(endingColor)
-{}
+{
+	positionGlobal_ = position;
+}
     
 void Emitter::update(const sf::Time& dT)
 {
-    if(spawnClock_.getElapsedTime().asSeconds() >= 1.0f / particlesPerSecond_)
-    {
-	spawnClock_.restart();
-	float direction = minDirection_ + std::rand() % (maxDirection_ - minDirection_);
-	float speed = minSpeed_ + std::rand() % (maxSpeed_ - minSpeed_);
-	float life = minLife_ + std::rand() % (maxLife_ - minLife_);
-	
-	lParticles_.pushBack(Particle(startingParticleSize_,
-				      endingParticleSize_,
-				      direction,
-				      speed,
-				      speedAcceleration_,
-				      life,
-				      startingColor_,
-				      endingColor_));
-    }
-				      
-    for(auto iParticle = lParticles_.begin(); iParticle != lParticles.end();)
-    {
-	//Updates the particle
-	iParticle->update(dT);
+	sf::Vector2f offset = lastPos_ - positionGlobal_;
+	lastPos_ = positionGlobal_;
 
-	//Checks if it is dead, erases if so, iterates otherwise
-	if(iParticle->isDead())
-	    iParticle = lParticles.erase(iParticle);
-	else
-	    ++iParticle;
+    if(spawnClock_.getElapsedTime().asSeconds() >= 1.0f / particlesPerSecond_ && particlesToSpawn_ > 0)
+    {
+		--particlesToSpawn_;
+		spawnClock_.restart();
+		float direction = minDirection_ + fmod(std::rand(), (maxDirection_ - minDirection_));
+		float speed = minSpeed_ + fmod(std::rand(), (maxSpeed_ - minSpeed_));
+		float life = minLife_ + fmod(std::rand(), (maxLife_ - minLife_));
+	
+		lParticles_.push_back(Particle(positionGlobal_,
+						  startingParticleSize_,
+						  endingParticleSize_,
+						  direction,
+						  speed,
+						  speedAcceleration_,
+						  life,
+						  startingColor_,
+						  endingColor_));
+    }
+			
+    for(auto iParticle = lParticles_.begin(); iParticle != lParticles_.end();)
+    {
+		if (relativeParticles_)
+			iParticle->setEmitterOffset(offset);
+
+		//Updates the particle
+		iParticle->update(dT);
+
+		//Checks if it is dead, erases if so, iterates otherwise
+		if(iParticle->isDead())
+			iParticle = lParticles_.erase(iParticle);
+		else
+			++iParticle;
     }
 }
 
 std::list<Particle> Emitter::getParticles() const { return lParticles_; }
+
+bool Emitter::isDead() const { return false; }

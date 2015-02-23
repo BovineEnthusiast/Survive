@@ -162,6 +162,24 @@ void Gun::update(const sf::Time& dT)
 				  shake_ = 1.5f;
 
 			}
+			vEmitters_.push_back(Emitter(true,
+									    spawnPos,
+										true,
+										10,
+										100,
+										sf::Vector2f(5.0f, 2.0f),
+										sf::Vector2f(2.0f, 2.0f),
+										rotationGlobal_ - 12.5f,
+										rotationGlobal_ + 12.5f,
+										200.0f,
+										400.0f,
+										0.0f,
+										0.05f,
+										0.15f,
+										sf::Color(255, 204, 49, 255),
+										sf::Color(255, 100, 49, 255)));
+			vEmitters_.back().setPositionGlobal(spawnPos);
+
 		}
 		else if (currentBullets_ == 0 && totalBullets_ > 0 && !reloading_)
 		{
@@ -188,6 +206,18 @@ void Gun::update(const sf::Time& dT)
 		}
 	}
 
+	//Update Emitters
+	for (auto iEmitter = vEmitters_.begin(); iEmitter != vEmitters_.end();)
+	{
+		iEmitter->update(dT);
+		iEmitter->setPositionGlobal(positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180)));
+		
+		//Checks if it needs to be deleted
+		if (iEmitter->isDead())
+			iEmitter = vEmitters_.erase(iEmitter);
+		else
+			++iEmitter;
+	}
 }
 
 
@@ -202,6 +232,7 @@ int Gun::getTotalAmmo() const { return totalBullets_; }
 sf::Time Gun::getCurrentReloadTime() const { return reloadClock_.getElapsedTime(); }
 float Gun::getReloadTime() const { return reloadTime_; }
 bool Gun::isReloading() const { return reloading_; }
+std::vector<Emitter> Gun::getEmitters() const { return vEmitters_; }
 float Gun::getShake()
 {
   float shake = shake_;

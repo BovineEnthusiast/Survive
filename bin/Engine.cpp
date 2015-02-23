@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "SpatialPartition.h"
 #include "GUIManager.h"
+#include "Emitter.h"
+#include "Particle.h"
 #include <iostream>
 #include <deque>
 #include <string>
@@ -134,8 +136,15 @@ void Engine::draw()
 		window_.draw(level_.getPlayer().getArmLeftSprite());
 		window_.draw(level_.getPlayer().getArmRightSprite());
 		window_.draw(level_.getPlayer().getHeadSprite());
-		window_.draw(level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex()).getSprite());
 
+		Gun currentGun = level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex());
+		window_.draw(currentGun.getSprite());
+
+		std::vector<Emitter> emitters = currentGun.getEmitters();
+		for (auto& emitter : emitters)
+			for (auto& particle : emitter.getParticles())
+				window_.draw(particle.getParticle());
+			
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
