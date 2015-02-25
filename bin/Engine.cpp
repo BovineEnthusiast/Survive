@@ -144,7 +144,11 @@ void Engine::draw()
 		for (auto& emitter : emitters)
 			for (auto& particle : emitter.getParticles())
 				window_.draw(particle.getParticle());
-			
+		std::vector<sf::ConvexShape> triangles = level_.getPlayer().getTriangles();
+		std::cout << "triangles in draw: " << triangles.size() << std::endl;
+		for (auto& triangle : triangles)
+			window_.draw(triangle);
+
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{

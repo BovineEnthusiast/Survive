@@ -5,6 +5,7 @@
 #include "Gun.h"
 #include "Bullet.h"
 #include "SoundManager.h"
+#include "LightingPolygon.h"
 class Player : public Humanoid
 {
 public:
@@ -23,6 +24,7 @@ public:
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
+	std::vector<sf::ConvexShape> getTriangles() const;
     
     //Setters
     void setPoints(const int);
@@ -33,7 +35,13 @@ public:
     void setHasMagnum(const bool);
     void setHasShotgun(const bool);
     void setHasRifle(const bool);
+
+	//Pushers
+	void pushLightingSprite(const sf::Sprite&);
+
  private:
+	//The lighting/line of sight of the player
+	 LightingPolygon lighting_;
     //Button clicks
     bool downSwapRight_ = false;
     bool downSwapLeft_ = false;

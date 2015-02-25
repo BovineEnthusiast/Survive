@@ -12,7 +12,7 @@ Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture
 {
 	corpseSprite_.setTexture(*pCorpseTexture_);
 	corpseSprite_.setOrigin(17.0f, 14.0f);
-	finalSpeed_ = 0;// 3 + std::rand() % (int)(speed * 1.5);
+	finalSpeed_ = 3 + std::rand() % (int)(speed * 1.5);
 	health_ = 100 + health;
 }
 void Zombie::update(const sf::Time& dT)
