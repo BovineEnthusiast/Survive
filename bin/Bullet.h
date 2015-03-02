@@ -1,6 +1,7 @@
 #ifndef BULLET_H
 #define	BULLET_H
 #include "GameObject.h"
+#include "LightingPolygon.h"
 #include <SFML/Graphics.hpp>
 class Bullet : public GameObject
 {

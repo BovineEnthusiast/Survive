@@ -55,7 +55,6 @@ void Particle::update(const sf::Time& dT)
 	positionGlobal_ += velocity_ * dT.asSeconds() - emitterOffset_;
 
 	particle_.setOrigin(particle_.getLocalBounds().width / 2.0f, particle_.getLocalBounds().height / 2.0f);
-	std::cout << emitterOffset_.x << ", " << emitterOffset_.y << std::endl;
 	particle_.setPosition(positionGlobal_);
 }
 

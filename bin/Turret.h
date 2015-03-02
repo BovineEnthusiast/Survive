@@ -5,6 +5,7 @@
 #include <array>
 #include "ImageManager.h"
 #include "SoundManager.h"
+#include "LightingPolygon.h"
 #include "GameObject.h"
 #include "Bullet.h"
 class Turret : public GameObject
@@ -20,9 +21,15 @@ public:
 	bool isSafeToDelete() const;
 	sf::Sprite getBaseSprite() const;
 	sf::Sprite getTurretSprite() const;
+	bool isMuzzleLight() const;
+	std::vector<sf::ConvexShape> getMuzzleTriangles() const;
 
 	//Setters
 	void setHealth(const int);
+
+	//Pushers
+	void pushMuzzleLightSprite(const sf::Sprite&);
+
 private:
 	//Stores all active bullets
 	std::list<Bullet>* pLBullets_;
@@ -40,7 +47,9 @@ private:
 	bool safeToDelete_ = false;
 	float firerate_ = 0.1;
 	float reloadTime_ = 5.0f;
+	LightingPolygon muzzleLight_;
 	//Clocks
+	sf::Clock muzzleClock_;
 	sf::Clock firerateClock_;
 	sf::Clock reloadClock_;
 

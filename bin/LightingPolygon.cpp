@@ -3,14 +3,16 @@
 #include <array>
 #include <math.h>
 
-LightingPolygon::LightingPolygon(GameObject* pParentObject)
-    :pParentObject_(pParentObject)
+LightingPolygon::LightingPolygon()
+
 {
 }
 
 //Getters
 std::vector<sf::ConvexShape> LightingPolygon::getTriangles() const { return vTriangles_; }
 
+//Setters
+void LightingPolygon::setPosition(const sf::Vector2f& position) { rayStart_ = position; }
 //Pushers
 void LightingPolygon::pushSprite(const sf::Sprite& sprite) { vSprites_.push_back(sprite); }
 //Helpers
@@ -23,57 +25,100 @@ void LightingPolygon::createPolygon()
 	vTriangles_.clear();
 	//renderTexture_.clear();
 
-    //The origin of the light
-    sf::Vector2f rayStart = pParentObject_->getPositionGlobal();
-    
-    //Inserts rays into the set and points them towards the verticies
+	//std::cout << "Richard is a kant: " << rayStart_.x << ", " << rayStart_.y << std::endl;
+	//Inserts rays into the set and points them towards the verticies
 	for (auto& sprite : vSprites_)
 	{
 		//Gets the unit vectors that point forward and right. Used to get vertex positions
 		float rotation = sprite.getRotation() * 3.14159265358f / 180.0f;
 		sf::Vector2f forwardVector(cos(rotation), sin(rotation));
-		sf::Vector2f rightVector(cos(rotation + 90), sin(rotation + 90));
+		sf::Vector2f rightVector(cos(rotation + (3.14159265358f / 2)), sin(rotation + (3.14159265358f / 2)));
 
 		//Gets the magnitude for the vectors.
-		float vectorMagnitude = sprite.getLocalBounds().height / 2;
-
+		float vectorMagnitude = sprite.getGlobalBounds().height / 2;
+		forwardVector *= vectorMagnitude;
+		rightVector *= vectorMagnitude;
 		//Position of the sprite at the center origin
 		sf::Vector2f spritePosition = sprite.getPosition();
 
 		//Assigns the rays. Goes CW after top-left
-		sRays_.insert(Ray(spritePosition + forwardVector - rightVector, rayStart));
-		sRays_.insert(Ray(spritePosition + forwardVector + rightVector, rayStart));
-		sRays_.insert(Ray(spritePosition - forwardVector + rightVector, rayStart));
-		sRays_.insert(Ray(spritePosition - forwardVector - rightVector, rayStart));
+		sRays_.insert(Ray((spritePosition + forwardVector - rightVector) - rayStart_, rayStart_));
+		sRays_.insert(Ray((spritePosition + forwardVector + rightVector) - rayStart_, rayStart_));
+		sRays_.insert(Ray((spritePosition - forwardVector + rightVector) - rayStart_, rayStart_));
+		sRays_.insert(Ray((spritePosition - forwardVector - rightVector) - rayStart_, rayStart_));
 	}
 
 	int numPoint = 0;
 
 	//Adds rays that point to the four corners of the map
-	sRays_.insert(Ray(-rayStart, rayStart)); //Top left
-	sRays_.insert(Ray(sf::Vector2f(8160, 0) - rayStart, rayStart)); //Top right
-	sRays_.insert(Ray(sf::Vector2f(8160, 8160) - rayStart, rayStart)); //Bottom right
-	sRays_.insert(Ray(sf::Vector2f(0, 8160) - rayStart, rayStart)); //Bottom left
+	sRays_.insert(Ray(sf::Vector2f(0.0f, 0.0f) - rayStart_, rayStart_)); //Top left
+	sRays_.insert(Ray(sf::Vector2f(8160.0f, 0.0f) - rayStart_, rayStart_)); //Top right
+	sRays_.insert(Ray(sf::Vector2f(8160.0f, 8160.0f) - rayStart_, rayStart_)); //Bottom right
+	sRays_.insert(Ray(sf::Vector2f(0.0f, 8160.0f) - rayStart_, rayStart_)); //Bottom left
 
 	//Adds slightly offset rays to light up past the corner of a "wall"
 	std::set<Ray> tempSet = sRays_;
 	for (auto& point : tempSet)
 	{
-		sRays_.insert(Ray(rayStart, point.getAngle() + 0.0001f));
-		sRays_.insert(Ray(rayStart, point.getAngle() - 0.0001f));
+		sRays_.insert(Ray(rayStart_, point.getAngle() + 0.00001f));
+		sRays_.insert(Ray(rayStart_, point.getAngle() - 0.00001f));
 	}
 
-	std::cout << "Ray count: " << sRays_.size() << std::endl;
 	//Calculates all the triangle points
 	for (auto& ray : sRays_)
 	{
 		//Gets the ray's direction
 		sf::Vector2f rayDirection = ray.getDirection();
-
 		//Keep track of the smallest intersection
 		sf::Vector2f smallestIntersectionVector;
 		float smallestRayScalar = std::numeric_limits<float>::max();
+		float lineScalarTest;
 
+		//Test against world boundries
+		std::array<sf::Vector2f, 4> worldVerticies;
+
+		worldVerticies[0] = sf::Vector2f(0.0f, 0.0f);
+		worldVerticies[1] = sf::Vector2f(8160.0f, 0.0f);
+		worldVerticies[2] = sf::Vector2f(8160.0f, 8160.0f);
+		worldVerticies[3] = sf::Vector2f(0.0f, 8160.0f);
+
+		//For those four verticies
+		for (int i = 0; i < 4; ++i)
+		{
+			sf::Vector2f lineStart;
+			sf::Vector2f lineDirection;
+
+			if (i != 3)
+			{
+				lineStart = worldVerticies[i];
+
+				//Gets the direction of the line(to the other point)
+				lineDirection = worldVerticies[i + 1] - lineStart;
+			}
+			else
+			{
+				lineStart = worldVerticies[3];
+
+				//Gets the direction of the line(to the other point)
+				lineDirection = worldVerticies[0] - lineStart;
+			}
+
+			//The two scalars for the parametric form of the ray/line equations
+			float lineScalar = (rayDirection.x * (lineStart.y - rayStart_.y) + rayDirection.y * (rayStart_.x - lineStart.x)) / (lineDirection.x * rayDirection.y - lineDirection.y * rayDirection.x);
+			float rayScalar = (lineStart.x + lineDirection.x * lineScalar - rayStart_.x) / rayDirection.x;
+
+			
+
+
+			if (rayScalar < smallestRayScalar && rayScalar > 0 && rayScalar != std::numeric_limits<float>::max() && lineScalar >= 0 && lineScalar <= 1)
+			{
+				smallestRayScalar = rayScalar;
+				lineScalarTest = lineScalar;
+				smallestIntersectionVector = sf::Vector2f(rayStart_.x + rayDirection.x * rayScalar, rayStart_.y + rayDirection.y * rayScalar);
+			}
+
+		}
+		//Test against sprites
 		for (auto& sprite : vSprites_)
 		{
 			std::array<sf::Vector2f, 4> aVerticies;
@@ -81,10 +126,12 @@ void LightingPolygon::createPolygon()
 			//Gets the unit vectors that point forward and right. Used to get vertex positions
 			float rotation = sprite.getRotation() * 3.14159265358f / 180.0f;
 			sf::Vector2f forwardVector(cos(rotation), sin(rotation));
-			sf::Vector2f rightVector(cos(rotation + 90), sin(rotation + 90));
+			sf::Vector2f rightVector(cos(rotation + (3.14159265358f / 2)), sin(rotation + (3.14159265358f / 2)));
 
 			//Gets the magnitude for the vectors.
-			float vectorMagnitude = sprite.getLocalBounds().height / 2;
+			float vectorMagnitude = sprite.getGlobalBounds().height / 2;
+			forwardVector *= vectorMagnitude;
+			rightVector *= vectorMagnitude;
 
 			//Position of the sprite at the center origin
 			sf::Vector2f spritePosition = sprite.getPosition();
@@ -116,43 +163,59 @@ void LightingPolygon::createPolygon()
 				}
 
 				//The two scalars for the parametric form of the ray/line equations
-				float lineScalar = (rayDirection.x * (lineStart.y - rayStart.y) + rayDirection.y * (rayStart.x - lineStart.x)) / (lineDirection.x * rayDirection.y - lineDirection.y * rayDirection.x);
-				float rayScalar = (lineStart.x + lineDirection.x * lineScalar - rayStart.x) / rayDirection.x;
+				float lineScalar = (rayDirection.x * (lineStart.y - rayStart_.y) + rayDirection.y * (rayStart_.x - lineStart.x)) / (lineDirection.x * rayDirection.y - lineDirection.y * rayDirection.x);
+				float rayScalar = (lineStart.x + lineDirection.x * lineScalar - rayStart_.x) / rayDirection.x;
 
-				//Make sure the intersection exists
-				if (rayScalar <= 0 || (lineScalar <= 0 || lineScalar >= 1))
-					continue;
 
-				if (rayScalar < smallestRayScalar)
+
+				if (rayScalar < smallestRayScalar && rayScalar > 0 && rayScalar != std::numeric_limits<float>::max() && lineScalar >= 0 && lineScalar <= 1)
 				{
 					smallestRayScalar = rayScalar;
-					smallestIntersectionVector = sf::Vector2f(rayStart.x + rayDirection.x * rayScalar, rayStart.y + rayDirection.y * rayScalar);
+					lineScalarTest = lineScalar;
+					smallestIntersectionVector = sf::Vector2f(rayStart_.x + rayDirection.x * rayScalar, rayStart_.y + rayDirection.y * rayScalar);
 				}
 
 			}
 		}
-		++numPoint;
-		vTrianglePoints_.push_back(smallestIntersectionVector);
+		//if (smallestRayScalar != std::numeric_limits<float>::max())
+		//{
+		float angleTest = atan2(smallestIntersectionVector.x - rayStart_.x, smallestIntersectionVector.y - rayStart_.y) * 180 / 3.14159265358f;
+		
+			++numPoint;
+			vTrianglePoints_.push_back(smallestIntersectionVector);
+		
 
 		//If there are two points(plus the light position)
 		if (numPoint >= 2)
 		{
 			sf::Vector2f currentPoint = vTrianglePoints_.back();
-			sf::Vector2f lastPoint = vTrianglePoints_.at(vTrianglePoints_.size() - 1);
+			sf::Vector2f lastPoint = vTrianglePoints_.at(vTrianglePoints_.size() - 2);
 
 			sf::ConvexShape triangle;
 			triangle.setFillColor(sf::Color::Black);
 			triangle.setPointCount(3);
 
 			triangle.setPoint(0, lastPoint);
-			triangle.setPoint(1, rayStart);
+			triangle.setPoint(1, rayStart_);
 			triangle.setPoint(2, currentPoint);
-			std::cout << "pointPos1: " << lastPoint.x << ", " << lastPoint.y << std::endl;
-			std::cout << "pointPos2: " << currentPoint.x << ", " << currentPoint.y << std::endl;
 			vTriangles_.push_back(triangle);
 		}
+		//}
+
+
+
 		//renderTexture_.display();
 	}
+	//Adds the last triangle
+	sf::ConvexShape triangle;
+	triangle.setFillColor(sf::Color::Black);
+	triangle.setPointCount(3);
+
+	triangle.setPoint(0, vTrianglePoints_.back());
+	triangle.setPoint(1, rayStart_);
+	triangle.setPoint(2, vTrianglePoints_.front());
+
+	vTriangles_.push_back(triangle);
 
 	//Draw all those triangles onto the render texture
 	//for (auto& triangle : vTriangles_)

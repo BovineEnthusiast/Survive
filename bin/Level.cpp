@@ -407,7 +407,6 @@ void Level::generateLevel(const int width, const int height)
 			   }
 			   else if (xPos / 10 == 0)
 			   {
-				   std::cout << yPos / 10 << std::endl;
 				   spatialPartitions_.at(yPos / 10).push_back(SpatialPartition(sf::FloatRect(xPos * 32.0f, yPos * 32.0f, 320.0f, 320.0f), &player_, &spatialPartitions_, pSoundManager_, &zombiesAlive_, &zombiesToSpawn_, &wave_));
 				   spatialPartitions_.at(yPos / 10).back().setImageManagerPointer(&imageManager_);
 				   spatialPartitions_.at(yPos / 10).back().setTilesPointer(&tiles);

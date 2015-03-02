@@ -3,7 +3,7 @@
 #include <math.h>
 #include <iostream>
 Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* pSoundManager)
-	:lighting_(this), Humanoid(texture), pSoundManager_(pSoundManager)
+	:Humanoid(texture), pSoundManager_(pSoundManager)
 {
 	finalSpeed_ = 20;
 
@@ -107,6 +107,7 @@ void Player::update(const sf::Time& dT)
 		armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 + 180.0f);
 		armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 + 180.0f);
 	}
+	lighting_.setPosition(positionGlobal_);
 	lighting_.createPolygon();
 	lighting_.clearSprites();
 }
@@ -127,7 +128,7 @@ float Player::getShake()
 bool Player::hasMagnum() const { return hasMagnum_; }
 bool Player::hasShotgun() const { return hasShotgun_; }
 bool Player::hasRifle() const { return hasRifle_; }
-
+bool Player::isMuzzleFlash() const { return muzzleFlash_; }
 //Setters 
 void Player::setPoints(const int points) { points_ = points; }
 void Player::setPosition(const sf::Vector2f& position) { positionGlobal_ = position; }
@@ -143,7 +144,7 @@ void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 }
 
 //Pushers
-void Player::pushLightingSprite(const sf::Sprite& sprite) { lighting_.pushSprite(sprite); }
+void Player::pushLightingSprite(const sf::Sprite& sprite) { vGuns_.at(currentGun_).pushMuzzleLightSprite(sprite); }
 
 //Helper functions
 void Player::swapGun(const bool left)

@@ -5,6 +5,7 @@
 #include <list>
 #include <SFML/Graphics.hpp>
 #include "Bullet.h"
+#include "LightingPolygon.h"
 #include "SoundManager.h"
 #include "ImageManager.h"
 #include "Emitter.h"
@@ -29,15 +30,20 @@ public:
 	sf::Time getCurrentReloadTime() const;
 	float getReloadTime() const;
 	bool isReloading() const;
+	bool isMuzzleLight() const;
+	std::vector<sf::ConvexShape> getMuzzleTriangles() const;
 	float getShake();
 	std::vector<Emitter> getEmitters() const;
-
+	sf::Vector2f getBulletSpawnPos() const;
 	//Setters
 	void setLocalPosition(const sf::Vector2f&);
 	void setPlayerPosition(const sf::Vector2f&);
 	void setPlayerVelocity(const sf::Vector2f&);
 	void setPlayerHeadRotation(const float);
 	void setBulletsPtr(std::list<Bullet>*);
+
+	//Pushers
+	void pushMuzzleLightSprite(const sf::Sprite&);
 private:
 	sf::Texture* pTexture_;
 	sf::Sprite gun_;
@@ -91,7 +97,12 @@ private:
 	//Used for muzzle flashes
 	std::vector<Emitter> vEmitters_;
 
+	//Dynamic lighting for flashes
+	bool muzzleLighting_ = false;
+	LightingPolygon muzzleLight_;
+
 	//Clocks
+	sf::Clock muzzleClock_;
 	sf::Clock fireRateClock_;
 	sf::Clock reloadClock_;
 	sf::Clock animationClock_;

@@ -414,6 +414,51 @@ void SpatialPartition::update(const sf::Time& dT)
 
 	for (auto iTurret = vTurrets_.begin(); iTurret != vTurrets_.end();)
 	{
+
+		iTurret->pushMuzzleLightSprite(player_->getHeadSprite());
+
+		for (auto& zombie : vZombies_)		
+				iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
+
+		//Neigboring partition's zombies
+		for (auto& partition : pSpatialPartitions_)
+			if (partition != nullptr)
+				for (auto& zombie : partition->vZombies_)
+						iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
+		
+		//This partition's trees
+		for (auto& tree : vTrees_)
+			iTurret->pushMuzzleLightSprite(tree.getTrunk());
+
+		//Neighboring partitions's tree
+		for (auto& partition : pSpatialPartitions_)
+			if (partition != nullptr)
+				for (auto& tree : partition->vTrees_)
+					iTurret->pushMuzzleLightSprite(tree.getTrunk());
+		//This partition's turrets
+		for (auto& turret : vTurrets_)
+			if (turret.getPositionGlobal() != iTurret->getPositionGlobal())
+				iTurret->pushMuzzleLightSprite(turret.getBaseSprite());
+
+		//Neighboring partition's turrets
+		for (auto& partition : pSpatialPartitions_)
+			if (partition != nullptr)
+				for (auto& turret : vTurrets_)
+					if (turret.getPositionGlobal() != iTurret->getPositionGlobal())
+						iTurret->pushMuzzleLightSprite(turret.getBaseSprite());
+
+		//This partition's barricades
+		for (auto& barricade : vBarricades_)
+			iTurret->pushMuzzleLightSprite(barricade.getSprite());
+
+		//Neighboring partition's barricades
+		for (auto& partition : pSpatialPartitions_)
+			if (partition != nullptr)
+				for (auto& barricade : partition->vBarricades_)
+					iTurret->pushMuzzleLightSprite(barricade.getSprite());
+
+
+
 		iTurret->preUpdate(zomPositions);
 		iTurret->update(dT);
 		if (iTurret->isSafeToDelete())
@@ -446,6 +491,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	{
 		//This partition's zombies
 		for (auto& zombie : vZombies_)
+		{
 			if (isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) && zombie.getHealth() > 0)
 			{
 				zombie.injure();
@@ -455,12 +501,15 @@ void SpatialPartition::update(const sf::Time& dT)
 				bullet.setHit(true);
 				pSoundManager_->playSound("hit");
 				player_->setPoints(player_->getPoints() + 10);
+
 			}
+		}
 
 		//Neighboring partition's zombies
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& zombie : partition->vZombies_)
+				{
 					if (isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true && zombie.getHealth() > 0)
 					{
 						zombie.injure();
@@ -470,18 +519,24 @@ void SpatialPartition::update(const sf::Time& dT)
 						bullet.setHit(true);
 						pSoundManager_->playSound("hit");
 					}
+				}
 
 		//This partition's trees
 		for (auto& tree : vTrees_)
+		{
 			if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 				bullet.setHit(true);
+		}
 
 		//Neighboring partition's trees
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& tree : partition->vTrees_)
+				{
 					if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 						bullet.setHit(true);
+
+				}
 	}
 	for (auto& zombie : vZombies_)
 	{
@@ -531,6 +586,16 @@ void SpatialPartition::update(const sf::Time& dT)
 					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
 				}
 
+		//This partition's turret
+		for (auto& turret : vTurrets_)
+			zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombie.getHeadSprite()));
+
+		for (auto& partition : pSpatialPartitions_)
+			if (partition != nullptr)
+				for (auto& turret : vTurrets_)
+					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombie.getHeadSprite()));
+
+
 		//Unwalkable collision checks
 		for (int i = 0; i < 8; ++i)
 		{
@@ -571,7 +636,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		{
 			if (!zombie.isDead())
 				player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
-			player_->pushLightingSprite(zombie.getHeadSprite());
+				player_->pushLightingSprite(zombie.getHeadSprite());
 		}
 		//Neigboring partition's zombies
 		for (auto& partition : pSpatialPartitions_)
@@ -581,6 +646,21 @@ void SpatialPartition::update(const sf::Time& dT)
 					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
 					player_->pushLightingSprite(zombie.getHeadSprite());
 				}
+		//This partition's turrets
+		for (auto& turret : vTurrets_)
+		{
+			player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), turret.getBaseSprite()));
+			player_->pushLightingSprite(turret.getBaseSprite());
+		}
+		//Neighboring partition's turrets
+		for (auto& partition : pSpatialPartitions_)
+			if (partition != nullptr)
+				for (auto& turret : partition->getTurrets())
+				{
+					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), turret.getBaseSprite()));
+					player_->pushLightingSprite(turret.getBaseSprite());
+				}
+
 		//This partition's trees
 		for (auto& tree : vTrees_)
 		{
@@ -597,14 +677,18 @@ void SpatialPartition::update(const sf::Time& dT)
 				}
 		//This partition's barricades
 		for (auto& barricade : vBarricades_)
+		{
 			player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
-
+			player_->pushLightingSprite(barricade.getSprite());
+		}
 		//Neighboring partition's barricades
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& barricade : partition->vBarricades_)
+				{
 					player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
-
+					player_->pushLightingSprite(barricade.getSprite());
+				}
 		//Unwalkable collision checks
 		for (int i = 0; i < 8; ++i)
 		{

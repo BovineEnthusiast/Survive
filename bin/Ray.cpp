@@ -5,7 +5,7 @@ Ray::Ray(){}
 Ray::Ray(const sf::Vector2f& start, const float angle)
 	:angle_(angle)
 {
-	direction_ = sf::Vector2f(start_.x + cos(angle_), start.y + sin(angle_));
+	direction_ = sf::Vector2f(cos(angle_), sin(angle_));
 }
 Ray::Ray(const sf::Vector2f& direction, const sf::Vector2f& start)
 	:direction_(direction), start_(start)

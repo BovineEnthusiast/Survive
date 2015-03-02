@@ -33,6 +33,7 @@ private:
     //Shaders
     sf::RenderTexture renderTexture_;
     sf::Shader shaderGlow_;
+	//sf::Shader shaderLighting_;
 };
 
 #endif	

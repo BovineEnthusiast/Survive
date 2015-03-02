@@ -8,11 +8,13 @@
 class LightingPolygon
 {
 public:
-	LightingPolygon(GameObject*);
+	LightingPolygon();
 
 	//Getters
 	std::vector<sf::ConvexShape> getTriangles() const;
 
+	//Setters
+	void setPosition(const sf::Vector2f&);
 	//Pushers
 	void pushSprite(const sf::Sprite&);
 
@@ -22,6 +24,7 @@ public:
 private:
 	//Used to get center position of the light
 	GameObject* pParentObject_ = nullptr;
+	sf::Vector2f rayStart_;
 
 	//Used to store all the sprites that are used for lighting
 	std::vector<sf::Sprite> vSprites_;

@@ -98,7 +98,6 @@ sf::Vector2f isColliding(const sf::Sprite& squareOne, const sf::Sprite& squareTw
             return sf::Vector2f(0.0f, 0.0f);
         
     }
-        //std::cout << smallestProjection << std::endl;
         if(negate)
             return smallestProjectionAxis * -smallestProjection;
         else  

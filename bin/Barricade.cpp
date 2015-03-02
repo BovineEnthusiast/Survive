@@ -26,7 +26,7 @@ bool Barricade::isSafeToDelete() const { return safeToDelete_; }
 sf::Sprite Barricade::getSprite() const { return sprite_; }
 
 //Setters
-void Barricade::setHealth(int health) { health_ = health; std::cout << "Health set: " << health << std::endl; }
+void Barricade::setHealth(int health) { health_ = health;}
 
 
 

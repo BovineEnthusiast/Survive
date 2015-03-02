@@ -15,6 +15,7 @@ Engine::Engine()
 bool Engine::initialize()
 {
   shaderGlow_.loadFromFile("shaders/frag/glow.frag", sf::Shader::Fragment);
+  //shaderLighting_.loadFromFile("shaders/frag/lighting.frag", sf::Shader::Fragment);
   window_.create(sf::VideoMode(1440, 720), "Survive");
   return true;
 }
@@ -130,6 +131,11 @@ void Engine::draw()
 					window_.draw(dBloodSplats.at(bloodSplat).getSprite());
 
 			}
+		
+
+		
+
+		
 		//Player and gun
 		window_.draw(level_.getPlayer().getLegLeftSprite());
 		window_.draw(level_.getPlayer().getLegRightSprite());
@@ -140,15 +146,31 @@ void Engine::draw()
 		Gun currentGun = level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex());
 		window_.draw(currentGun.getSprite());
 
+
+		sf::RenderStates addBlendState(sf::BlendAdd);
+		//Calculating the light position in window coordinates
+		sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
+		sf::View view = window_.getView();
+		sf::Vector2f viewSize = view.getSize();
+		sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
+		sf::Vector2f windowCoord((currentGun.getBulletSpawnPos() - viewTopLeft) * (windowSize.x / viewSize.x));
+		windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
+		shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
+		shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 255, 0, 255));
+		shaderGlow_.setParameter("frag_Attenuation", 0.075f);
+
+		sf::RenderStates rs;
+		rs.shader = &shaderGlow_;
+		rs.blendMode = sf::BlendAdd;
+		
+		if (currentGun.isMuzzleLight())
+			for (auto& triangle : currentGun.getMuzzleTriangles())
+				window_.draw(triangle, rs);
+
 		std::vector<Emitter> emitters = currentGun.getEmitters();
 		for (auto& emitter : emitters)
 			for (auto& particle : emitter.getParticles())
 				window_.draw(particle.getParticle());
-		std::vector<sf::ConvexShape> triangles = level_.getPlayer().getTriangles();
-		std::cout << "triangles in draw: " << triangles.size() << std::endl;
-		for (auto& triangle : triangles)
-			window_.draw(triangle);
-
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
@@ -182,10 +204,36 @@ void Engine::draw()
 						window_.draw(iZombie->getCorpseSprite());
 				}
 				std::vector<Turret> vTurrets = iPartition->getTurrets();
+
 				for (auto& turret : vTurrets)
 				{
 					window_.draw(turret.getBaseSprite());
 					window_.draw(turret.getTurretSprite());
+
+					sf::RenderStates addBlendState(sf::BlendAdd);
+					//Calculating the light position in window coordinates
+					sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
+					sf::View view = window_.getView();
+					sf::Vector2f viewSize = view.getSize();
+					sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
+					sf::Vector2f windowCoord((turret.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
+					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
+					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
+					shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 255, 0, 255));
+					shaderGlow_.setParameter("frag_Attenuation", 0.075f);
+
+					sf::RenderStates rs;
+					rs.shader = &shaderGlow_;
+					rs.blendMode = sf::BlendAdd;
+
+					if (turret.isMuzzleLight())
+					{
+						std::cout << turret.getMuzzleTriangles().size() << std::endl;
+						for (auto& triangle : turret.getMuzzleTriangles())
+							window_.draw(triangle, rs);
+						
+					}
+					
 				}
 				std::vector<Barricade> vBarricades = iPartition->getBarricades();
 				for (auto& barricade : vBarricades)
@@ -193,28 +241,15 @@ void Engine::draw()
 
 				
 				//Draws bullets
+
+				
+
+				
+
 				std::list<Bullet> vBullets = iPartition->getBullets();
 				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
 				{			      
-					window_.draw(iBullet->getSprite());
-
-					//Light
-
-					//Calculating the light position in window coordinates
-					sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
-					sf::View view = window_.getView();
-					sf::Vector2f viewSize = view.getSize();
-					sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
-					sf::Vector2f windowCoord((iBullet->getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
-					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
-					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
-					shaderGlow_.setParameter("frag_Radius", 64.0f * (windowSize.x / viewSize.x));
-
-					sf::RenderStates rs;
-					rs.shader = &shaderGlow_;
-					rs.blendMode = sf::BlendAdd;
-
-					window_.draw(iBullet->getLight(), rs);
+					window_.draw(iBullet->getSprite());	
 				}
 
 				//Draws trees

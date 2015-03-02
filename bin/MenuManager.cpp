@@ -87,7 +87,6 @@ void MenuManager::update(const sf::Time& dT)
 		}
 		else
 		{
-			std::cout << "this" << std::endl;
 			vSync_ = true;
 			pWindow_->setVerticalSyncEnabled(true);
 			vSyncText_.setString("V-Sync: On");
@@ -108,7 +107,6 @@ void MenuManager::update(const sf::Time& dT)
 		click_ = false;
 
 	sf::Vector2f windowSize = pWindow_->getView().getSize();
-	//std::cout << "update?" << std::endl;
 	if (currentMenu_ == mainMenu)
 	{
 		highlight(surviveTitleText_);

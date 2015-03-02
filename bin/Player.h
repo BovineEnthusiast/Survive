@@ -24,6 +24,7 @@ public:
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
+	bool isMuzzleFlash() const;
 	std::vector<sf::ConvexShape> getTriangles() const;
     
     //Setters
@@ -51,6 +52,8 @@ public:
     bool hasShotgun_ = false;
     bool hasRifle_ = false;
     
+	bool muzzleFlash_ = false;
+
     int turrets_ = 0;
     int barricades_ = 0;
     

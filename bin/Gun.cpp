@@ -142,6 +142,7 @@ void Gun::update(const sf::Time& dT)
 			    }
 			  currentBullets_ -= 1;
 			  fireRateClock_.restart();
+			  muzzleClock_.restart();
 
 			  shake_ = 2.5f;
 			  
@@ -153,6 +154,8 @@ void Gun::update(const sf::Time& dT)
 				fireRateClock_.restart();
 				pSoundManager_->playSound(gunType_);
 				currentBullets_ -= 1;
+				
+				muzzleClock_.restart();
 
 				if(gunType_ == "pistol")
 				  shake_ = 1.0f;
@@ -218,6 +221,15 @@ void Gun::update(const sf::Time& dT)
 		else
 			++iEmitter;
 	}
+
+	//Draw lighting if muzzle is flashing
+	if (muzzleClock_.getElapsedTime().asSeconds() <= 0.05f)
+	{
+		muzzleLight_.setPosition((positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180))));
+		muzzleLight_.createPolygon();
+	}
+	muzzleLight_.clearSprites();
+
 }
 
 
@@ -232,7 +244,10 @@ int Gun::getTotalAmmo() const { return totalBullets_; }
 sf::Time Gun::getCurrentReloadTime() const { return reloadClock_.getElapsedTime(); }
 float Gun::getReloadTime() const { return reloadTime_; }
 bool Gun::isReloading() const { return reloading_; }
+bool Gun::isMuzzleLight() const { return muzzleClock_.getElapsedTime().asSeconds() <= 0.05f; }
+std::vector<sf::ConvexShape> Gun::getMuzzleTriangles() const { return muzzleLight_.getTriangles(); }
 std::vector<Emitter> Gun::getEmitters() const { return vEmitters_; }
+sf::Vector2f Gun::getBulletSpawnPos() const { return (positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180))); }
 float Gun::getShake()
 {
   float shake = shake_;
@@ -245,3 +260,6 @@ void Gun::setPlayerPosition(const sf::Vector2f& position) { playerPos_ = positio
 void Gun::setPlayerVelocity(const sf::Vector2f& velocity) { playerVelocity_ = velocity; }
 void Gun::setPlayerHeadRotation(const float rotation) { playerRotation_ = rotation; }
 void Gun::setBulletsPtr(std::list<Bullet>* pointer) { pLBullets_ = pointer; ptrSet_ = true; }
+
+//Pushers
+void Gun::pushMuzzleLightSprite(const sf::Sprite& sprite) { muzzleLight_.pushSprite(sprite); }
