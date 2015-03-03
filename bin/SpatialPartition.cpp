@@ -540,60 +540,68 @@ void SpatialPartition::update(const sf::Time& dT)
 	}
 	for (auto& zombie : vZombies_)
 	{
+		sf::Sprite zombieHeadSprite(zombie.getHeadSprite());
+
 		if (!zombie.isDead())
 		{
 			//This partition's zombies
 			for (auto& zombie2 : vZombies_)
-				if (!zombie2.isDead() && &zombie != &zombie2 && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
-					zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
-
+			{ 
+				if (!zombie2.isDead() && &zombie != &zombie2)
+					zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombieHeadSprite, zombie2.getHeadSprite()));
+			}
 			//Neigboring partition's zombies
 			for (auto& partition : pSpatialPartitions_)
 				if (partition != nullptr)
 					for (auto& zombie2 : partition->vZombies_)
-						if (!zombie2.isDead() && isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()) != sf::Vector2f(0.0f, 0.0f))
-							zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), zombie2.getHeadSprite()));
+						if (!zombie2.isDead())
+							zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombieHeadSprite, zombie2.getHeadSprite()));
 		}
 
 		//These collision checks should still occur when dead
 
 		//This partition's trees
 		for (auto& tree : vTrees_)
-			if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
+		{
+			sf::Vector2f collisionResolution = isColliding(zombieHeadSprite, tree.getTrunk());
+			if (collisionResolution != sf::Vector2f(0.0f, 0.0f))
 			{
-				zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
+				zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombieHeadSprite, tree.getTrunk()));
 				zombie.setNeedsPath(true);
 			}
+		}
+				
 		//Neighboring partitions's tree
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& tree : partition->vTrees_)
-					if (isColliding(zombie.getHeadSprite(), tree.getTrunk()) != sf::Vector2f(0.0f, 0.0f))
+				{
+					sf::Vector2f collisionResolution = isColliding(zombieHeadSprite, tree.getTrunk());
+					if (collisionResolution != sf::Vector2f(0.0f, 0.0f))
 					{
-						zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombie.getHeadSprite(), tree.getTrunk()));
+						zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombieHeadSprite, tree.getTrunk()));
 						zombie.setNeedsPath(true);
 					}
+				}
 		//This partition's barricades
 		for (auto& barricade : vBarricades_)
-		{
-			zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
-		}
+			zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombieHeadSprite));
+		
 		//Neighboring partition's barricades
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& barricade : partition->vBarricades_)
-				{
-					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombie.getHeadSprite()));
-				}
+					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombieHeadSprite));
+
 
 		//This partition's turret
 		for (auto& turret : vTurrets_)
-			zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombie.getHeadSprite()));
+			zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombieHeadSprite));
 
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& turret : vTurrets_)
-					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombie.getHeadSprite()));
+					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombieHeadSprite));
 
 
 		//Unwalkable collision checks
@@ -631,11 +639,12 @@ void SpatialPartition::update(const sf::Time& dT)
 
 	if (hasPlayer_)
 	{
+		sf::Sprite playerHeadSprite(player_->getHeadSprite());
 		//This partition's zombies
 		for (auto& zombie : vZombies_)
 		{
 			if (!zombie.isDead())
-				player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
+				player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, zombie.getHeadSprite()));
 				player_->pushLightingSprite(zombie.getHeadSprite());
 		}
 		//Neigboring partition's zombies
@@ -643,13 +652,13 @@ void SpatialPartition::update(const sf::Time& dT)
 			if (partition != nullptr)
 				for (auto& zombie : partition->vZombies_)
 				{
-					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), zombie.getHeadSprite()));
+					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, zombie.getHeadSprite()));
 					player_->pushLightingSprite(zombie.getHeadSprite());
 				}
 		//This partition's turrets
 		for (auto& turret : vTurrets_)
 		{
-			player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), turret.getBaseSprite()));
+			player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, turret.getBaseSprite()));
 			player_->pushLightingSprite(turret.getBaseSprite());
 		}
 		//Neighboring partition's turrets
@@ -657,14 +666,14 @@ void SpatialPartition::update(const sf::Time& dT)
 			if (partition != nullptr)
 				for (auto& turret : partition->getTurrets())
 				{
-					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), turret.getBaseSprite()));
+					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, turret.getBaseSprite()));
 					player_->pushLightingSprite(turret.getBaseSprite());
 				}
 
 		//This partition's trees
 		for (auto& tree : vTrees_)
 		{
-			player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
+			player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, tree.getTrunk()));
 			player_->pushLightingSprite(tree.getTrunk());
 		}
 		//Neighboring partitions's tree
@@ -672,13 +681,13 @@ void SpatialPartition::update(const sf::Time& dT)
 			if (partition != nullptr)
 				for (auto& tree : partition->vTrees_)
 				{
-					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(player_->getHeadSprite(), tree.getTrunk()));
+					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, tree.getTrunk()));
 					player_->pushLightingSprite(tree.getTrunk());
 				}
 		//This partition's barricades
 		for (auto& barricade : vBarricades_)
 		{
-			player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
+			player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), playerHeadSprite));
 			player_->pushLightingSprite(barricade.getSprite());
 		}
 		//Neighboring partition's barricades
@@ -686,7 +695,7 @@ void SpatialPartition::update(const sf::Time& dT)
 			if (partition != nullptr)
 				for (auto& barricade : partition->vBarricades_)
 				{
-					player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), player_->getHeadSprite()));
+					player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), playerHeadSprite));
 					player_->pushLightingSprite(barricade.getSprite());
 				}
 		//Unwalkable collision checks
@@ -711,7 +720,7 @@ void SpatialPartition::update(const sf::Time& dT)
 			else
 				yPos = -1;
 
-			sf::Vector2f playerPosition(player_->getPositionGlobal());
+			sf::Vector2f playerPosition = player_->getPositionGlobal();
 			sf::Vector2u playerTilePos((playerPosition.x - fmod(playerPosition.x, 32.0f) + 16) / 32, (playerPosition.y - fmod(playerPosition.y, 32.0f) + 16) / 32);
 			if (playerTilePos.x + xPos >= 0 && playerTilePos.y + yPos >= 0 && playerTilePos.x + xPos < 256 && playerTilePos.y + yPos < 256)
 			{

@@ -110,7 +110,7 @@ void LightingPolygon::createPolygon()
 			
 
 
-			if (rayScalar < smallestRayScalar && rayScalar > 0 && rayScalar != std::numeric_limits<float>::max() && lineScalar >= 0 && lineScalar <= 1)
+			if (rayScalar < smallestRayScalar && rayScalar > 0 && lineScalar >= 0 && lineScalar <= 1)
 			{
 				smallestRayScalar = rayScalar;
 				lineScalarTest = lineScalar;
@@ -168,7 +168,7 @@ void LightingPolygon::createPolygon()
 
 
 
-				if (rayScalar < smallestRayScalar && rayScalar > 0 && rayScalar != std::numeric_limits<float>::max() && lineScalar >= 0 && lineScalar <= 1)
+				if (rayScalar < smallestRayScalar && rayScalar > 0 && lineScalar >= 0 && lineScalar <= 1)
 				{
 					smallestRayScalar = rayScalar;
 					lineScalarTest = lineScalar;

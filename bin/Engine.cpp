@@ -137,11 +137,12 @@ void Engine::draw()
 
 		
 		//Player and gun
-		window_.draw(level_.getPlayer().getLegLeftSprite());
-		window_.draw(level_.getPlayer().getLegRightSprite());
-		window_.draw(level_.getPlayer().getArmLeftSprite());
-		window_.draw(level_.getPlayer().getArmRightSprite());
-		window_.draw(level_.getPlayer().getHeadSprite());
+		Player player = level_.getPlayer();
+		window_.draw(player.getLegLeftSprite());
+		window_.draw(player.getLegRightSprite());
+		window_.draw(player.getArmLeftSprite());
+		window_.draw(player.getArmRightSprite());
+		window_.draw(player.getHeadSprite());
 
 		Gun currentGun = level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex());
 		window_.draw(currentGun.getSprite());
@@ -167,10 +168,11 @@ void Engine::draw()
 			for (auto& triangle : currentGun.getMuzzleTriangles())
 				window_.draw(triangle, rs);
 
-		std::vector<Emitter> emitters = currentGun.getEmitters();
-		for (auto& emitter : emitters)
+			for (auto& emitter : currentGun.getEmitters())
+		{
 			for (auto& particle : emitter.getParticles())
 				window_.draw(particle.getParticle());
+		}
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
@@ -203,54 +205,30 @@ void Engine::draw()
 					else
 						window_.draw(iZombie->getCorpseSprite());
 				}
-				std::vector<Turret> vTurrets = iPartition->getTurrets();
 
-				for (auto& turret : vTurrets)
+				for (auto& turret : iPartition->getTurrets())
 				{
 					window_.draw(turret.getBaseSprite());
 					window_.draw(turret.getTurretSprite());
 
-					sf::RenderStates addBlendState(sf::BlendAdd);
-					//Calculating the light position in window coordinates
-					sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
-					sf::View view = window_.getView();
-					sf::Vector2f viewSize = view.getSize();
-					sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
-					sf::Vector2f windowCoord((turret.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
+					windowCoord = ((turret.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
 					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
 					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
-					shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 255, 0, 255));
-					shaderGlow_.setParameter("frag_Attenuation", 0.075f);
-
-					sf::RenderStates rs;
-					rs.shader = &shaderGlow_;
-					rs.blendMode = sf::BlendAdd;
 
 					if (turret.isMuzzleLight())
-					{
-						std::cout << turret.getMuzzleTriangles().size() << std::endl;
 						for (auto& triangle : turret.getMuzzleTriangles())
 							window_.draw(triangle, rs);
-						
-					}
-					
 				}
-				std::vector<Barricade> vBarricades = iPartition->getBarricades();
-				for (auto& barricade : vBarricades)
+
+				for (auto& barricade : iPartition->getBarricades())
 					window_.draw(barricade.getSprite());
 
 				
 				//Draws bullets
-
-				
-
-				
-
 				std::list<Bullet> vBullets = iPartition->getBullets();
-				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
-				{			      
+				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)		      
 					window_.draw(iBullet->getSprite());	
-				}
+				
 
 				//Draws trees
 				std::vector<Tree> vTrees = iPartition->getTrees();
@@ -332,14 +310,19 @@ int Engine::run()
 			//update cam
 		  //	level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
 			//Clamps the camera to edges
-			if (level_.getCameraView().getCenter().x - level_.getCameraView().getSize().x / 2 < 0)
-				level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getSize().x / 2, level_.getCameraView().getCenter().y));
-			if (level_.getCameraView().getCenter().y - level_.getCameraView().getSize().y / 2 < 0)
-				level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getCenter().x, level_.getCameraView().getSize().y / 2));
-			if (level_.getCameraView().getCenter().x + level_.getCameraView().getSize().x / 2 > level_.tiles.size() * tileSize_)
-				level_.setCameraPosition(sf::Vector2f(level_.tiles.size() * tileSize_ - level_.getCameraView().getSize().x / 2, level_.getCameraView().getCenter().y));
-			if (level_.getCameraView().getCenter().y + level_.getCameraView().getSize().y / 2 > level_.tiles.size() * tileSize_)
-				level_.setCameraPosition(sf::Vector2f(level_.getCameraView().getCenter().x, level_.tiles.size() * tileSize_ - level_.getCameraView().getSize().y / 2));
+			sf::View view = level_.getCameraView();
+			sf::Vector2f size = view.getSize();
+			sf::Vector2f center = view.getCenter();
+			int vectorSize = level_.tiles.size();
+
+			if (center.x - size.x / 2 < 0)
+				level_.setCameraPosition(sf::Vector2f(size.x / 2, center.y));
+			if (center.y - size.y / 2 < 0)
+				level_.setCameraPosition(sf::Vector2f(center.x, size.y / 2));
+			if (center.x + size.x / 2 > vectorSize * tileSize_)
+				level_.setCameraPosition(sf::Vector2f(vectorSize * tileSize_ - size.x / 2, center.y));
+			if (center.y + size.y / 2 > vectorSize * tileSize_)
+				level_.setCameraPosition(sf::Vector2f(center.x, vectorSize * tileSize_ - size.y / 2));
 
 			level_.resizeCamera(window_.getSize());
 			window_.setView(level_.getCameraView());
