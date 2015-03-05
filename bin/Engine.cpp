@@ -206,6 +206,11 @@ void Engine::draw()
 						window_.draw(iZombie->getCorpseSprite());
 				}
 
+				//Blood particles
+				for (auto& emitter : iPartition->getEmitters())
+					for (auto& particle : emitter.getParticles())
+					window_.draw(particle.getParticle());
+
 				for (auto& turret : iPartition->getTurrets())
 				{
 					window_.draw(turret.getBaseSprite());

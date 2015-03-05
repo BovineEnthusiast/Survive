@@ -489,6 +489,10 @@ void SpatialPartition::update(const sf::Time& dT)
 	//-----------------COLLISION--------------------------------
 	for (auto& bullet : lBullets_)
 	{
+		float rotation = (bullet.getSprite().getRotation() - 180.0f);
+		float rotationRadians = rotation * 3.14159265358f / 180.0f;
+		sf::Vector2f position(bullet.getPositionGlobal() - sf::Vector2f(cos(rotationRadians) * 7.5f, sin(rotationRadians) * 7.5f));
+
 		//This partition's zombies
 		for (auto& zombie : vZombies_)
 		{
@@ -496,11 +500,27 @@ void SpatialPartition::update(const sf::Time& dT)
 			{
 				zombie.injure();
 				zombie.setHealth(zombie.getHealth() - bullet.getDamage());
-				dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
-				dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
 				bullet.setHit(true);
 				pSoundManager_->playSound("hit");
 				player_->setPoints(player_->getPoints() + 10);
+
+				
+				vEmitters_.push_back(Emitter(true,
+					position,
+					true,
+					5,
+					1000,
+					sf::Vector2f(5.0f, 5.0f),
+					sf::Vector2f(3.0f, 3.0f),
+					rotation - 25.0f,
+					rotation + 25.0f,
+					150.0f,
+					250.0f,
+					0.0f,
+					0.1f,
+					0.2f,
+					sf::Color(255, 25, 25, 255),
+					sf::Color(255, 25, 25, 255)));
 
 			}
 		}
@@ -514,10 +534,25 @@ void SpatialPartition::update(const sf::Time& dT)
 					{
 						zombie.injure();
 						zombie.setHealth(zombie.getHealth() - bullet.getDamage());
-						dBloodSplats_.push_back(BloodSplat(&imageManager_->vBloodSplatTextures.at(std::rand() % imageManager_->vBloodSplatTextures.size())));
-						dBloodSplats_.at(dBloodSplats_.size() - 1).setPositionGlobal(bullet.getSprite().getPosition());
 						bullet.setHit(true);
 						pSoundManager_->playSound("hit");
+
+						vEmitters_.push_back(Emitter(true,
+							position,
+							true,
+							5,
+							1000,
+							sf::Vector2f(5.0f, 5.0f),
+							sf::Vector2f(3.0f, 3.0f),
+							rotation - 25.0f,
+							rotation + 25.0f,
+							150.0f,
+							250.0f,
+							0.0f,
+							0.1f,
+							0.2f,
+							sf::Color(255, 25, 25, 255),
+							sf::Color(255, 25, 25, 255)));
 					}
 				}
 
@@ -525,7 +560,26 @@ void SpatialPartition::update(const sf::Time& dT)
 		for (auto& tree : vTrees_)
 		{
 			if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
+			{
 				bullet.setHit(true);
+
+				vEmitters_.push_back(Emitter(true,
+					position,
+					true,
+					5,
+					1000,
+					sf::Vector2f(5.0f, 5.0f),
+					sf::Vector2f(3.0f, 3.0f),
+					rotation - 25.0f,
+					rotation + 25.0f,
+					150.0f,
+					250.0f,
+					0.0f,
+					0.1f,
+					0.2f,
+					sf::Color(93, 64, 40, 255),
+					sf::Color(93, 64, 40, 255)));
+			}
 		}
 
 		//Neighboring partition's trees
@@ -534,8 +588,26 @@ void SpatialPartition::update(const sf::Time& dT)
 				for (auto& tree : partition->vTrees_)
 				{
 					if ((isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
+					{
 						bullet.setHit(true);
 
+						vEmitters_.push_back(Emitter(true,
+							position,
+							true,
+							5,
+							1000,
+							sf::Vector2f(5.0f, 5.0f),
+							sf::Vector2f(3.0f, 3.0f),
+							rotation - 25.0f,
+							rotation + 25.0f,
+							150.0f,
+							250.0f,
+							0.0f,
+							0.1f,
+							0.2f,
+							sf::Color(93, 64, 40, 255),
+							sf::Color(93, 64, 40, 255)));
+					}
 				}
 	}
 	for (auto& zombie : vZombies_)
@@ -751,6 +823,9 @@ void SpatialPartition::update(const sf::Time& dT)
 	{
 		clickBarricadeDown_ = false;
 	}
+
+	for (auto& emitter : vEmitters_)
+		emitter.update(dT);
 }
 
 //Setters
@@ -769,6 +844,7 @@ std::deque<BloodSplat> SpatialPartition::getBloodSplats() const { return dBloodS
 std::vector<Turret> SpatialPartition::getTurrets() const { return vTurrets_; }
 std::vector<Barricade> SpatialPartition::getBarricades() const { return vBarricades_; }
 std::array<SpatialPartition*, 8> SpatialPartition::getNeigborPartitions() const { return pSpatialPartitions_; }
+std::vector<Emitter> SpatialPartition::getEmitters() const { return vEmitters_; }
 
 //Pushers
 void SpatialPartition::pushZombie(const Zombie& zombie) { vZombies_.push_back(zombie); }

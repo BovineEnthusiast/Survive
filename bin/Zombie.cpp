@@ -12,8 +12,8 @@ Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture
 {
 	corpseSprite_.setTexture(*pCorpseTexture_);
 	corpseSprite_.setOrigin(17.0f, 14.0f);
-	finalSpeed_ = 3 + std::rand() % (int)(speed * 1.5);
-	health_ = 100 + health;
+	finalSpeed_ =  3 + std::rand() % (int)(speed * 1.5);
+	health_ =  100 + health;
 }
 void Zombie::update(const sf::Time& dT)
 {
@@ -361,6 +361,7 @@ bool Zombie::isDead() const { return dead_; }
 bool Zombie::isDeletable() const { return delete_; }
 bool Zombie::isReadyToRepath() const { return readyToRepath_; }
 sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
+std::vector<Emitter> Zombie::getEmitters() const { return vEmitters_; }
 std::stack<Node> Zombie::getNodes() const { return sPNodes_; }
 bool Zombie::needsPath()
 {

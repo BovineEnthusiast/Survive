@@ -4,6 +4,7 @@
 #include <mutex>
 #include <stack>
 #include "Humanoid.h"
+#include "Emitter.h"
 #include "Player.h"
 #include "Tile.h"
 #include "Turret.h"
@@ -27,6 +28,7 @@ public:
     bool isDead() const;
     bool isDeletable() const;
     bool isReadyToRepath() const;
+	std::vector<Emitter> getEmitters() const;
     sf::Sprite getCorpseSprite() const;
     std::stack<Node> getNodes() const;
 
@@ -67,6 +69,8 @@ public:
     sf::Vector2i lastTargetPosition_;
     bool readyToRepath_ = true;
     
+	//A vector of emitters for the particles
+	std::vector<Emitter> vEmitters_;
     //The corpse texture
     sf::Texture* pCorpseTexture_;
     sf::Sprite corpseSprite_;

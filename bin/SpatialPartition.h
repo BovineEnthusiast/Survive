@@ -9,6 +9,7 @@
 #include "Bullet.h"
 #include "Den.h"
 #include "ImageManager.h"
+#include "Emitter.h"
 #include "Player.h"
 #include "SoundManager.h"
 #include "Tile.h"
@@ -39,6 +40,7 @@ public:
   std::deque<BloodSplat> getBloodSplats() const;
   std::array<SpatialPartition*, 8> getNeigborPartitions() const;
   sf::RectangleShape getSelectionRect() const;
+  std::vector<Emitter> getEmitters() const;
 
   //Pushers
   void pushZombie(const Zombie&);
@@ -73,6 +75,7 @@ public:
   std::vector<Den> vDens_;
   std::vector<Turret> vTurrets_;
   std::vector<Barricade> vBarricades_;
+  std::vector<Emitter> vEmitters_; //Used for zombie blood
   std::deque<BloodSplat> dBloodSplats_;
   Player* player_;
   std::vector<std::vector<SpatialPartition>>* partitions_;
