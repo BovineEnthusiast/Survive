@@ -135,12 +135,6 @@ void Engine::draw()
 				{
 				    window_.draw(mine.getMine());
 				    Emitter emitter = mine.getEmitter();
-
-				    for(auto& particle : emitter.getParticles())
-				    {
-					std::cout << "TESTSZ" << std::endl;
-					window_.draw(particle.getParticle());
-				    }
 				}
 			}
 		
@@ -246,6 +240,16 @@ void Engine::draw()
 				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)		      
 					window_.draw(iBullet->getSprite());	
 				
+				std::vector<Mine> vMines = iPartition->getMines();
+				for (auto& mine : vMines)
+				{
+					Emitter emitter = mine.getEmitter();
+
+					for (auto& particle : emitter.getParticles())
+					{
+						window_.draw(particle.getParticle());
+					}
+				}
 
 				//Draws trees
 				std::vector<Tree> vTrees = iPartition->getTrees();

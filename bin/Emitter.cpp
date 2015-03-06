@@ -81,5 +81,4 @@ void Emitter::update(const sf::Time& dT)
 }
 
 std::list<Particle> Emitter::getParticles() const { return lParticles_; }
-
-bool Emitter::isDead() const { return false; }
+int Emitter::getParticlesToSpawn() const { return particlesToSpawn_; }

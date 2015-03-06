@@ -214,9 +214,8 @@ void Gun::update(const sf::Time& dT)
 	{
 		iEmitter->setPositionGlobal(positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180)));
 		iEmitter->update(dT);
-		
-		//Checks if it needs to be deleted
-		if (iEmitter->isDead())
+
+		if (iEmitter->getParticlesToSpawn() == 0 && iEmitter->getParticles().size() == 0)
 			iEmitter = vEmitters_.erase(iEmitter);
 		else
 			++iEmitter;

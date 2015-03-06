@@ -1,8 +1,10 @@
 #ifndef MINE_H
 #define MINE_H
-#include "ImageManager.h"
 #include "GameObject.h"
 #include "Emitter.h"
+#include "ImageManager.h"
+#include "LightingPolygon.h"
+
 class Mine : public GameObject
 {
  public:
@@ -12,10 +14,13 @@ class Mine : public GameObject
   //Getters
   int getDamage() const;
   int getRadius() const;
+  LightingPolygon getLightingPolygon() const;
   sf::Sprite getMine() const;
   bool exploded() const;
   Emitter getEmitter() const;
 
+  //Pushers
+  void pushSprite(const sf::Sprite&);
   //Helpers
   void explode();
   
@@ -23,8 +28,9 @@ class Mine : public GameObject
   sf::Texture* pTexture_;
   sf::Sprite mineSprite_;
   Emitter emitter_;
+  LightingPolygon light_;
   bool exploded_ = false;
   int damage_ = 500;
-  int radius_  = 224;
+  int radius_  = 500;
 };
 #endif

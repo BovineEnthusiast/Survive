@@ -506,11 +506,17 @@ void SpatialPartition::update(const sf::Time& dT)
 			++iBarricade;
 	}
 
-	for (auto iMine = vMines_.begin(); iMine != vMines_.end(); ++iMine)
+	for (auto iMine = vMines_.begin(); iMine != vMines_.end();)
 	{
 	    iMine->update(dT);
-	    //if(iMine->exploded())
-		//iMine = vMines_.erase(iMine);
+	     
+		//Deletes the mine if it is done.
+		Emitter emitter = iMine->getEmitter();
+		if (emitter.getParticlesToSpawn() == 0 && emitter.getParticles().size() == 0)
+			iMine = vMines_.erase(iMine);
+		else
+			++iMine;
+		
 	}
 
 
@@ -709,8 +715,41 @@ void SpatialPartition::update(const sf::Time& dT)
 
 		for(auto& partition : pSpatialPartitions_)
 		    for(auto& mine : vMines_)
-			if(isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
-			    mine.explode();
+				if (isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
+				{
+					mine.explode();
+					int range = mine.getRadius();
+					int damage = mine.getDamage();
+
+					//This partition's zombies
+					for (auto& altZombie : vZombies_)
+					{
+						if (&altZombie != &zombie)
+						{
+							sf::Vector2f distanceVector(mine.getPositionGlobal() - altZombie.getPositionGlobal());
+							float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+
+							//Damage the zombie if it is in range
+							if (distance <= range)
+								zombie.setHealth(zombie.getHealth() - (1.0f - (distance / 224.0f)) * damage);
+						}
+					}
+
+					//Neighbor partition zombies
+					for (auto& partition : pSpatialPartitions_)
+						for (auto& altZombie : vZombies_)
+						{
+							if (&altZombie != &zombie)
+							{
+								sf::Vector2f distanceVector(mine.getPositionGlobal() - altZombie.getPositionGlobal());
+								float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+
+								//Damage the zombie if it is in range
+								if (distance <= range)
+									zombie.setHealth(zombie.getHealth() - (1.0f - (distance / 224.0f)) * damage);
+							}
+						}
+				}
 
 		//Unwalkable collision checks
 		for (int i = 0; i < 8; ++i)
@@ -863,8 +902,15 @@ void SpatialPartition::update(const sf::Time& dT)
 	{
 	    clickMineDown_ = false;
 	}
-	for (auto& emitter : vEmitters_)
-		emitter.update(dT);
+	for (auto iEmitter = vEmitters_.begin(); iEmitter != vEmitters_.end();)
+	{
+		iEmitter->update(dT);
+
+		if (iEmitter->getParticlesToSpawn() == 0 && iEmitter->getParticles().size() == 0)
+			iEmitter = vEmitters_.erase(iEmitter);
+		else
+			++iEmitter;
+	}
 }
 
 //Setters

@@ -13,9 +13,8 @@ class Emitter : public GameObject
 
   //Getters
   std::list<Particle> getParticles() const;
+  int getParticlesToSpawn() const;
   bool isDead() const;
-  //Setters
-  void setDead(const bool);
   
  private:
   std::list<Particle> lParticles_;

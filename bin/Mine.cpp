@@ -33,7 +33,7 @@ void Mine::explode()
 			   sf::Vector2f(50.0f, 50.0f),
 			   0.0f,
 			   360.0f,
-			   500.0f,
+			   0.0f,
 			   850.0f,
 			   -3000.0f,
 			   0.75f,
@@ -42,5 +42,6 @@ void Mine::explode()
 			   sf::Color(250, 250, 250, 255));
 
     exploded_ = true;
+	mineSprite_.setColor(sf::Color::Transparent);
 }
 
