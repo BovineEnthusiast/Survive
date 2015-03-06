@@ -130,6 +130,18 @@ void Engine::draw()
 				for (size_t bloodSplat = 0; bloodSplat < dBloodSplats.size(); ++bloodSplat)
 					window_.draw(dBloodSplats.at(bloodSplat).getSprite());
 
+				std::vector<Mine> vMines = iPartition->getMines();
+				for(auto& mine : vMines)
+				{
+				    window_.draw(mine.getMine());
+				    Emitter emitter = mine.getEmitter();
+
+				    for(auto& particle : emitter.getParticles())
+				    {
+					std::cout << "TESTSZ" << std::endl;
+					window_.draw(particle.getParticle());
+				    }
+				}
 			}
 		
 

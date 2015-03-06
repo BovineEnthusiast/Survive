@@ -47,8 +47,12 @@ void Particle::update(const sf::Time& dT)
 	particle_.setFillColor(newColor);
 	
 	//Speed
-	speed_ += speedAcceleration_ * dT.asSeconds();
+	if(speed_ > 0)
+	    speed_ += speedAcceleration_ * dT.asSeconds();
 
+	if(speed_ < 0)
+	    speed_ = 0;
+	
 	//Velocity
 	velocity_ = speed_ * directionVector_;
 

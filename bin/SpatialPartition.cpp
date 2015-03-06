@@ -9,6 +9,7 @@ sf::RectangleShape SpatialPartition::selectionRect_;
 bool SpatialPartition::selecting_;
 bool SpatialPartition::clickTurretDown_;
 bool SpatialPartition::clickBarricadeDown_;
+bool SpatialPartition::clickMineDown_;
 
 SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<std::vector<SpatialPartition> >* partitions, SoundManager* pSoundManager, int* pZombiesAlive, int* pZombiesToSpawn, int* pWave)
 	:partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager), pZombiesAlive_(pZombiesAlive), pZombiesToSpawn_(pZombiesToSpawn), pWave_(pWave)
@@ -20,7 +21,7 @@ SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* 
 	selecting_ = false;
 	clickTurretDown_ = false;
 	clickBarricadeDown_ = false;
-
+	
 	selectionRect_.setSize(sf::Vector2f(32.0f, 32.0f));
 	selectionRect_.setOrigin(16.0f, 16.0f);
 	selectionRect_.setFillColor(sf::Color(0, 255, 0, 255));
@@ -400,7 +401,28 @@ void SpatialPartition::update(const sf::Time& dT)
 			}
 		}
 	}
+	//Mine Addition
+	if(hasPlayer_ && !clickMineDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) && player_->getMines() > 0)
+	{
+	    clickMineDown_ = true;
+	    Mine mine(&imageManager_->mineTexture);
+	    mine.setPositionGlobal(player_->getPositionGlobal());
+	    mine.update(dT);
 
+	    bool placed = false;
+	    
+	    for(auto& altMine : vMines_)
+		if(isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
+		    placed = true;
+
+	    for(auto& partition : pSpatialPartitions_)
+		for(auto& altMine : vMines_)
+		    if(isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
+			placed = true;
+
+	    //if(placed)
+		vMines_.push_back(mine);
+	}
 	std::vector<sf::Vector2f> zomPositions;
 	for (auto& zombie : vZombies_)
 		if (!zombie.isDead())
@@ -484,6 +506,12 @@ void SpatialPartition::update(const sf::Time& dT)
 			++iBarricade;
 	}
 
+	for (auto iMine = vMines_.begin(); iMine != vMines_.end(); ++iMine)
+	{
+	    iMine->update(dT);
+	    //if(iMine->exploded())
+		//iMine = vMines_.erase(iMine);
+	}
 
 
 	//-----------------COLLISION--------------------------------
@@ -675,6 +703,14 @@ void SpatialPartition::update(const sf::Time& dT)
 				for (auto& turret : vTurrets_)
 					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombieHeadSprite));
 
+		for(auto& mine : vMines_)
+		    if(isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
+			mine.explode();
+
+		for(auto& partition : pSpatialPartitions_)
+		    for(auto& mine : vMines_)
+			if(isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
+			    mine.explode();
 
 		//Unwalkable collision checks
 		for (int i = 0; i < 8; ++i)
@@ -823,7 +859,10 @@ void SpatialPartition::update(const sf::Time& dT)
 	{
 		clickBarricadeDown_ = false;
 	}
-
+	if(clickMineDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num8))
+	{
+	    clickMineDown_ = false;
+	}
 	for (auto& emitter : vEmitters_)
 		emitter.update(dT);
 }
@@ -843,6 +882,7 @@ std::vector<Den> SpatialPartition::getDens() const { return vDens_; }
 std::deque<BloodSplat> SpatialPartition::getBloodSplats() const { return dBloodSplats_; }
 std::vector<Turret> SpatialPartition::getTurrets() const { return vTurrets_; }
 std::vector<Barricade> SpatialPartition::getBarricades() const { return vBarricades_; }
+std::vector<Mine> SpatialPartition::getMines() const { return vMines_; }
 std::array<SpatialPartition*, 8> SpatialPartition::getNeigborPartitions() const { return pSpatialPartitions_; }
 std::vector<Emitter> SpatialPartition::getEmitters() const { return vEmitters_; }
 

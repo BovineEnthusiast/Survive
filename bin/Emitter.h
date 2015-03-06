@@ -7,6 +7,7 @@
 class Emitter : public GameObject
 {
  public:
+  Emitter();
   Emitter(const bool, const sf::Vector2f&, const bool, const int, const int, const sf::Vector2f&, const sf::Vector2f&, const float, const float, const float, const float, const float, const float, const float, const sf::Color&, const sf::Color&);
   void update(const sf::Time&);
 

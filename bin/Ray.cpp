@@ -11,7 +11,7 @@ Ray::Ray(const sf::Vector2f& direction, const sf::Vector2f& start)
 	:direction_(direction), start_(start)
 {
 	//Normalize direction
-	direction_ /= sqrt(direction.x * direction.x + direction.y * direction.y);
+    direction_ /= (float)sqrt(direction.x * direction.x + direction.y * direction.y);
 
 	angle_ = atan2(direction.y, direction.x);
 }

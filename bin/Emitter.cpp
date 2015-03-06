@@ -1,5 +1,6 @@
 #include "Emitter.h"
-
+#include <iostream> 
+Emitter::Emitter(){}
 Emitter::Emitter(const bool relativeParticles,
 		 const sf::Vector2f& position,
 	     const bool hasSpawnLimit,
@@ -17,7 +18,7 @@ Emitter::Emitter(const bool relativeParticles,
 		 const sf::Color& startingColor,
 		 const sf::Color& endingColor)
     :relativeParticles_(relativeParticles),
-	 hasSpawnLimit_(hasSpawnLimit),
+     hasSpawnLimit_(hasSpawnLimit),
      particlesToSpawn_(particlesToSpawn),
      particlesPerSecond_(particlesPerSecond),
      startingParticleSize_(startingParticleSize),
@@ -40,25 +41,29 @@ void Emitter::update(const sf::Time& dT)
 	sf::Vector2f offset = lastPos_ - positionGlobal_;
 	lastPos_ = positionGlobal_;
 
-    if(spawnClock_.getElapsedTime().asSeconds() >= 1.0f / particlesPerSecond_ && particlesToSpawn_ > 0)
-    {
-		--particlesToSpawn_;
-		spawnClock_.restart();
+	if(spawnClock_.getElapsedTime().asSeconds() >= 1.0f / particlesPerSecond_ && particlesToSpawn_ > 0)
+	{
+	    int numToSpawn = (int)(spawnClock_.getElapsedTime().asSeconds() / (1.0f / particlesPerSecond_));
+	    particlesToSpawn_ -= numToSpawn;
+	    spawnClock_.restart();
+
+	    for (int i = 0; i < numToSpawn; ++i)
+	    {
 		float direction = minDirection_ + fmod(std::rand(), (maxDirection_ - minDirection_));
 		float speed = minSpeed_ + fmod(std::rand(), (maxSpeed_ - minSpeed_));
 		float life = minLife_ + fmod(std::rand(), (maxLife_ - minLife_));
-	
 		lParticles_.push_back(Particle(positionGlobal_,
-						  startingParticleSize_,
-						  endingParticleSize_,
-						  direction,
-						  speed,
-						  speedAcceleration_,
-						  life,
-						  startingColor_,
-						  endingColor_));
-    }
-			
+					       startingParticleSize_,
+					       endingParticleSize_,
+					       direction,
+					       speed,
+					       speedAcceleration_,
+					       life,
+					       startingColor_,
+					       endingColor_));
+
+	    }
+	}		
     for(auto iParticle = lParticles_.begin(); iParticle != lParticles_.end();)
     {
 		//if(relativeParticles_)

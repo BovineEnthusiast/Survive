@@ -11,7 +11,7 @@ ImageManager::ImageManager()
   turretBaseTexture.loadFromFile("assets/guns/turret/base.png");
   turretTexture.loadFromFile("assets/guns/turret/turret.png");
   barricadeTexture.loadFromFile("assets/guns/barricade.png");
-  
+  mineTexture.loadFromFile("assets/guns/mine.png");
   treeUpperLeafTexture.loadFromFile("assets/tree/tree_upper.png");
   treeLowerLeafTexture.loadFromFile("assets/tree/tree_lower.png");
   treeTrunkTexture.loadFromFile("assets/tree/tree_trunk.png");

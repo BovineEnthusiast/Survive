@@ -118,6 +118,7 @@ int Player::getCurrentGunIndex() const { return currentGun_; }
 int Player::getPoints() const { return points_; }
 int Player::getTurrets() const { return turrets_; }
 int Player::getBarricades() const { return barricades_; }
+int Player::getMines() const { return mines_; }
 std::vector<sf::ConvexShape> Player::getTriangles() const { return lighting_.getTriangles(); }
 float Player::getShake()
 {
@@ -129,11 +130,13 @@ bool Player::hasMagnum() const { return hasMagnum_; }
 bool Player::hasShotgun() const { return hasShotgun_; }
 bool Player::hasRifle() const { return hasRifle_; }
 bool Player::isMuzzleFlash() const { return muzzleFlash_; }
+
 //Setters 
 void Player::setPoints(const int points) { points_ = points; }
 void Player::setPosition(const sf::Vector2f& position) { positionGlobal_ = position; }
 void Player::setTurrets(const int turrets) { turrets_ = turrets; }
 void Player::setBarricades(const int barricades) { barricades_ = barricades; }
+void Player::setMines(const int mines) { mines_ = mines; }
 void Player::setHasMagnum(const bool hasMagnum) { hasMagnum_ = hasMagnum; }
 void Player::setHasShotgun(const bool hasShotgun) { hasShotgun_ = hasShotgun; }
 void Player::setHasRifle(const bool hasRifle) { hasRifle_ = hasRifle; }

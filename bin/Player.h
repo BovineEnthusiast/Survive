@@ -20,12 +20,13 @@ public:
     int getPoints() const;
     int getTurrets() const;
     int getBarricades() const;
+    int getMines() const;
     float getShake();
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
-	bool isMuzzleFlash() const;
-	std::vector<sf::ConvexShape> getTriangles() const;
+    bool isMuzzleFlash() const;
+    std::vector<sf::ConvexShape> getTriangles() const;
     
     //Setters
     void setPoints(const int);
@@ -33,16 +34,17 @@ public:
     void setGunBulletPointers(std::list<Bullet>*);
     void setTurrets(const int);
     void setBarricades(const int);
+    void setMines(const int);
     void setHasMagnum(const bool);
     void setHasShotgun(const bool);
     void setHasRifle(const bool);
 
-	//Pushers
-	void pushLightingSprite(const sf::Sprite&);
+    //Pushers
+    void pushLightingSprite(const sf::Sprite&);
 
  private:
-	//The lighting/line of sight of the player
-	 LightingPolygon lighting_;
+    //The lighting/line of sight of the player
+    LightingPolygon lighting_;
     //Button clicks
     bool downSwapRight_ = false;
     bool downSwapLeft_ = false;
@@ -52,10 +54,11 @@ public:
     bool hasShotgun_ = false;
     bool hasRifle_ = false;
     
-	bool muzzleFlash_ = false;
+    bool muzzleFlash_ = false;
 
     int turrets_ = 0;
     int barricades_ = 0;
+    int mines_ = 1000;
     
     int points_ = 100000;
     int currentGun_ = 0;

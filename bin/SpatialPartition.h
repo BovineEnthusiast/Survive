@@ -10,6 +10,7 @@
 #include "Den.h"
 #include "ImageManager.h"
 #include "Emitter.h"
+#include "Mine.h"
 #include "Player.h"
 #include "SoundManager.h"
 #include "Tile.h"
@@ -37,6 +38,7 @@ public:
   std::vector<Den> getDens() const;
   std::vector<Turret> getTurrets() const;
   std::vector<Barricade> getBarricades() const;
+  std::vector<Mine> getMines() const;
   std::deque<BloodSplat> getBloodSplats() const;
   std::array<SpatialPartition*, 8> getNeigborPartitions() const;
   sf::RectangleShape getSelectionRect() const;
@@ -58,7 +60,7 @@ public:
   //Used to determine clicks for turret/barricade placement
   static bool clickTurretDown_;
   static bool clickBarricadeDown_;
-  
+  static bool clickMineDown_;
   int xPos_;
   int yPos_;
   sf::Vector2f lastPlayerPos_;
@@ -75,6 +77,7 @@ public:
   std::vector<Den> vDens_;
   std::vector<Turret> vTurrets_;
   std::vector<Barricade> vBarricades_;
+  std::vector<Mine> vMines_;
   std::vector<Emitter> vEmitters_; //Used for zombie blood
   std::deque<BloodSplat> dBloodSplats_;
   Player* player_;
