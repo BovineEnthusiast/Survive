@@ -509,13 +509,35 @@ void SpatialPartition::update(const sf::Time& dT)
 	for (auto iMine = vMines_.begin(); iMine != vMines_.end();)
 	{
 	    iMine->update(dT);
-	     
-		//Deletes the mine if it is done.
-		Emitter emitter = iMine->getEmitter();
-		if (emitter.getParticlesToSpawn() == 0 && emitter.getParticles().size() == 0)
-			iMine = vMines_.erase(iMine);
-		else
-			++iMine;
+	    if(iMine->exploded() && iMine->getExplosionTime() <= 0.25f)
+	    {
+		for(auto& zombie : vZombies_)
+		{
+		    sf::Vector2f distanceVector(zombie.getPositionGlobal() - iMine->getPositionGlobal());
+		    float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+		
+		    if(distance > 32.0f)
+			iMine->pushSprite(zombie.getHeadSprite());
+		}
+		for(auto& tree : vTrees_)
+		    iMine->pushSprite(tree.getTrunk());
+
+		for(auto partition : pSpatialPartitions_)
+		{
+		    for(auto& zombie : vZombies_)
+			iMine->pushSprite(zombie.getHeadSprite());
+
+		    for(auto& tree : vTrees_)
+			iMine->pushSprite(tree.getTrunk());
+		}
+		
+	    }
+	    //Deletes the mine if it is done.
+	    Emitter emitter = iMine->getEmitter();
+	    if (emitter.getParticlesToSpawn() == 0 && emitter.getParticles().size() == 0)
+		iMine = vMines_.erase(iMine);
+	    else
+		++iMine;
 		
 	}
 

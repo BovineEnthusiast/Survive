@@ -5,25 +5,41 @@ Mine::Mine(sf::Texture* pTexture)
 {
     mineSprite_.setTexture(*pTexture_);
 }
+
 void Mine::update(const sf::Time& dT)
 {
     if(exploded_)
+    {
 	emitter_.update(dT);
+	float currentTime = explosionLightClock_.getElapsedTime().asSeconds();
+	if(currentTime <= 0.25f)
+	{
+	    light_.createPolygon();
+	    light_.clearSprites();
+	}
+    }
 
-
-   mineSprite_.setPosition(positionGlobal_);
-   mineSprite_.setRotation(rotationGlobal_);
+    light_.setPosition(positionGlobal_);
+    mineSprite_.setPosition(positionGlobal_);
+    mineSprite_.setRotation(rotationGlobal_);
 }
+
 //Getters
 int Mine::getDamage() const { return damage_; }
 int Mine::getRadius() const { return radius_; }
 sf::Sprite Mine::getMine() const { return mineSprite_; }
 bool Mine::exploded() const { return exploded_; }
 Emitter Mine::getEmitter() const { return emitter_; }
+float Mine::getExplosionTime() const { return explosionLightClock_.getElapsedTime().asSeconds(); }
+LightingPolygon Mine::getLightingPolygon() const { return light_; }
+
+//Pushers
+void Mine::pushSprite(const sf::Sprite& sprite) { light_.pushSprite(sprite); }
 //Helpers
 void Mine::explode()
 {
     if(!exploded_)
+    {
 	emitter_ = Emitter(true,
 			   positionGlobal_,
 			   true,
@@ -41,7 +57,9 @@ void Mine::explode()
 			   sf::Color(255, 255, 50, 255),
 			   sf::Color(250, 250, 250, 255));
 
-    exploded_ = true;
+	exploded_ = true;
 	mineSprite_.setColor(sf::Color::Transparent);
+	explosionLightClock_.restart();
+    }
 }
 

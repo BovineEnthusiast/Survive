@@ -76,6 +76,14 @@ void Engine::draw()
 		sf::Vector2f camTopLeft = sf::Vector2f(camView.getCenter().x - camView.getSize().x / 2, camView.getCenter().y - camView.getSize().y / 2);
 		sf::Vector2f camBottomRight = sf::Vector2f(camView.getCenter().x + camView.getSize().x / 2, camView.getCenter().y + camView.getSize().y / 2);
 
+		//Used for shaders
+		sf::RenderStates addBlendState(sf::BlendAdd);
+		//Calculating the light position in window coordinates
+		sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
+		sf::View view = window_.getView();
+		sf::Vector2f viewSize = view.getSize();
+		sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
+ 
 		//Vector positions of tiles to render
 		int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_;
 		int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_;
@@ -133,7 +141,25 @@ void Engine::draw()
 				std::vector<Mine> vMines = iPartition->getMines();
 				for(auto& mine : vMines)
 				{
-				    window_.draw(mine.getMine());
+				    if(mine.exploded() && mine.getExplosionTime() <= 0.25f)
+				    {
+					sf::Vector2f windowCoord((mine.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
+					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
+					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
+					shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 150, 0, 255));
+					shaderGlow_.setParameter("frag_Attenuation", 0.05f);
+					sf::RenderStates rs;
+					rs.shader = &shaderGlow_;
+					rs.blendMode = sf::BlendAdd;
+					
+					std::vector<sf::ConvexShape> triangles = mine.getLightingPolygon().getTriangles();
+					for(auto& triangle : triangles)
+					    window_.draw(triangle);
+					
+					
+					window_.draw(mine.getMine(), rs);
+				    }
+				    
 				    Emitter emitter = mine.getEmitter();
 				}
 			}
@@ -154,12 +180,6 @@ void Engine::draw()
 		window_.draw(currentGun.getSprite());
 
 
-		sf::RenderStates addBlendState(sf::BlendAdd);
-		//Calculating the light position in window coordinates
-		sf::Vector2f windowSize = (sf::Vector2f)window_.getSize();
-		sf::View view = window_.getView();
-		sf::Vector2f viewSize = view.getSize();
-		sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
 		sf::Vector2f windowCoord((currentGun.getBulletSpawnPos() - viewTopLeft) * (windowSize.x / viewSize.x));
 		windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
 		shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
