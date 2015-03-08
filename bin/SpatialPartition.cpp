@@ -21,7 +21,7 @@ SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* 
 	selecting_ = false;
 	clickTurretDown_ = false;
 	clickBarricadeDown_ = false;
-	
+
 	selectionRect_.setSize(sf::Vector2f(32.0f, 32.0f));
 	selectionRect_.setOrigin(16.0f, 16.0f);
 	selectionRect_.setFillColor(sf::Color(0, 255, 0, 255));
@@ -402,25 +402,25 @@ void SpatialPartition::update(const sf::Time& dT)
 		}
 	}
 	//Mine Addition
-	if(hasPlayer_ && !clickMineDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) && player_->getMines() > 0)
+	if (hasPlayer_ && !clickMineDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) && player_->getMines() > 0)
 	{
-	    clickMineDown_ = true;
-	    Mine mine(&imageManager_->mineTexture);
-	    mine.setPositionGlobal(player_->getPositionGlobal());
-	    mine.update(dT);
+		clickMineDown_ = true;
+		Mine mine(&imageManager_->mineTexture);
+		mine.setPositionGlobal(player_->getPositionGlobal());
+		mine.update(dT);
 
-	    bool placed = false;
-	    
-	    for(auto& altMine : vMines_)
-		if(isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
-		    placed = true;
+		bool placed = false;
 
-	    for(auto& partition : pSpatialPartitions_)
-		for(auto& altMine : vMines_)
-		    if(isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
-			placed = true;
+		for (auto& altMine : vMines_)
+			if (isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
+				placed = true;
 
-	    //if(placed)
+		for (auto& partition : pSpatialPartitions_)
+			for (auto& altMine : vMines_)
+				if (isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
+					placed = true;
+
+		//if(placed)
 		vMines_.push_back(mine);
 	}
 	std::vector<sf::Vector2f> zomPositions;
@@ -439,15 +439,15 @@ void SpatialPartition::update(const sf::Time& dT)
 
 		iTurret->pushMuzzleLightSprite(player_->getHeadSprite());
 
-		for (auto& zombie : vZombies_)		
-				iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
+		for (auto& zombie : vZombies_)
+			iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
 
 		//Neigboring partition's zombies
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& zombie : partition->vZombies_)
-						iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
-		
+					iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
+
 		//This partition's trees
 		for (auto& tree : vTrees_)
 			iTurret->pushMuzzleLightSprite(tree.getTrunk());
@@ -508,37 +508,38 @@ void SpatialPartition::update(const sf::Time& dT)
 
 	for (auto iMine = vMines_.begin(); iMine != vMines_.end();)
 	{
-	    iMine->update(dT);
-	    if(iMine->exploded() && iMine->getExplosionTime() <= 0.25f)
-	    {
-		for(auto& zombie : vZombies_)
+		iMine->update(dT);
+		if (iMine->exploded() && iMine->getExplosionTime() <= 0.75f)
 		{
-		    sf::Vector2f distanceVector(zombie.getPositionGlobal() - iMine->getPositionGlobal());
-		    float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
-		
-		    if(distance > 32.0f)
-			iMine->pushSprite(zombie.getHeadSprite());
-		}
-		for(auto& tree : vTrees_)
-		    iMine->pushSprite(tree.getTrunk());
+			for (auto& zombie : vZombies_)
+			{
+				sf::Vector2f distanceVector(zombie.getPositionGlobal() - iMine->getPositionGlobal());
+				float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
 
-		for(auto partition : pSpatialPartitions_)
-		{
-		    for(auto& zombie : vZombies_)
-			iMine->pushSprite(zombie.getHeadSprite());
+				//Minumim distance to allow light to shine instead of hitting near zombies
+				if (distance > 150.0f)
+					iMine->pushSprite(zombie.getHeadSprite());
+			}
+			for (auto& tree : vTrees_)
+				iMine->pushSprite(tree.getTrunk());
 
-		    for(auto& tree : vTrees_)
-			iMine->pushSprite(tree.getTrunk());
+			for (auto& partition : pSpatialPartitions_)
+			{
+				for (auto& zombie : partition->getZombies())
+					iMine->pushSprite(zombie.getHeadSprite());
+
+				for (auto& tree : partition->getTrees())
+					iMine->pushSprite(tree.getTrunk());
+			}
+
 		}
-		
-	    }
-	    //Deletes the mine if it is done.
-	    Emitter emitter = iMine->getEmitter();
-	    if (emitter.getParticlesToSpawn() == 0 && emitter.getParticles().size() == 0)
-		iMine = vMines_.erase(iMine);
-	    else
-		++iMine;
-		
+		//Deletes the mine if it is done.
+		Emitter emitter = iMine->getEmitter();
+		if (iMine->isDead())
+			iMine = vMines_.erase(iMine);
+		else
+			++iMine;
+
 	}
 
 
@@ -560,7 +561,7 @@ void SpatialPartition::update(const sf::Time& dT)
 				pSoundManager_->playSound("hit");
 				player_->setPoints(player_->getPoints() + 10);
 
-				
+
 				vEmitters_.push_back(Emitter(true,
 					position,
 					true,
@@ -674,7 +675,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		{
 			//This partition's zombies
 			for (auto& zombie2 : vZombies_)
-			{ 
+			{
 				if (!zombie2.isDead() && &zombie != &zombie2)
 					zombie.setPositionGlobal(zombie.getPositionGlobal() - isColliding(zombieHeadSprite, zombie2.getHeadSprite()));
 			}
@@ -698,7 +699,7 @@ void SpatialPartition::update(const sf::Time& dT)
 				zombie.setNeedsPath(true);
 			}
 		}
-				
+
 		//Neighboring partitions's tree
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
@@ -714,7 +715,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		//This partition's barricades
 		for (auto& barricade : vBarricades_)
 			zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(barricade.getSprite(), zombieHeadSprite));
-		
+
 		//Neighboring partition's barricades
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
@@ -731,19 +732,36 @@ void SpatialPartition::update(const sf::Time& dT)
 				for (auto& turret : vTurrets_)
 					zombie.setPositionGlobal(zombie.getPositionGlobal() + isColliding(turret.getBaseSprite(), zombieHeadSprite));
 
-		for(auto& mine : vMines_)
-		    if(isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
-			mine.explode();
+		for (auto& mine : vMines_)
+			if (!mine.exploded() && isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
+			{
+				zombie.setHealth(0);
 
-		for(auto& partition : pSpatialPartitions_)
-		    for(auto& mine : vMines_)
-				if (isColliding(zombie.getHeadSprite(), mine.getMine()) != sf::Vector2f(0.0f, 0.0f))
+				mine.explode();
+				int range = mine.getRadius();
+				int damage = mine.getDamage();
+
+				//This partition's zombies
+				for (auto& altZombie : vZombies_)
 				{
-					mine.explode();
-					int range = mine.getRadius();
-					int damage = mine.getDamage();
+					if (&altZombie != &zombie)
+					{
+						sf::Vector2f distanceVector(altZombie.getPositionGlobal() - mine.getPositionGlobal());
+						float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
 
-					//This partition's zombies
+						//Damage the zombie if it is in range
+						if (distance <= range)
+							altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / range)) * damage);
+						
+						//Slide away from explosion upon death
+						if (altZombie.getHealth() <= 0)
+						{
+							altZombie.setRotationGlobal(atan2(distanceVector.y, distanceVector.x) * 180 / 3.14159265358f);
+						}
+					}
+				}
+				//Neighbor partition zombies
+				for (auto& partition : pSpatialPartitions_)
 					for (auto& altZombie : vZombies_)
 					{
 						if (&altZombie != &zombie)
@@ -753,25 +771,10 @@ void SpatialPartition::update(const sf::Time& dT)
 
 							//Damage the zombie if it is in range
 							if (distance <= range)
-								zombie.setHealth(zombie.getHealth() - (1.0f - (distance / 224.0f)) * damage);
+								altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / range)) * damage);
 						}
 					}
-
-					//Neighbor partition zombies
-					for (auto& partition : pSpatialPartitions_)
-						for (auto& altZombie : vZombies_)
-						{
-							if (&altZombie != &zombie)
-							{
-								sf::Vector2f distanceVector(mine.getPositionGlobal() - altZombie.getPositionGlobal());
-								float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
-
-								//Damage the zombie if it is in range
-								if (distance <= range)
-									zombie.setHealth(zombie.getHealth() - (1.0f - (distance / 224.0f)) * damage);
-							}
-						}
-				}
+			}
 
 		//Unwalkable collision checks
 		for (int i = 0; i < 8; ++i)
@@ -814,14 +817,15 @@ void SpatialPartition::update(const sf::Time& dT)
 		{
 			if (!zombie.isDead())
 				player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, zombie.getHeadSprite()));
-				player_->pushLightingSprite(zombie.getHeadSprite());
+			player_->pushLightingSprite(zombie.getHeadSprite());
 		}
 		//Neigboring partition's zombies
 		for (auto& partition : pSpatialPartitions_)
 			if (partition != nullptr)
 				for (auto& zombie : partition->vZombies_)
 				{
-					player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, zombie.getHeadSprite()));
+					if (!zombie.isDead())
+						player_->setPositionGlobal(player_->getPositionGlobal() - isColliding(playerHeadSprite, zombie.getHeadSprite()));
 					player_->pushLightingSprite(zombie.getHeadSprite());
 				}
 		//This partition's turrets
@@ -920,15 +924,15 @@ void SpatialPartition::update(const sf::Time& dT)
 	{
 		clickBarricadeDown_ = false;
 	}
-	if(clickMineDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num8))
+	if (clickMineDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num8))
 	{
-	    clickMineDown_ = false;
+		clickMineDown_ = false;
 	}
 	for (auto iEmitter = vEmitters_.begin(); iEmitter != vEmitters_.end();)
 	{
 		iEmitter->update(dT);
 
-		if (iEmitter->getParticlesToSpawn() == 0 && iEmitter->getParticles().size() == 0)
+		if (iEmitter->isDead())
 			iEmitter = vEmitters_.erase(iEmitter);
 		else
 			++iEmitter;

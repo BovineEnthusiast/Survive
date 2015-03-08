@@ -19,6 +19,7 @@ class Mine : public GameObject
   bool exploded() const;
   Emitter getEmitter() const;
   float getExplosionTime() const;
+  bool isDead() const;
   
   //Pushers
   void pushSprite(const sf::Sprite&);
@@ -32,8 +33,9 @@ class Mine : public GameObject
   LightingPolygon light_;
   bool exploded_ = false;
   bool needLight_ = false;
-  int damage_ = 500;
-  int radius_  = 500;
+  bool dead_ = false;
+  int damage_ = 300;
+  int radius_  = 300;
 
   sf::Clock explosionLightClock_;
 };

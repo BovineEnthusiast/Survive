@@ -124,6 +124,7 @@ public:
     int priceRifle_ = 3000;
     int priceBarricade_ = 100;
     int priceTurret_ = 1000;
+	int priceMine_ = 200;
 
     //Buy button texts
     sf::Text buyMagnumText_;

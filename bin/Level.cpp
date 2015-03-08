@@ -69,12 +69,13 @@ void Level::generateLevel(const int width, const int height)
 {
 	//Resets the level in case of replay
 	player_.setHealth(100);
-	player_.setPoints(111110);
+	player_.setPoints(0);
 	player_.setHasMagnum(false);
 	player_.setHasShotgun(false);
 	player_.setHasRifle(false);
 	player_.setTurrets(0);
 	player_.setBarricades(0);
+	player_.setMines(0);
 	spatialPartitions_.clear();
 	tiles.clear();
 	GUIManager_.reset();
@@ -477,7 +478,7 @@ void Level::generateLevel(const int width, const int height)
 				 spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
 				 hasItem = true;
 			 }
-			 if (row > 5 && row <= 9 && std::rand() % 500 < 2)
+			 if (row > 5 && row <= 9 && std::rand() % 1000 < 2)
 			 {
 				 Den den = Den(&imageManager_.zombieDenTexture);
 				 den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));

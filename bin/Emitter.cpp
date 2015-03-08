@@ -38,6 +38,9 @@ Emitter::Emitter(const bool relativeParticles,
     
 void Emitter::update(const sf::Time& dT)
 {
+	if (particlesToSpawn_ <= 0 && lParticles_.size() == 0)
+		dead_ = true;
+
 	sf::Vector2f offset = lastPos_ - positionGlobal_;
 	lastPos_ = positionGlobal_;
 
@@ -82,3 +85,4 @@ void Emitter::update(const sf::Time& dT)
 
 std::list<Particle> Emitter::getParticles() const { return lParticles_; }
 int Emitter::getParticlesToSpawn() const { return particlesToSpawn_; }
+bool Emitter::isDead() const { return dead_; }

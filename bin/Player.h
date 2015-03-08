@@ -58,9 +58,9 @@ public:
 
     int turrets_ = 0;
     int barricades_ = 0;
-    int mines_ = 1000;
+    int mines_ = 0;
     
-    int points_ = 100000;
+    int points_ = 0;
     int currentGun_ = 0;
     std::vector<Gun> vGuns_;
     SoundManager* pSoundManager_;

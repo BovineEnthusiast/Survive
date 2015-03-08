@@ -23,6 +23,13 @@ void Zombie::update(const sf::Time& dT)
 	if (pBarricade_ != nullptr && pBarricade_->isDead())
 		pBarricade_ = nullptr;
 
+	//Sets it to corpse mode if health <= 0
+	//if (health_ <= 0)
+//	{
+	//	dead_ = true;
+	//	corpseSpeed_ = finalSpeed_;
+	//}
+
 	if (!dead_)
 	{
 		float playerDistance = sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2));
@@ -152,7 +159,7 @@ void Zombie::update(const sf::Time& dT)
 	}
 	else
 	{
-		if (!still_)
+		if (!still_ && corpseSpeed_ > 0.0f)
 		{
 			sf::Vector2f forwardVector = sf::Vector2f(cos((rotationGlobal_)* 3.14159265358f / 180.0f), sin((rotationGlobal_)* 3.14159265358 / 180.0f));
 			positionGlobal_ += forwardVector * corpseSpeed_ * 13.5f * dT.asSeconds();
@@ -161,12 +168,22 @@ void Zombie::update(const sf::Time& dT)
 			headSprite_.setPosition(positionGlobal_); //For collision detection of dead bodies
 			corpseSpeed_ -= 7.5f * dT.asSeconds();
 		}
-		if (!still_ && corpseSpeed_ <= 0.0f)
+		else if (!still_)
 		{
 			still_ = true;
-			deathClock_.restart();
+			fadeAfterClock_.restart();
 		}
-		else if (still_ && deathClock_.getElapsedTime().asSeconds() >= 3.0f)
+		else if (still_ && !fading_ && fadeAfterClock_.getElapsedTime().asSeconds() > fadeAfter_)
+		{
+			fading_ = true;
+			fadeForClock_.restart();
+		}
+		else if (fading_ && fadeForClock_.getElapsedTime().asSeconds() < fadeFor_)
+		{
+			sf::Color corpseColor = corpseSprite_.getColor();
+			corpseSprite_.setColor(sf::Color(corpseColor.r, corpseColor.g, corpseColor.b, 255.0f - (fadeForClock_.getElapsedTime().asSeconds() / fadeFor_ * 255.0f)));
+		}
+		else if (fading_)
 			delete_ = true;		
 	}
 }

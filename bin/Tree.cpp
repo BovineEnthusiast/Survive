@@ -16,18 +16,18 @@ Tree::Tree(sf::Texture* upperTexture, sf::Texture* lowerTexture, sf::Texture* tr
     trunk_.setTexture(*trunkTexture_);
     
     //Sets up trunk
-    trunk_.setOrigin(10.0f, 10.0f);
-    
+    trunk_.setOrigin(13, 13);
+	trunk_.setScale(0.5f, 0.5f);
    
     //Origins
-    upperLeafOne_.setOrigin(20, 79);
-    upperLeafTwo_.setOrigin(20, 79);
-    upperLeafThree_.setOrigin(20, 79);
-    upperLeafFour_.setOrigin(20, 79);
-    lowerLeafOne_.setOrigin(19, 70);
-    lowerLeafTwo_.setOrigin(19, 70);
-    lowerLeafThree_.setOrigin(19, 70);
-    lowerLeafFour_.setOrigin(19, 70);
+    upperLeafOne_.setOrigin(16, 50);
+	upperLeafTwo_.setOrigin(16, 50);
+	upperLeafThree_.setOrigin(16, 50);
+	upperLeafFour_.setOrigin(16, 50);
+    lowerLeafOne_.setOrigin(16, 50);
+    lowerLeafTwo_.setOrigin(16, 50);
+    lowerLeafThree_.setOrigin(16, 50);
+    lowerLeafFour_.setOrigin(16, 50);
   
     //Rotations
     upperLeafOne_.setRotation(30);
@@ -39,15 +39,7 @@ Tree::Tree(sf::Texture* upperTexture, sf::Texture* lowerTexture, sf::Texture* tr
     lowerLeafThree_.setRotation(255);
     lowerLeafFour_.setRotation(345);
 
-	upperLeafOne_.setScale(0.67f, 0.67f);
-	upperLeafTwo_.setScale(0.67f, 0.67f);
-	upperLeafThree_.setScale(0.67f, 0.67f);
-	upperLeafFour_.setScale(0.67f, 0.67f);
-	lowerLeafOne_.setScale(0.67f, 0.67f);
-	lowerLeafTwo_.setScale(0.67f, 0.67f);
-	lowerLeafThree_.setScale(0.67f, 0.67f);
-	lowerLeafFour_.setScale(0.67f, 0.67f);
-	trunk_.setScale(0.67f, 0.67f);
+	
 }
 void Tree::update(const sf::Time& dT)
 {
@@ -61,14 +53,14 @@ void Tree::update(const sf::Time& dT)
     upperLeafFour_.setPosition(positionGlobal_);
     trunk_.setPosition(positionGlobal_);
     
-    lowerLeafOne_.setRotation(30 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    lowerLeafTwo_.setRotation(120 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    lowerLeafThree_.setRotation(210 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    lowerLeafFour_.setRotation(300 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    upperLeafOne_.setRotation(75 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    upperLeafTwo_.setRotation(165 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    upperLeafThree_.setRotation(255 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
-    upperLeafFour_.setRotation(345 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    //lowerLeafOne_.setRotation(30 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+   // lowerLeafTwo_.setRotation(120 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+   // lowerLeafThree_.setRotation(210 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    //lowerLeafFour_.setRotation(300 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    //upperLeafOne_.setRotation(75 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    //upperLeafTwo_.setRotation(165 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    //upperLeafThree_.setRotation(255 + sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
+    //upperLeafFour_.setRotation(345 - sin(swayClock_.getElapsedTime().asSeconds()) * 3.0f);
 }
 
 //Setters

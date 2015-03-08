@@ -95,3 +95,5 @@ int Humanoid::getHealth() {return health_;}
 //Setters
 void Humanoid::setVelocity(const sf::Vector2f& velocity) {velocity_ = velocity;}
 void Humanoid::setHealth(const int health) {health_ = health;}
+void Humanoid::setRotationGlobal(const float rotation) { rotationGlobal_ = rotation; }
+void Humanoid::setPositionGlobal(const sf::Vector2f& position) { positionGlobal_ = position; }

@@ -14,17 +14,17 @@ Engine::Engine()
 {}
 bool Engine::initialize()
 {
-  shaderGlow_.loadFromFile("shaders/frag/glow.frag", sf::Shader::Fragment);
-  //shaderLighting_.loadFromFile("shaders/frag/lighting.frag", sf::Shader::Fragment);
-  window_.create(sf::VideoMode(1440, 720), "Survive");
-  return true;
+	shaderGlow_.loadFromFile("shaders/frag/glow.frag", sf::Shader::Fragment);
+	//shaderLighting_.loadFromFile("shaders/frag/lighting.frag", sf::Shader::Fragment);
+	window_.create(sf::VideoMode(1440, 720), "Survive");
+	return true;
 }
 
 void Engine::update()
 {
-  if(sf::Keyboard::isKeyPressed(sf::Keyboard::P))
-    drawPath_ = !drawPath_;
-  
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+		drawPath_ = !drawPath_;
+
 	if (inMenu_)
 		menuManager_.update(_dT);
 	else
@@ -38,7 +38,7 @@ void Engine::update()
 
 void Engine::draw()
 {
-  if (inMenu_)
+	if (inMenu_)
 	{
 		window_.draw(menuManager_.getTitleRect());
 		if (menuManager_.getCurrentMenu() == 0)
@@ -83,7 +83,7 @@ void Engine::draw()
 		sf::View view = window_.getView();
 		sf::Vector2f viewSize = view.getSize();
 		sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
- 
+
 		//Vector positions of tiles to render
 		int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_;
 		int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_;
@@ -110,12 +110,12 @@ void Engine::draw()
 		for (size_t vTile = topLeftX; vTile <= bottomRightX; ++vTile)
 			for (size_t tile = topLeftY; tile <= bottomRightY; ++tile)
 			{/*
-			  shaderGlow_.setParameter("frag_LightOrigin", level_.getPlayer().getPositionGlobal());
-			  shaderGlow_.setParameter("frag_LightColor", sf::Color(255.0f, 0.0f, 0.0f, 255.0f));
-			  shaderGlow_.setParameter("frag_LightLuminosity", 10.0f);
-			  sf::RenderStates rs;
-			  rs.shader = &shaderGlow_;
-			  rs.blendMode = sf::BlendAdd;*/
+			 shaderGlow_.setParameter("frag_LightOrigin", level_.getPlayer().getPositionGlobal());
+			 shaderGlow_.setParameter("frag_LightColor", sf::Color(255.0f, 0.0f, 0.0f, 255.0f));
+			 shaderGlow_.setParameter("frag_LightLuminosity", 10.0f);
+			 sf::RenderStates rs;
+			 rs.shader = &shaderGlow_;
+			 rs.blendMode = sf::BlendAdd;*/
 				level_.tiles[vTile][tile].setSpritePos(sf::Vector2f((float)vTile * tileSize_ + 16, (float)tile * tileSize_ + 16));
 				window_.draw(level_.tiles[vTile][tile].getSprite());
 			}
@@ -126,7 +126,7 @@ void Engine::draw()
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
-			  window_.draw(iPartition->getSelectionRect());
+				window_.draw(iPartition->getSelectionRect());
 				//Dens
 				std::vector<Den> vDens = iPartition->getDens();
 				for (auto iDen = vDens.begin(); iDen != vDens.end(); ++iDen)
@@ -139,45 +139,36 @@ void Engine::draw()
 					window_.draw(dBloodSplats.at(bloodSplat).getSprite());
 
 				std::vector<Mine> vMines = iPartition->getMines();
-				for(auto& mine : vMines)
+				for (auto& mine : vMines)
 				{
-				    if(mine.exploded() && mine.getExplosionTime() <= 0.25f)
-				    {
-					sf::Vector2f windowCoord((mine.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
-					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
-					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
-					shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 150, 0, 255));
-					shaderGlow_.setParameter("frag_Attenuation", 0.05f);
-					sf::RenderStates rs;
-					rs.shader = &shaderGlow_;
-					rs.blendMode = sf::BlendAdd;
-					
-					std::vector<sf::ConvexShape> triangles = mine.getLightingPolygon().getTriangles();
-					for(auto& triangle : triangles)
-					    window_.draw(triangle);
-					
-					
-					window_.draw(mine.getMine(), rs);
-				    }
-				    
-				    Emitter emitter = mine.getEmitter();
+					window_.draw(mine.getMine());
+
+					if (mine.exploded() && mine.getExplosionTime() <= 0.75f)
+					{
+						sf::Vector2f windowCoord((mine.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
+						windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
+						shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
+						shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 150, 0, 255));
+						shaderGlow_.setParameter("frag_Attenuation", 0.005f + (mine.getExplosionTime() / 0.75f) * 0.1f);
+						sf::RenderStates rs;
+						rs.shader = &shaderGlow_;
+						rs.blendMode = sf::BlendAdd;
+
+						std::vector<sf::ConvexShape> triangles = mine.getLightingPolygon().getTriangles();
+						for (auto& triangle : triangles)
+							window_.draw(triangle, rs);
+
+					}
+
 				}
 			}
-		
 
-		
 
-		
-		//Player and gun
-		Player player = level_.getPlayer();
-		window_.draw(player.getLegLeftSprite());
-		window_.draw(player.getLegRightSprite());
-		window_.draw(player.getArmLeftSprite());
-		window_.draw(player.getArmRightSprite());
-		window_.draw(player.getHeadSprite());
+
+
+
 
 		Gun currentGun = level_.getPlayer().getGuns().at(level_.getPlayer().getCurrentGunIndex());
-		window_.draw(currentGun.getSprite());
 
 
 		sf::Vector2f windowCoord((currentGun.getBulletSpawnPos() - viewTopLeft) * (windowSize.x / viewSize.x));
@@ -189,12 +180,12 @@ void Engine::draw()
 		sf::RenderStates rs;
 		rs.shader = &shaderGlow_;
 		rs.blendMode = sf::BlendAdd;
-		
+
 		if (currentGun.isMuzzleLight())
 			for (auto& triangle : currentGun.getMuzzleTriangles())
 				window_.draw(triangle, rs);
 
-			for (auto& emitter : currentGun.getEmitters())
+		for (auto& emitter : currentGun.getEmitters())
 		{
 			for (auto& particle : emitter.getParticles())
 				window_.draw(particle.getParticle());
@@ -208,7 +199,7 @@ void Engine::draw()
 				std::vector<Zombie> vZombies = iPartition->getZombies();
 				for (auto iZombie = vZombies.begin(); iZombie != vZombies.end(); ++iZombie)
 				{
-				  std::stack<Node> nodes = iZombie->getNodes();
+					std::stack<Node> nodes = iZombie->getNodes();
 					if (!iZombie->isDead())
 					{
 						window_.draw(iZombie->getLegLeftSprite());
@@ -217,16 +208,16 @@ void Engine::draw()
 						window_.draw(iZombie->getArmRightSprite());
 						window_.draw(iZombie->getHeadSprite());
 
-						while(!nodes.empty() && drawPath_)
-						  {
-						    sf::Vector2i pos = nodes.top().getPosition();
-						    nodes.pop();
-						    sf::RectangleShape visualNode(sf::Vector2f(32.0f, 32.0f));
-						    visualNode.setOrigin(16.0f, 16.0f);
-						    visualNode.setFillColor(sf::Color(255,0,0,25));
-						    visualNode.setPosition(pos.x, pos.y);
-						    window_.draw(visualNode);
-						  }
+						while (!nodes.empty() && drawPath_)
+						{
+							sf::Vector2i pos = nodes.top().getPosition();
+							nodes.pop();
+							sf::RectangleShape visualNode(sf::Vector2f(32.0f, 32.0f));
+							visualNode.setOrigin(16.0f, 16.0f);
+							visualNode.setFillColor(sf::Color(255, 0, 0, 25));
+							visualNode.setPosition(pos.x, pos.y);
+							window_.draw(visualNode);
+						}
 					}
 					else
 						window_.draw(iZombie->getCorpseSprite());
@@ -235,7 +226,7 @@ void Engine::draw()
 				//Blood particles
 				for (auto& emitter : iPartition->getEmitters())
 					for (auto& particle : emitter.getParticles())
-					window_.draw(particle.getParticle());
+						window_.draw(particle.getParticle());
 
 				for (auto& turret : iPartition->getTurrets())
 				{
@@ -254,12 +245,26 @@ void Engine::draw()
 				for (auto& barricade : iPartition->getBarricades())
 					window_.draw(barricade.getSprite());
 
-				
+			}
+
+		//Player and gun
+		Player player = level_.getPlayer();
+		window_.draw(player.getLegLeftSprite());
+		window_.draw(player.getLegRightSprite());
+		window_.draw(player.getArmLeftSprite());
+		window_.draw(player.getArmRightSprite());
+		window_.draw(player.getHeadSprite());
+
+		window_.draw(currentGun.getSprite());
+
+		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
+			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
+			{
 				//Draws bullets
 				std::list<Bullet> vBullets = iPartition->getBullets();
-				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)		      
-					window_.draw(iBullet->getSprite());	
-				
+				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
+					window_.draw(iBullet->getSprite());
+
 				std::vector<Mine> vMines = iPartition->getMines();
 				for (auto& mine : vMines)
 				{
@@ -294,7 +299,7 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getWaveText());
 		window_.draw(GUIManagerCopy.getZombiesText());
 		window_.draw(GUIManagerCopy.getPointsText());
-		
+
 		window_.draw(GUIManagerCopy.getHealthOutOf());
 		window_.draw(GUIManagerCopy.getHealthCurrent());
 
@@ -349,7 +354,7 @@ int Engine::run()
 		{
 
 			//update cam
-		  //	level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
+			//	level_.setCameraPosition(level_.getPlayer().getPositionGlobal());
 			//Clamps the camera to edges
 			sf::View view = level_.getCameraView();
 			sf::Vector2f size = view.getSize();

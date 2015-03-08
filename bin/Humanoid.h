@@ -27,6 +27,8 @@ public:
     
     //Setters
     void setVelocity(const sf::Vector2f&);
+	void setRotationGlobal(const float);
+	void setPositionGlobal(const sf::Vector2f&);
     void setHealth(const int);
 protected:
 
