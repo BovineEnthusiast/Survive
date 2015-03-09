@@ -39,7 +39,8 @@ void Turret::update(const sf::Time& dT)
 			muzzleClock_.restart();
 			pSoundManager_->playSound("rifle");
 			firerateClock_.restart();
-			pLBullets_->push_back(Bullet(positionGlobal_, sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180) * 750, sin(rotationGlobal_ * 3.14159265358 / 180) * 750), 10));
+			pLBullets_->push_back(Bullet(false, positionGlobal_, sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180) * 1500, sin(rotationGlobal_ * 3.14159265358 / 180) * 1500), 10));
+			pLBullets_->back().setFromTurret(true);
 		}
 	}
 	if (health_ <= 0)

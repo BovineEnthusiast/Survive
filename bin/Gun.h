@@ -85,6 +85,7 @@ private:
 	bool clicked_ = false; //Used to enforce semi-auto
 	bool ptrSet_ = false;
 	bool shotgun_ = false;
+	bool rocket_ = false;
 	float shake_ = 0.0f;
 	//Animation variables
 	sf::Vector2f swayOffset_;

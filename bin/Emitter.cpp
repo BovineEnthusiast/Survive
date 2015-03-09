@@ -69,8 +69,8 @@ void Emitter::update(const sf::Time& dT)
 	}		
     for(auto iParticle = lParticles_.begin(); iParticle != lParticles_.end();)
     {
-		//if(relativeParticles_)
-		iParticle->setEmitterOffset(offset);
+		if(relativeParticles_)
+			iParticle->setEmitterOffset(offset);
 
 		//Updates the particle
 		iParticle->update(dT);
@@ -86,3 +86,6 @@ void Emitter::update(const sf::Time& dT)
 std::list<Particle> Emitter::getParticles() const { return lParticles_; }
 int Emitter::getParticlesToSpawn() const { return particlesToSpawn_; }
 bool Emitter::isDead() const { return dead_; }
+
+//Setters
+void Emitter::setParticlesToEmit(const int particles) { particlesToSpawn_ = particles; }

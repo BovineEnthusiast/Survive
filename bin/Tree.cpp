@@ -16,8 +16,7 @@ Tree::Tree(sf::Texture* upperTexture, sf::Texture* lowerTexture, sf::Texture* tr
     trunk_.setTexture(*trunkTexture_);
     
     //Sets up trunk
-    trunk_.setOrigin(13, 13);
-	trunk_.setScale(0.5f, 0.5f);
+    trunk_.setOrigin(6.5f, 6.5f);
    
     //Origins
     upperLeafOne_.setOrigin(16, 50);

@@ -15,6 +15,7 @@ class ImageManager
   sf::Texture gunPistolTexture;
   sf::Texture gunMagnumTexture;
   sf::Texture gunRifleTexture;
+  sf::Texture gunRocketTexture;
   sf::Texture gunShotgunTexture;
   sf::Texture turretBaseTexture;
   sf::Texture mineTexture;

@@ -12,6 +12,7 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 	vGuns_.push_back(Gun("magnum", pImageManager, pSoundManager));
 	vGuns_.push_back(Gun("shotgun", pImageManager, pSoundManager));
 	vGuns_.push_back(Gun("rifle", pImageManager, pSoundManager));
+	vGuns_.push_back(Gun("rocket", pImageManager, pSoundManager));
 	armLeftSprite_.setOrigin(armLeftSprite_.getLocalBounds().width, 4.5f);
 	armRightSprite_.setOrigin(armLeftSprite_.getLocalBounds().width, 4.5f);
 }
@@ -59,6 +60,10 @@ void Player::update(const sf::Time& dT)
 		{
 			pSoundManager_->playSound("rifle_select");
 			currentGun_ = 3;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) && hasRocket_ && currentGun_ != 4)
+		{
+			currentGun_ = 4;
 		}
 
 		vGuns_[currentGun_].window = window;
@@ -129,6 +134,7 @@ float Player::getShake()
 bool Player::hasMagnum() const { return hasMagnum_; }
 bool Player::hasShotgun() const { return hasShotgun_; }
 bool Player::hasRifle() const { return hasRifle_; }
+bool Player::hasRocket() const { return hasRocket_; }
 bool Player::isMuzzleFlash() const { return muzzleFlash_; }
 
 //Setters 
@@ -140,6 +146,7 @@ void Player::setMines(const int mines) { mines_ = mines; }
 void Player::setHasMagnum(const bool hasMagnum) { hasMagnum_ = hasMagnum; }
 void Player::setHasShotgun(const bool hasShotgun) { hasShotgun_ = hasShotgun; }
 void Player::setHasRifle(const bool hasRifle) { hasRifle_ = hasRifle; }
+void Player::setHasRocket(const bool hasRocket) { hasRocket_ = hasRocket; }
 void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 {
 	for (auto iGun = vGuns_.begin(); iGun != vGuns_.end(); ++iGun)

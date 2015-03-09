@@ -130,9 +130,12 @@ void GUIManager::update(const sf::Time& dT)
 				buyRifleText_.setString("Bought");
 				buyRifleText_.setOrigin(buyRifleText_.getLocalBounds().width / 2.0f, buyRifleText_.getLocalBounds().height / 2.0f);
 			}
-			else if (hover(buyRocketText_))
+			else if (hover(buyRocketText_) && !pPlayer_->hasRocket() && pPlayer_->getPoints() >= priceRocket_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-
+				pPlayer_->setHasRocket(true);
+				pPlayer_->setPoints(pPlayer_->getPoints() - priceRocket_);
+				buyRocketText_.setString("Bought");
+				buyRocketText_.setOrigin(buyRocketText_.getLocalBounds().width / 2.0f, buyRocketText_.getLocalBounds().height / 2.0f);
 			}
 			else if (hover(buyBarricadeText_) && pPlayer_->getPoints() >= priceBarricade_ && !clickDown_ &&  sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
@@ -243,7 +246,7 @@ void GUIManager::reset()
 	setUpText(buyMagnumText_, "Buy: " + std::to_string(priceMagnum_));
 	setUpText(buyShotgunText_, "Buy: " + std::to_string(priceShotgun_));
 	setUpText(buyRifleText_, "Buy: " + std::to_string(priceRifle_));
-	setUpText(buyRocketText_, "Buy: ");
+	setUpText(buyRocketText_, "Buy: " + std::to_string(priceRocket_));
 	setUpText(buyBarricadeText_, "Buy: " + std::to_string(priceBarricade_));
 	setUpText(buyTurretText_, "Buy: " + std::to_string(priceTurret_));
 	setUpText(buyRocketTurretText_, "Buy: ");

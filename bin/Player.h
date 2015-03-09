@@ -25,6 +25,7 @@ public:
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
+	bool hasRocket() const;
     bool isMuzzleFlash() const;
     std::vector<sf::ConvexShape> getTriangles() const;
     
@@ -38,6 +39,7 @@ public:
     void setHasMagnum(const bool);
     void setHasShotgun(const bool);
     void setHasRifle(const bool);
+	void setHasRocket(const bool);
 
     //Pushers
     void pushLightingSprite(const sf::Sprite&);
@@ -53,7 +55,7 @@ public:
     bool hasMagnum_ = false;
     bool hasShotgun_ = false;
     bool hasRifle_ = false;
-    
+	bool hasRocket_ = false;
     bool muzzleFlash_ = false;
 
     int turrets_ = 0;

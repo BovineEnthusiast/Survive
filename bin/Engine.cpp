@@ -253,9 +253,10 @@ void Engine::draw()
 		window_.draw(player.getLegRightSprite());
 		window_.draw(player.getArmLeftSprite());
 		window_.draw(player.getArmRightSprite());
+		window_.draw(currentGun.getSprite());
+
 		window_.draw(player.getHeadSprite());
 
-		window_.draw(currentGun.getSprite());
 
 		for (auto iPartitionRow = spatialPartitions.begin(); iPartitionRow != spatialPartitions.end(); ++iPartitionRow)
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
@@ -263,8 +264,34 @@ void Engine::draw()
 				//Draws bullets
 				std::list<Bullet> vBullets = iPartition->getBullets();
 				for (auto iBullet = vBullets.begin(); iBullet != vBullets.end(); ++iBullet)
+				{
 					window_.draw(iBullet->getSprite());
+					if (iBullet->isRocket())
+					{
+						Emitter rocketEmitter = iBullet->getRocketEmitter();
+						for (auto& particle : rocketEmitter.getParticles())
+							window_.draw(particle.getParticle());
 
+						if (iBullet->isHit())
+						{
+							sf::Vector2f windowCoord((iBullet->getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
+							windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
+							shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
+							shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 150, 0, 255));
+							shaderGlow_.setParameter("frag_Attenuation", 0.005f + (iBullet->getExplosionTime() / 0.75f) * 0.1f);
+							sf::RenderStates rs;
+							rs.shader = &shaderGlow_;
+							rs.blendMode = sf::BlendAdd;
+
+							Emitter explosionEmitter = iBullet->getExplosionEmitter();
+							for (auto& particle : explosionEmitter.getParticles())
+								window_.draw(particle.getParticle());
+
+							for (auto& triangle : iBullet->getExplosionPolygon().getTriangles())
+								window_.draw(triangle, rs);
+						}
+					}
+				}
 				std::vector<Mine> vMines = iPartition->getMines();
 				for (auto& mine : vMines)
 				{

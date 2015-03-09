@@ -35,10 +35,10 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 	{
 		pTexture_ = &pImageManager_->gunRifleTexture;
 		gun_.setOrigin(11.0f, 3.5f);
-		gunPosition_ = sf::Vector2f(21.5f, 8.0f);
+		gunPosition_ = sf::Vector2f(12.0f, 8.0f);
 		positionLocal_ = gunPosition_;
-		armLeftPosLocal_ = sf::Vector2f(0.0f, 0.0f);
-		armRightPosLocal_ = sf::Vector2f(0.0f, 0.0f);
+		armLeftPosLocal_ = sf::Vector2f(15.0f, 0.0f);
+		armRightPosLocal_ = sf::Vector2f(10.0f, 0.0f);
 		reloadTime_ = 2.5f;
 		bulletsPerMag_ = 30;
 		currentBullets_ = 30;
@@ -47,7 +47,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		fireRate_ = 0.08f; // ~12rps 
 		auto_ = true;
 		bulletDamage_ = 35;
-		bulletSpawnPos_ = sf::Vector2f(27.0f, 0.0f);
+		bulletSpawnPos_ = sf::Vector2f(40.0f, 0.0f);
 	}
 	else if (type == "shotgun")
 	{
@@ -67,6 +67,25 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		bulletDamage_ = 25;
 		bulletSpawnPos_ = sf::Vector2f(34.5f, 0.0f);
 		shotgun_ = true;
+	}
+	else if (type == "rocket")
+	{
+		pTexture_ = &pImageManager->gunRocketTexture;
+		gun_.setOrigin(22.0f, 5.0f);
+		gunPosition_ = sf::Vector2f(15.0f, 12.0f);
+		positionLocal_ = gunPosition_;
+		armLeftPosLocal_ = sf::Vector2f(3.0f, 0.0f);
+		armRightPosLocal_ = sf::Vector2f(0.0f, 0.0f);
+		reloadTime_ = 5.0f;
+		bulletsPerMag_ = 1;
+		currentBullets_ = 1;
+		totalBullets_ = 9999;
+		recoilAmount_ = 25.0f;
+		fireRate_ = 0.1f; 
+		auto_ = false;
+		bulletDamage_ = 500;
+		bulletSpawnPos_ = sf::Vector2f(19.0f, 0.0f);
+		rocket_ = true;
 	}
 	gun_.setTexture(*pTexture_);
 
@@ -138,7 +157,7 @@ void Gun::update(const sf::Time& dT)
 			  for (int bullet = 0; bullet < 9; ++bullet)
 			    {
 			      sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358f / 180 + (3.14159265358f / 64.0f) * (bullet - 4)), sin(rotationGlobal_ * 3.14159265358 / 180 + (3.14159265358f / 64.0f) * (bullet - 4))) * bulletSpeed_;
-			      pLBullets_->push_back(Bullet(spawnPos, bulletVelocity, bulletDamage_));
+			      pLBullets_->push_back(Bullet(false, spawnPos, bulletVelocity, bulletDamage_));
 			    }
 			  currentBullets_ -= 1;
 			  fireRateClock_.restart();
@@ -147,10 +166,23 @@ void Gun::update(const sf::Time& dT)
 			  shake_ = 2.5f;
 			  
 			}
+			else if (rocket_)
+			{
+				pSoundManager_->playSound(gunType_);
+
+				sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180), sin(rotationGlobal_ * 3.14159265358 / 180)) * (bulletSpeed_ / 3.0f);
+				pLBullets_->push_back(Bullet(true, spawnPos, bulletVelocity, bulletDamage_));
+
+				currentBullets_ -= 1;
+				fireRateClock_.restart();
+				muzzleClock_.restart();
+
+				shake_ = 10.0f;
+			}
 			else
 			{
 				sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180), sin(rotationGlobal_ * 3.14159265358 / 180)) * bulletSpeed_;
-				pLBullets_->push_back(Bullet(spawnPos, bulletVelocity, bulletDamage_));
+				pLBullets_->push_back(Bullet(false, spawnPos, bulletVelocity, bulletDamage_));
 				fireRateClock_.restart();
 				pSoundManager_->playSound(gunType_);
 				currentBullets_ -= 1;
