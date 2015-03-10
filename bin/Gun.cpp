@@ -24,7 +24,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		reloadTime_ = 2.0f;
 		bulletsPerMag_ = 8;
 		currentBullets_ = 6;
-		totalBullets_ = 9999;
+		totalBullets_ = 32;
 		recoilAmount_ = 8.0f;
 		fireRate_ = 0.15f; // ~12rps 
 		auto_ = false;
@@ -42,7 +42,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		reloadTime_ = 2.5f;
 		bulletsPerMag_ = 30;
 		currentBullets_ = 30;
-		totalBullets_ = 9999;
+		totalBullets_ = 120;
 		recoilAmount_ = 3.3f;
 		fireRate_ = 0.08f; // ~12rps 
 		auto_ = true;
@@ -60,7 +60,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		reloadTime_ = 2.0f;
 		bulletsPerMag_ = 2;
 		currentBullets_ = 2;
-		totalBullets_ = 9999;
+		totalBullets_ = 20;
 		recoilAmount_ = 8.0f;
 		fireRate_ = 0.15f; // ~12rps 
 		auto_ = false;
@@ -79,7 +79,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		reloadTime_ = 5.0f;
 		bulletsPerMag_ = 1;
 		currentBullets_ = 1;
-		totalBullets_ = 9999;
+		totalBullets_ = 3;
 		recoilAmount_ = 25.0f;
 		fireRate_ = 0.1f; 
 		auto_ = false;
@@ -291,6 +291,6 @@ void Gun::setPlayerPosition(const sf::Vector2f& position) { playerPos_ = positio
 void Gun::setPlayerVelocity(const sf::Vector2f& velocity) { playerVelocity_ = velocity; }
 void Gun::setPlayerHeadRotation(const float rotation) { playerRotation_ = rotation; }
 void Gun::setBulletsPtr(std::list<Bullet>* pointer) { pLBullets_ = pointer; ptrSet_ = true; }
-
+void Gun::setAmmoTotal(const int ammo) { totalBullets_ = ammo; }
 //Pushers
 void Gun::pushMuzzleLightSprite(const sf::Sprite& sprite) { muzzleLight_.pushSprite(sprite); }

@@ -72,7 +72,7 @@ void Level::generateLevel(const int width, const int height)
 	player_.setPoints(0);
 	player_.setHasMagnum(false);
 	player_.setHasShotgun(false);
-	player_.setHasRifle(true);
+	player_.setHasRifle(false);
 	player_.setHasRocket(false);
 	player_.setTurrets(0);
 	player_.setBarricades(0);

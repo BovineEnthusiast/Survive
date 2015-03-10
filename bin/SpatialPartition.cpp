@@ -101,7 +101,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		{
 			--(*pZombiesToSpawn_);
 			++(*pZombiesAlive_);
-			Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, &imageManager_->zombieCorpseTexture, (*pWave_ - 1) * 10, (*pWave_ + 10));
+			Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) , (*pWave_ + 5));
 			zombie.pTiles = pVTiles_;
 			zombie.setPositionGlobal(den.getPositionGlobal());
 			vZombies_.push_back(zombie);

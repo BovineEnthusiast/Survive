@@ -152,7 +152,7 @@ void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 	for (auto iGun = vGuns_.begin(); iGun != vGuns_.end(); ++iGun)
 		iGun->setBulletsPtr(pointer);
 }
-
+void Player::increaseAmmo(const int index, const int ammo) { vGuns_.at(index).setAmmoTotal(vGuns_.at(index).getTotalAmmo() + ammo); }
 //Pushers
 void Player::pushLightingSprite(const sf::Sprite& sprite) { vGuns_.at(currentGun_).pushMuzzleLightSprite(sprite); }
 

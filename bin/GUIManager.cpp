@@ -108,53 +108,118 @@ void GUIManager::update(const sf::Time& dT)
 			showInStore(buyTurretText_, 7.0f, 8.0f, itemTextSize_);
 			showInStore(buyRocketTurretText_, 8.0f, 8.0f, itemTextSize_);
 			showInStore(buyMineText_, 9.0f, 8.0f, itemTextSize_);
-
-			if (hover(buyMagnumText_) && !pPlayer_->hasMagnum() && pPlayer_->getPoints() >= priceMagnum_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			showInStore(buyPistolAmmoText_, 1.0f, -16.0f, itemTextSize_ / 1.5f);
+			showInStore(buyMagnumAmmoText_, 2.0f, -16.0f, itemTextSize_ / 1.5f);
+			showInStore(buyShotgunAmmoText_, 3.0f, -16.0f, itemTextSize_ / 1.5f);
+			showInStore(buyRifleAmmoText_, 4.0f, -16.0f, itemTextSize_ / 1.5f);
+			showInStore(buyRocketAmmoText_, 5.0f, -16.0f, itemTextSize_ / 1.5f);
+			if (hover(buyMagnumText_))
 			{
+			    if( !pPlayer_->hasMagnum() && pPlayer_->getPoints() >= priceMagnum_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setHasMagnum(true);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceMagnum_);
 				buyMagnumText_.setString("Bought");
 				buyMagnumText_.setOrigin(buyMagnumText_.getLocalBounds().width / 2.0f, buyMagnumText_.getLocalBounds().height / 2.0f);
+			    }
 			}
-			else if (hover(buyShotgunText_) && pPlayer_->getPoints() >= priceShotgun_ && !pPlayer_->hasShotgun() && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			else if (hover(buyShotgunText_))
 			{
+			    if( pPlayer_->getPoints() >= priceShotgun_ && !pPlayer_->hasShotgun() && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setHasShotgun(true);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceShotgun_);
 				buyShotgunText_.setString("Bought");
 				buyShotgunText_.setOrigin(buyShotgunText_.getLocalBounds().width / 2.0f, buyShotgunText_.getLocalBounds().height / 2.0f);
+			    }
 			}
-			else if (hover(buyRifleText_) && !pPlayer_->hasRifle() && pPlayer_->getPoints() >= priceRifle_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			else if (hover(buyRifleText_))
 			{
+			    if( !pPlayer_->hasRifle() && pPlayer_->getPoints() >= priceRifle_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setHasRifle(true);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceRifle_);
 				buyRifleText_.setString("Bought");
 				buyRifleText_.setOrigin(buyRifleText_.getLocalBounds().width / 2.0f, buyRifleText_.getLocalBounds().height / 2.0f);
+			    }
 			}
-			else if (hover(buyRocketText_) && !pPlayer_->hasRocket() && pPlayer_->getPoints() >= priceRocket_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			else if (hover(buyRocketText_))
 			{
+			    if(!pPlayer_->hasRocket() && pPlayer_->getPoints() >= priceRocket_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setHasRocket(true);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceRocket_);
 				buyRocketText_.setString("Bought");
 				buyRocketText_.setOrigin(buyRocketText_.getLocalBounds().width / 2.0f, buyRocketText_.getLocalBounds().height / 2.0f);
+			    }
 			}
-			else if (hover(buyBarricadeText_) && pPlayer_->getPoints() >= priceBarricade_ && !clickDown_ &&  sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			else if (hover(buyBarricadeText_))
 			{
+			    if( pPlayer_->getPoints() >= priceBarricade_ && !clickDown_ &&  sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setBarricades(pPlayer_->getBarricades() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceBarricade_);
+			    }
 			}
-			else if (hover(buyTurretText_) && pPlayer_->getPoints() >= priceTurret_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			else if (hover(buyTurretText_))
 			{
+			    if( pPlayer_->getPoints() >= priceTurret_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setTurrets(pPlayer_->getTurrets() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceTurret_);
+			    }
 			}
 			else if (hover(buyRocketTurretText_))
 			{
 
 			}
-			else if (hover(buyMineText_) && pPlayer_->getPoints() >= priceMine_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			else if (hover(buyMineText_))
 			{
+			    if(pPlayer_->getPoints() >= priceMine_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
 				pPlayer_->setMines(pPlayer_->getMines() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceMine_);
+			    }
+			}
+			else if(hover(buyPistolAmmoText_))
+			{
+			    if(pPlayer_->getPoints() >= priceAmmoPistol_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
+				pPlayer_->increaseAmmo(0, pistolAmmoIncrease_);
+				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoPistol_);
+			    }
+			}
+			else if(hover(buyMagnumAmmoText_))
+			{
+			    if(pPlayer_->getPoints() >= priceAmmoMagnum_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
+				pPlayer_->increaseAmmo(1, magnumAmmoIncrease_);
+				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoMagnum_);
+			    }
+			}
+			else if(hover(buyShotgunAmmoText_))
+			{
+			    if(pPlayer_->getPoints() >= priceAmmoShotgun_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
+				pPlayer_->increaseAmmo(2, shotgunAmmoIncrease_);
+				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoShotgun_);
+			    }
+			}
+			else if(hover(buyRifleAmmoText_))
+			{
+			    if(pPlayer_->getPoints() >= priceAmmoRifle_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
+				pPlayer_->increaseAmmo(3, rifleAmmoIncrease_);
+				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoRifle_);
+			    }
+			}
+			else if(hover(buyRocketAmmoText_))
+			{
+			    if(pPlayer_->getPoints() >= priceAmmoRocket_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			    {
+				pPlayer_->increaseAmmo(4, rocketAmmoIncrease_);
+				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoRocket_);
+			    }
 			}
 			else
 				selectionRect_.setFillColor(sf::Color::Transparent);
@@ -251,6 +316,11 @@ void GUIManager::reset()
 	setUpText(buyTurretText_, "Buy: " + std::to_string(priceTurret_));
 	setUpText(buyRocketTurretText_, "Buy: ");
 	setUpText(buyMineText_, "Buy: " + std::to_string(priceMine_));
+	setUpText(buyPistolAmmoText_, "Ammo: $" + std::to_string(priceAmmoPistol_) + "(+" + std::to_string(pistolAmmoIncrease_) + ")");
+	setUpText(buyMagnumAmmoText_, "Ammo: $" + std::to_string(priceAmmoMagnum_) + "(+" + std::to_string(magnumAmmoIncrease_) + ")");
+	setUpText(buyShotgunAmmoText_, "Ammo: $" + std::to_string(priceAmmoShotgun_) + "(+" + std::to_string(shotgunAmmoIncrease_) + ")");
+	setUpText(buyRifleAmmoText_, "Ammo: $" + std::to_string(priceAmmoRifle_) + "(+" + std::to_string(rifleAmmoIncrease_) + ")");
+	setUpText(buyRocketAmmoText_, "Ammo: $" + std::to_string(priceAmmoRocket_) + "(+" + std::to_string(rocketAmmoIncrease_) + ")");
 }
 void GUIManager::setUpText(sf::Text& text, const std::string& string)
 {
@@ -317,3 +387,8 @@ sf::Text GUIManager::getBuyTurretText() const { return buyTurretText_; }
 sf::Text GUIManager::getBuyRocketTurretText() const { return buyRocketTurretText_; }
 sf::Text GUIManager::getBuyMineText() const { return buyMineText_; }
 sf::Text GUIManager::getPointsText() const { return pointsText_; }
+sf::Text GUIManager::getBuyPistolAmmoText() const { return buyPistolAmmoText_; }
+sf::Text GUIManager::getBuyMagnumAmmoText() const { return buyMagnumAmmoText_; }
+sf::Text GUIManager::getBuyShotgunAmmoText() const { return buyShotgunAmmoText_; }
+sf::Text GUIManager::getBuyRifleAmmoText() const { return buyRifleAmmoText_; }
+sf::Text GUIManager::getBuyRocketAmmoText() const { return buyRocketAmmoText_; }

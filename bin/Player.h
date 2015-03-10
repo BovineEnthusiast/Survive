@@ -39,8 +39,8 @@ public:
     void setHasMagnum(const bool);
     void setHasShotgun(const bool);
     void setHasRifle(const bool);
-	void setHasRocket(const bool);
-
+    void setHasRocket(const bool);
+    void increaseAmmo(const int, const int);
     //Pushers
     void pushLightingSprite(const sf::Sprite&);
 

@@ -356,6 +356,11 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getBuyTurretText());
 		window_.draw(GUIManagerCopy.getBuyRocketTurretText());
 		window_.draw(GUIManagerCopy.getBuyMineText());
+		window_.draw(GUIManagerCopy.getBuyPistolAmmoText());
+		window_.draw(GUIManagerCopy.getBuyMagnumAmmoText());
+		window_.draw(GUIManagerCopy.getBuyShotgunAmmoText());
+		window_.draw(GUIManagerCopy.getBuyRifleAmmoText());
+		window_.draw(GUIManagerCopy.getBuyRocketAmmoText());
 	}
 }
 int Engine::run()

@@ -35,12 +35,14 @@ public:
 	float getShake();
 	std::vector<Emitter> getEmitters() const;
 	sf::Vector2f getBulletSpawnPos() const;
+	
 	//Setters
 	void setLocalPosition(const sf::Vector2f&);
 	void setPlayerPosition(const sf::Vector2f&);
 	void setPlayerVelocity(const sf::Vector2f&);
 	void setPlayerHeadRotation(const float);
 	void setBulletsPtr(std::list<Bullet>*);
+	void setAmmoTotal(const int);
 
 	//Pushers
 	void pushMuzzleLightSprite(const sf::Sprite&);
@@ -77,7 +79,7 @@ private:
 	float reloadTime_ = 1.5f; //In Seconds
 	int bulletsPerMag_ = 15; //How much per reload
 	int currentBullets_ = 15; //In current reload
-	int totalBullets_ = 9999; //Total ammo
+	int totalBullets_ = 45; //Total ammo
 	float recoilAmount_ = 4.0f; //In game "pixels"
 	float fireRate_ = 0.1f; // bullets/sec
 	bool reloading_ = false;
