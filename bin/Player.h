@@ -41,6 +41,7 @@ public:
     void setHasRifle(const bool);
     void setHasRocket(const bool);
     void increaseAmmo(const int, const int);
+	void setInStore(const bool);
     //Pushers
     void pushLightingSprite(const sf::Sprite&);
 
@@ -51,6 +52,7 @@ public:
     bool downSwapRight_ = false;
     bool downSwapLeft_ = false;
     
+	bool inStore_ = false; //Can't fire whilst in store
     //Weapon unlocks/amounts
     bool hasMagnum_ = false;
     bool hasShotgun_ = false;

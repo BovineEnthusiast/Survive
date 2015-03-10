@@ -28,6 +28,11 @@ Level::Level(sf::RenderWindow* pWindow, SoundManager* pSoundManager)
 
 void Level::update(const sf::Time& dT)
 {
+	//Prevents player from firing if the store is open
+	if (GUIManager_.isOpen())
+		player_.setInStore(true);
+	else
+		player_.setInStore(false);
 	//if (zombiesAlive_ > 0)
 	if (zombiesToSpawn_ == 0 && zombiesAlive_ == 0 && !beetweenWaves_)
 	{

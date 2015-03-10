@@ -254,6 +254,11 @@ void GUIManager::update(const sf::Time& dT)
 		buyTurretText_.setColor(sf::Color::Transparent);
 		buyRocketTurretText_.setColor(sf::Color::Transparent);
 		buyMineText_.setColor(sf::Color::Transparent);
+		buyPistolAmmoText_.setColor(sf::Color::Transparent);
+		buyMagnumAmmoText_.setColor(sf::Color::Transparent);
+		buyShotgunAmmoText_.setColor(sf::Color::Transparent);
+		buyRifleAmmoText_.setColor(sf::Color::Transparent);
+		buyRocketAmmoText_.setColor(sf::Color::Transparent);
 		selectionRect_.setFillColor(sf::Color::Transparent);
 	}
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -392,3 +397,4 @@ sf::Text GUIManager::getBuyMagnumAmmoText() const { return buyMagnumAmmoText_; }
 sf::Text GUIManager::getBuyShotgunAmmoText() const { return buyShotgunAmmoText_; }
 sf::Text GUIManager::getBuyRifleAmmoText() const { return buyRifleAmmoText_; }
 sf::Text GUIManager::getBuyRocketAmmoText() const { return buyRocketAmmoText_; }
+bool GUIManager::isOpen() const { return storeOpen_; }

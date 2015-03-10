@@ -47,6 +47,7 @@ class GUIManager
   sf::Text getBuyShotgunAmmoText() const;
   sf::Text getBuyRifleAmmoText() const;
   sf::Text getBuyRocketAmmoText() const;
+  bool isOpen() const;
     
  private:
   //Allows only clicks to buy
@@ -124,13 +125,13 @@ class GUIManager
   float itemTextSize_ = 0.05f;
   float titleTextSize_ = 0.1f;
   //Gun/Item prices
-  int priceMagnum_ = 1250;
-  int priceShotgun_ = 2000;
-  int priceRifle_ = 3000;
-  int priceRocket_ = 7500;
+  int priceMagnum_ = 2500;
+  int priceShotgun_ = 5500;
+  int priceRifle_ = 9500;
+  int priceRocket_ = 15000;
   int priceBarricade_ = 100;
-  int priceTurret_ = 2500;
-  int priceMine_ = 250;
+  int priceTurret_ = 3000;
+  int priceMine_ = 300;
   int priceAmmoPistol_ = 25;
   int priceAmmoMagnum_ = 75;
   int priceAmmoShotgun_ = 150;

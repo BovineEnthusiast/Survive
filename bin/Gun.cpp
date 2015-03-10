@@ -143,7 +143,7 @@ void Gun::update(const sf::Time& dT)
 		reloading_ = true;
 	}
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	if (!inStore_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
 		if (fireRateClock_.getElapsedTime().asSeconds() >= fireRate_ && currentBullets_ > 0 && !reloading_ && (auto_ || !clicked_) && ptrSet_)
 		{
@@ -292,5 +292,7 @@ void Gun::setPlayerVelocity(const sf::Vector2f& velocity) { playerVelocity_ = ve
 void Gun::setPlayerHeadRotation(const float rotation) { playerRotation_ = rotation; }
 void Gun::setBulletsPtr(std::list<Bullet>* pointer) { pLBullets_ = pointer; ptrSet_ = true; }
 void Gun::setAmmoTotal(const int ammo) { totalBullets_ = ammo; }
+void Gun::setInStore(const bool inStore) { inStore_ = inStore; }
+void Gun::setReloading(const bool reloading) { reloading_ = reloading; }
 //Pushers
 void Gun::pushMuzzleLightSprite(const sf::Sprite& sprite) { muzzleLight_.pushSprite(sprite); }

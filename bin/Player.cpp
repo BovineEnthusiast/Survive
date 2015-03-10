@@ -19,6 +19,16 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 
 void Player::update(const sf::Time& dT)
 {
+	//Prevents player from firing when in store
+	if (inStore_)
+		vGuns_.at(currentGun_).setInStore(true);
+	else
+		vGuns_.at(currentGun_).setInStore(false);
+
+	for (int i = 0; i < vGuns_.size(); ++i)
+		if (i != currentGun_)
+			vGuns_.at(i).setReloading(false);
+
 	if (downSwapLeft_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		downSwapLeft_ = false;
 	else if (downSwapRight_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::E))
@@ -26,9 +36,7 @@ void Player::update(const sf::Time& dT)
 
 	if (health_ > 0)
 	{
-		//Resets the gun if replaying
-		if ((currentGun_ == 1 && !hasMagnum_) || (currentGun_ == 2 && !hasShotgun_) || (currentGun_ == 3 && !hasRifle_))
-			currentGun_ = 0;
+		
 		if (!downSwapLeft_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		{
 			downSwapLeft_ = true;
@@ -39,7 +47,9 @@ void Player::update(const sf::Time& dT)
 			downSwapRight_ = true;
 			swapGun(false);
 		}
-
+		//Resets the gun if replaying
+		if ((currentGun_ == 1 && !hasMagnum_) || (currentGun_ == 2 && !hasShotgun_) || (currentGun_ == 3 && !hasRifle_) || (currentGun_ == 4 && !hasRocket_))
+			currentGun_ = 0;
 		//Switches out the gun if number is pressed
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && currentGun_ != 0)
 		{
@@ -111,6 +121,8 @@ void Player::update(const sf::Time& dT)
 		armRightSprite_.setPosition(vGuns_[currentGun_].getArmRightPos() + vGuns_[currentGun_].getPositionGlobal());
 		armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 + 180.0f);
 		armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 + 180.0f);
+
+	
 	}
 	lighting_.setPosition(positionGlobal_);
 	lighting_.createPolygon();
@@ -147,6 +159,7 @@ void Player::setHasMagnum(const bool hasMagnum) { hasMagnum_ = hasMagnum; }
 void Player::setHasShotgun(const bool hasShotgun) { hasShotgun_ = hasShotgun; }
 void Player::setHasRifle(const bool hasRifle) { hasRifle_ = hasRifle; }
 void Player::setHasRocket(const bool hasRocket) { hasRocket_ = hasRocket; }
+void Player::setInStore(const bool inStore) { inStore_ = inStore; }
 void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 {
 	for (auto iGun = vGuns_.begin(); iGun != vGuns_.end(); ++iGun)
@@ -164,11 +177,11 @@ void Player::swapGun(const bool left)
 		if (currentGun_ != 0)
 			currentGun_ -= 1;
 		else
-			currentGun_ = 3;
+			currentGun_ = 4;
 	}
 	else
 	{
-		if (currentGun_ != 3)
+		if (currentGun_ != 4)
 			currentGun_ += 1;
 		else
 			currentGun_ = 0;

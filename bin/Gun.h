@@ -43,6 +43,8 @@ public:
 	void setPlayerHeadRotation(const float);
 	void setBulletsPtr(std::list<Bullet>*);
 	void setAmmoTotal(const int);
+	void setInStore(const bool);
+	void setReloading(const bool);
 
 	//Pushers
 	void pushMuzzleLightSprite(const sf::Sprite&);
@@ -50,6 +52,8 @@ private:
 	sf::Texture* pTexture_;
 	sf::Sprite gun_;
 
+	//Can't fire if in store
+	bool inStore_ = false;
 	//Used to play sounds
 	SoundManager* pSoundManager_;
 
