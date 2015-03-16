@@ -7,13 +7,21 @@
 //Functor to compare Node pointers
 bool compNode::operator() (Node* lhv, Node* rhv) { return lhv->getTotalValue() > rhv->getTotalValue(); }
 
-Zombie::Zombie(Player* player, sf::Texture* texture, sf::Texture* pCorpseTexture, const int health, const int speed)
-	: Humanoid(texture), pCorpseTexture_(pCorpseTexture), pPlayer_(player)
+Zombie::Zombie(Player* player, const std::string type, sf::Texture* texture, sf::Texture* pCorpseTexture, const int health, const int speed)
+	: Humanoid(texture), type_(type), pCorpseTexture_(pCorpseTexture), pPlayer_(player)
 {
 	corpseSprite_.setTexture(*pCorpseTexture_);
 	corpseSprite_.setOrigin(17.0f, 14.0f);
-	finalSpeed_ =  3 + std::rand() % (int)(speed);
-	health_ =  100 + health;
+	if (type_ == "boom")
+	{
+		finalSpeed_ = 3 + std::rand() % (int)(speed) * 3;
+		health_ = (100 + health) / 10;
+	}
+	else
+	{
+		finalSpeed_ = 3 + std::rand() % (int)(speed);
+		health_ = 100 + health;
+	}
 }
 void Zombie::update(const sf::Time& dT)
 {
@@ -22,13 +30,6 @@ void Zombie::update(const sf::Time& dT)
 
 	if (pBarricade_ != nullptr && pBarricade_->isDead())
 		pBarricade_ = nullptr;
-
-	//Sets it to corpse mode if health <= 0
-	//if (health_ <= 0)
-//	{
-	//	dead_ = true;
-	//	corpseSpeed_ = finalSpeed_;
-	//}
 
 	if (!dead_)
 	{
@@ -94,8 +95,12 @@ void Zombie::update(const sf::Time& dT)
 		}
 
 		else
+		{
 			velocity_ = sf::Vector2f(0.0f, 0.0f);
 
+			if (type_ == "boom")
+				dead_ = true;
+		}
 		if (closerDistance <= 43.5f && !attacking_)
 		{
 			attackClock_.restart();
@@ -159,32 +164,65 @@ void Zombie::update(const sf::Time& dT)
 	}
 	else
 	{
-		if (!still_ && corpseSpeed_ > 0.0f)
+		if (type_ == "boom")
 		{
-			sf::Vector2f forwardVector = sf::Vector2f(cos((rotationGlobal_)* 3.14159265358f / 180.0f), sin((rotationGlobal_)* 3.14159265358 / 180.0f));
-			positionGlobal_ += forwardVector * corpseSpeed_ * 13.5f * dT.asSeconds();
-			corpseSprite_.setPosition(positionGlobal_);
-			corpseSprite_.setRotation(rotationGlobal_);
-			headSprite_.setPosition(positionGlobal_); //For collision detection of dead bodies
-			corpseSpeed_ -= 7.5f * dT.asSeconds();
+			//Hasn't blown up yet
+			if (!exploded_)
+			{
+				exploded_ = true;
+				corpseSprite_.setColor(sf::Color::Transparent);
+				explosionEmitter_ = Emitter(true,
+					positionGlobal_,
+					true,
+					300,
+					3000,
+					sf::Vector2f(5.0f, 5.0f),
+					sf::Vector2f(50.0f, 50.0f),
+					0.0f,
+					360.0f,
+					0.0f,
+					850.0f,
+					-3000.0f,
+					0.75f,
+					1.25f,
+					sf::Color(255, 225, 50, 255),
+					sf::Color(250, 250, 250, 255));
+			}
+			explosionEmitter_.update(dT);
+			
+			//Explosion ended, delete
+			if (explosionEmitter_.isDead())
+				delete_ = true;
 		}
-		else if (!still_)
+		else
 		{
-			still_ = true;
-			fadeAfterClock_.restart();
+			if (!still_ && corpseSpeed_ > 0.0f)
+			{
+				sf::Vector2f forwardVector = sf::Vector2f(cos((rotationGlobal_)* 3.14159265358f / 180.0f), sin((rotationGlobal_)* 3.14159265358 / 180.0f));
+				positionGlobal_ += forwardVector * corpseSpeed_ * 13.5f * dT.asSeconds();
+				corpseSprite_.setPosition(positionGlobal_);
+				corpseSprite_.setRotation(rotationGlobal_);
+				headSprite_.setPosition(positionGlobal_); //For collision detection of dead bodies
+				corpseSpeed_ -= 7.5f * dT.asSeconds();
+			}
+			else if (!still_)
+			{
+				still_ = true;
+				fadeAfterClock_.restart();
+			}
+			else if (still_ && !fading_ && fadeAfterClock_.getElapsedTime().asSeconds() > fadeAfter_)
+			{
+				fading_ = true;
+				fadeForClock_.restart();
+			}
+			else if (fading_ && fadeForClock_.getElapsedTime().asSeconds() < fadeFor_)
+			{
+				sf::Color corpseColor = corpseSprite_.getColor();
+				corpseSprite_.setColor(sf::Color(corpseColor.r, corpseColor.g, corpseColor.b, 255.0f - (fadeForClock_.getElapsedTime().asSeconds() / fadeFor_ * 255.0f)));
+			}
+			else if (fading_)
+				delete_ = true;
 		}
-		else if (still_ && !fading_ && fadeAfterClock_.getElapsedTime().asSeconds() > fadeAfter_)
-		{
-			fading_ = true;
-			fadeForClock_.restart();
-		}
-		else if (fading_ && fadeForClock_.getElapsedTime().asSeconds() < fadeFor_)
-		{
-			sf::Color corpseColor = corpseSprite_.getColor();
-			corpseSprite_.setColor(sf::Color(corpseColor.r, corpseColor.g, corpseColor.b, 255.0f - (fadeForClock_.getElapsedTime().asSeconds() / fadeFor_ * 255.0f)));
-		}
-		else if (fading_)
-			delete_ = true;		
 	}
 }
 
@@ -353,6 +391,7 @@ Zombie& Zombie::operator= (const Zombie& other)
   return *this;
 }*/
 //Other functions
+//Getters
 bool Zombie::bled()
 {
 	if (dead_ && !still_ && bleedClock_.getElapsedTime().asSeconds() > 0.1f)
@@ -378,7 +417,6 @@ bool Zombie::isDead() const { return dead_; }
 bool Zombie::isDeletable() const { return delete_; }
 bool Zombie::isReadyToRepath() const { return readyToRepath_; }
 sf::Sprite Zombie::getCorpseSprite() const { return corpseSprite_; }
-std::vector<Emitter> Zombie::getEmitters() const { return vEmitters_; }
 std::stack<Node> Zombie::getNodes() const { return sPNodes_; }
 bool Zombie::needsPath()
 {
@@ -391,7 +429,15 @@ bool Zombie::needsPath()
     return false;
       
 }
+LightingPolygon Zombie::getLightingPolygon() const { return explosiveLight_; }
+Emitter Zombie::getExplosionEmitter() const { return explosionEmitter_; }
+std::string Zombie::getType() const { return type_; }
+bool Zombie::damagedOthers() const { return explosionDamagedOthers_; }
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
 void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; }
 void Zombie::setNeedsPath(bool needsPath) { needsPath_ = needsPath; }
+void Zombie::setExploded(const bool exploded) { exploded_ = exploded; }
+void Zombie::setDamagedOthers(const bool damaged) { explosionDamagedOthers_ = damaged; }
+//Pushers
+void Zombie::pushSprite(const sf::Sprite& sprite) { explosiveLight_.pushSprite(sprite); }

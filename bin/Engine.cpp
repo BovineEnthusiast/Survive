@@ -219,6 +219,9 @@ void Engine::draw()
 							window_.draw(visualNode);
 						}
 					}
+					else if (iZombie->getType() == "boom")
+						for (auto& particle : iZombie->getExplosionEmitter().getParticles())
+							window_.draw(particle.getParticle());
 					else
 						window_.draw(iZombie->getCorpseSprite());
 				}

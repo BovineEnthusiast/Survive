@@ -101,7 +101,22 @@ void SpatialPartition::update(const sf::Time& dT)
 		{
 			--(*pZombiesToSpawn_);
 			++(*pZombiesAlive_);
-			Zombie zombie = Zombie(player_, &imageManager_->humanoidZombieTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f , (*pWave_ * 3.5f));
+
+			//Randomize zombie type
+			sf::Texture* pTexture = &imageManager_->humanoidZombieTexture;
+			std::string type = "normal";
+			int random = std::rand() % 100;
+			if (random < 100 && *pWave_ > 0)
+			{
+				type = "boom";
+				pTexture = &imageManager_->humanoidBoomTexture;
+			}
+			//else if
+			//	(random < 20)
+			//	pTexture = &imageManager_->humanoidRangedTexture;
+
+
+			Zombie zombie = Zombie(player_, type, pTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f , (*pWave_ * 3.5f));
 			zombie.pTiles = pVTiles_;
 			zombie.setPositionGlobal(den.getPositionGlobal());
 			vZombies_.push_back(zombie);
@@ -241,6 +256,32 @@ void SpatialPartition::update(const sf::Time& dT)
 		//pathThread.join();					
 		iZombie->update(dT);
 
+		//Damages those around if it is an explosive zombie
+		if (iZombie->getType() == "boom" && iZombie->isDead() && !iZombie->damagedOthers())
+		{
+			iZombie->setDamagedOthers(true);
+			sf::Vector2f zomPos = iZombie->getPositionGlobal();
+			iZombie->setDamagedOthers(true);
+			for (auto& zombie : vZombies_)
+			{
+				sf::Vector2f currentZomPos = zombie.getPositionGlobal();
+				float distance = sqrt(pow(currentZomPos.x - zomPos.x, 2) + pow(currentZomPos.y - zomPos.y, 2));
+				if (distance <= 150)
+					zombie.setHealth(zombie.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+			}
+			for (auto& partition : pSpatialPartitions_)
+				for (auto& zombie : vZombies_)
+				{
+					sf::Vector2f currentZomPos = zombie.getPositionGlobal();
+					float distance = sqrt(pow(currentZomPos.x - zomPos.x, 2) + pow(currentZomPos.y - zomPos.y, 2));
+					if (distance <= 150)
+						zombie.setHealth(zombie.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+				}
+			sf::Vector2f playerPos = player_->getPositionGlobal();
+			float playerDistance = sqrt(pow(playerPos.x - zomPos.x, 2) + pow(playerPos.y - zomPos.y, 2));
+			if (playerDistance <= 150)
+				player_->setHealth(player_->getHealth() - 75.0f * (1.0f - playerDistance / 150.0f));
+		}
 		//Adds blood splats if it is sliding on the floor
 		if (iZombie->bled())
 		{

@@ -19,6 +19,8 @@ ImageManager::ImageManager()
   zombieCorpseTexture.loadFromFile("assets/humanoid/zombie_new_corpse.png");
   humanoidZombieTexture.loadFromFile("assets/humanoid/zombie_new.png");
   humanoidPlayerTexture.loadFromFile("assets/humanoid/player_new.png");
+  humanoidBoomTexture.loadFromFile("assets/humanoid/zombie_boom.png");
+  humanoidRangedTexture.loadFromFile("assets/humanoid/zombie_ranged.png");
   zombieDenTexture.loadFromFile("assets/den.png");
   
   //Blood splatters

@@ -24,7 +24,7 @@ Humanoid::Humanoid(sf::Texture* texture)
     armRightSprite_.setOrigin(0.0f, 3.0f);
     headSprite_.setOrigin(11.0f, 11.0f);
 }
-
+Humanoid::Humanoid(){};
 void Humanoid::animate(const sf::Time& dT)
 {
     if(injureClock_.getElapsedTime().asSeconds() < 0.15f)

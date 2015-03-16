@@ -22,6 +22,8 @@ class ImageManager
   sf::Texture turretTexture;
   sf::Texture barricadeTexture;
   sf::Texture zombieDenTexture;
+  sf::Texture humanoidBoomTexture;
+  sf::Texture humanoidRangedTexture;
   std::vector<sf::Texture> vBloodSplatTextures;
 };
 

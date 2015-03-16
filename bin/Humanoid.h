@@ -10,6 +10,7 @@ class Humanoid : public GameObject
 {
 public:
     Humanoid(sf::Texture*);
+	Humanoid();
     void animate(const sf::Time&);
     void injure();
     std::vector<std::vector<Tile>>* pTiles;

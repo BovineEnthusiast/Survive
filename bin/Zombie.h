@@ -9,12 +9,13 @@
 #include "Tile.h"
 #include "Turret.h"
 #include "Node.h"
+#include "LightingPolygon.h"
 #include "Barricade.h"
 
 class Zombie : public Humanoid
 {
 public:
-    Zombie(Player*, sf::Texture*, sf::Texture*, const int, const int);
+    Zombie(Player*, const std::string, sf::Texture*, sf::Texture*, const int, const int);
     void update(const sf::Time&);
 
     //Fills the sPNodes_ stack with node ptr
@@ -28,14 +29,23 @@ public:
     bool isDead() const;
     bool isDeletable() const;
     bool isReadyToRepath() const;
+	std::string getType() const;
 	std::vector<Emitter> getEmitters() const;
     sf::Sprite getCorpseSprite() const;
     std::stack<Node> getNodes() const;
+	LightingPolygon getLightingPolygon() const;
+	Emitter getExplosionEmitter() const;
+	bool damagedOthers() const;
 
     //Setters
     void setTurretPtr(Turret*);
     void setBarricadePtr(Barricade*);
     void setNeedsPath(bool);
+	void setExploded(const bool);
+	void setDamagedOthers(const bool);
+
+	//Pushers
+	void pushSprite(const sf::Sprite&);
     
     //Operator overloading
     bool operator== (const Zombie&) const;
@@ -45,7 +55,7 @@ public:
 
     //Protects the path node stack from being accessed concurrently
     //std::mutex mutexStack_;
-    
+	 std::string type_;
     //A pointer to the player used to get information such as position
     Player* pPlayer_;
 
@@ -69,9 +79,9 @@ public:
     sf::Vector2i lastTargetPosition_;
     bool readyToRepath_ = true;
     
-	//A vector of emitters for the particles
-	std::vector<Emitter> vEmitters_;
-    //The corpse texture
+	Emitter explosionEmitter_; 
+
+	//The corpse texture
     sf::Texture* pCorpseTexture_;
     sf::Sprite corpseSprite_;
     
@@ -92,6 +102,15 @@ public:
     float corpseSpeed_;
 	float fadeAfter_ = 10.0f;
 	float fadeFor_ = 5.0f;
+
+	//Type: boom
+	LightingPolygon explosiveLight_;
+	bool exploded_ = false;
+	bool explosionDamagedOthers_ = false;
+
+	//Type: shooting
+	sf::Clock firerateClock_;
+
     //Clocks
     sf::Clock fadeAfterClock_;
 	sf::Clock fadeForClock_;
