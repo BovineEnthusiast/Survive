@@ -85,9 +85,9 @@ void Level::generateLevel(const int width, const int height)
 	spatialPartitions_.clear();
 	tiles.clear();
 	GUIManager_.reset();
-	wave_ = 1;
+	wave_ = 2;
 	zombiesAlive_ = 0;
-	zombiesToSpawn_ = 10;
+	zombiesToSpawn_ = 20;
 
     //Resizes tiles vectores
     tiles.resize(width - 1);

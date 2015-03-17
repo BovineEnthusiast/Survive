@@ -25,7 +25,7 @@ public:
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
-	bool hasRocket() const;
+    bool hasRocket() const;
     bool isMuzzleFlash() const;
     std::vector<sf::ConvexShape> getTriangles() const;
     
@@ -52,7 +52,7 @@ public:
     bool downSwapRight_ = false;
     bool downSwapLeft_ = false;
     
-	bool inStore_ = false; //Can't fire whilst in store
+    bool inStore_ = false; //Can't fire whilst in store
     //Weapon unlocks/amounts
     bool hasMagnum_ = false;
     bool hasShotgun_ = false;

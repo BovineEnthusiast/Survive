@@ -107,6 +107,10 @@ void Bullet::setHit(bool hit)
 	}
 }
 void Bullet::setFromTurret(const bool isFromTurret) { fromTurret_ = isFromTurret; }
+void Bullet::setColor(const sf::Color& color) { bullet_.setFillColor(color); }
+void Bullet::setSize(const sf::Vector2f& size) { bullet_.setSize(size); }
+void Bullet::setSpeed(const int speed) { speed_ = speed; }
+
 //Getters
 bool Bullet::isDead() const { return deathClock_.getElapsedTime().asMilliseconds() > deathTime_; }
 bool Bullet::isFromTurret() const { return fromTurret_; }

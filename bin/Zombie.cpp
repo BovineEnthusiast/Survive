@@ -161,6 +161,20 @@ void Zombie::update(const sf::Time& dT)
 			dead_ = true;
 			corpseSpeed_ = finalSpeed_;
 		}
+
+		if(type_ == "ranged")
+		{
+		    if(playerDistance <= 300.0f && firerateClock_.getElapsedTime().asSeconds() >= 0.25f)
+		    {
+			sf::Vector2f playerVector = pPlayer_->getPositionGlobal() - positionGlobal_;
+			playerVector /= (float)sqrt(playerVector.x * playerVector.x + playerVector.y * playerVector.y);
+			firerateClock_.restart();
+			pLBullets_->push_back(Bullet(false, positionGlobal_, playerVector * 300.0f, 10));
+			pLBullets_->back().setColor(sf::Color(255, 0, 255, 255));
+			pLBullets_->back().setSize(sf::Vector2f(7.5f, 7.5f));			
+						    
+		    }
+		}
 	}
 	else
 	{
@@ -433,11 +447,13 @@ LightingPolygon Zombie::getLightingPolygon() const { return explosiveLight_; }
 Emitter Zombie::getExplosionEmitter() const { return explosionEmitter_; }
 std::string Zombie::getType() const { return type_; }
 bool Zombie::damagedOthers() const { return explosionDamagedOthers_; }
+
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
 void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; }
 void Zombie::setNeedsPath(bool needsPath) { needsPath_ = needsPath; }
 void Zombie::setExploded(const bool exploded) { exploded_ = exploded; }
 void Zombie::setDamagedOthers(const bool damaged) { explosionDamagedOthers_ = damaged; }
+void Zombie::setBulletListPtr(std::list<Bullet>* ptr) { pLBullets_ = ptr; }
 //Pushers
 void Zombie::pushSprite(const sf::Sprite& sprite) { explosiveLight_.pushSprite(sprite); }
