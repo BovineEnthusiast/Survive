@@ -75,6 +75,8 @@ void Humanoid::animate(const sf::Time& dT)
     headSprite_.setRotation(rotationGlobal_);
     legLeftSprite_.setRotation(rotationGlobal_);
     legRightSprite_.setRotation(rotationGlobal_);
+
+
 }
 
 void Humanoid::injure()
@@ -91,6 +93,7 @@ sf::Sprite Humanoid::getArmRightSprite() {return armRightSprite_;}
 sf::Sprite Humanoid::getHeadSprite() {return headSprite_;}
 sf::Vector2f Humanoid::getVelocity() {return velocity_;}
 int Humanoid::getHealth() {return health_;}
+bool Humanoid::isInjured() { return injured_; }
 
 //Setters
 void Humanoid::setVelocity(const sf::Vector2f& velocity) {velocity_ = velocity;}

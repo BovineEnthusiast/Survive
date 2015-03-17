@@ -43,6 +43,7 @@ public:
   std::array<SpatialPartition*, 8> getNeigborPartitions() const;
   sf::RectangleShape getSelectionRect() const;
   std::vector<Emitter> getEmitters() const;
+  float getShake();
 
   //Pushers
   void pushZombie(const Zombie&);
@@ -88,6 +89,8 @@ public:
   SoundManager* pSoundManager_;
   std::vector<std::vector<Tile>>* pVTiles_;
   
+  //Shake from rockets/zombies
+  float shake_ = 0.0f;
   //Clocks
   sf::Clock targetClock_;
   sf::Clock pathClock_;

@@ -42,6 +42,7 @@ public:
     void setHasRocket(const bool);
     void increaseAmmo(const int, const int);
 	void setInStore(const bool);
+	void setShake(const float);
     //Pushers
     void pushLightingSprite(const sf::Sprite&);
 

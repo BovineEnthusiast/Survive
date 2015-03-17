@@ -29,6 +29,7 @@ Bullet::Bullet(const bool rocket, const sf::Vector2f& startPos, const sf::Vector
 	}
 	else
 	{
+		shake_ = 30.0f;
 		bullet_.setSize(sf::Vector2f(20.0f, 6.0f));
 		bullet_.setOrigin(10.0f, 3.0f);
 
@@ -124,6 +125,11 @@ LightingPolygon Bullet::getExplosionPolygon() const { return explosionLight_; }
 sf::CircleShape Bullet::getLight() const { return light_; }
 sf::RectangleShape Bullet::getSprite() const { return bullet_; }
 sf::Vector2f Bullet::getLastPosition() { return lastPosition_; }
-
+float Bullet::getShake()
+{
+	float shake = shake_;
+	shake_ = 0;
+	return shake;
+}
 //Pusher
 void Bullet::pushSprite(const sf::Sprite& sprite) { explosionLight_.pushSprite(sprite); }

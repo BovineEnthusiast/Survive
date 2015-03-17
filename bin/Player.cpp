@@ -19,6 +19,12 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 
 void Player::update(const sf::Time& dT)
 {
+	if (injured_)
+	{
+		shake_ += 2.0f;
+		injured_ = false;
+	}
+
 	//Prevents player from firing when in store
 	if (inStore_)
 		vGuns_.at(currentGun_).setInStore(true);
@@ -166,6 +172,8 @@ void Player::setGunBulletPointers(std::list<Bullet>* pointer)
 		iGun->setBulletsPtr(pointer);
 }
 void Player::increaseAmmo(const int index, const int ammo) { vGuns_.at(index).setAmmoTotal(vGuns_.at(index).getTotalAmmo() + ammo); }
+void Player::setShake(const float shake) { shake_ = shake; }
+
 //Pushers
 void Player::pushLightingSprite(const sf::Sprite& sprite) { vGuns_.at(currentGun_).pushMuzzleLightSprite(sprite); }
 

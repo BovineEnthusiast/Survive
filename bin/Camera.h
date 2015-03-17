@@ -17,6 +17,7 @@ public:
  
     //Getters
     sf::View getView();
+	float getShake() const;
     
 private:
     //Size in game units, of the viewport's smaller side

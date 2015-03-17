@@ -177,7 +177,7 @@ void Gun::update(const sf::Time& dT)
 				fireRateClock_.restart();
 				muzzleClock_.restart();
 
-				shake_ = 10.0f;
+				shake_ += 10.0f;
 			}
 			else
 			{
@@ -190,11 +190,11 @@ void Gun::update(const sf::Time& dT)
 				muzzleClock_.restart();
 
 				if(gunType_ == "pistol")
-				  shake_ = 1.0f;
+				  shake_ += 1.0f;
 				else if(gunType_ == "magnum")
-				  shake_ = 2.0f;
+				  shake_ += 2.0f;
 				else if(gunType_ == "rifle")
-				  shake_ = 1.5f;
+				  shake_ += 1.0f;
 
 			}
 			vEmitters_.push_back(Emitter(true,

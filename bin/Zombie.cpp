@@ -171,7 +171,8 @@ void Zombie::update(const sf::Time& dT)
 			firerateClock_.restart();
 			pLBullets_->push_back(Bullet(false, positionGlobal_, playerVector * 300.0f, 10));
 			pLBullets_->back().setColor(sf::Color(255, 0, 255, 255));
-			pLBullets_->back().setSize(sf::Vector2f(7.5f, 7.5f));			
+			pLBullets_->back().setSize(sf::Vector2f(7.5f, 7.5f));		
+			shake_ += 0.25f;
 						    
 		    }
 		}
@@ -183,6 +184,7 @@ void Zombie::update(const sf::Time& dT)
 			//Hasn't blown up yet
 			if (!exploded_)
 			{
+				shake_ = 30.0f;
 				exploded_ = true;
 				corpseSprite_.setColor(sf::Color::Transparent);
 				explosionEmitter_ = Emitter(true,
@@ -447,7 +449,12 @@ LightingPolygon Zombie::getLightingPolygon() const { return explosiveLight_; }
 Emitter Zombie::getExplosionEmitter() const { return explosionEmitter_; }
 std::string Zombie::getType() const { return type_; }
 bool Zombie::damagedOthers() const { return explosionDamagedOthers_; }
-
+float Zombie::getShake()
+{
+	float shake = shake_;
+	shake_ = 0;
+	return shake;
+}
 //Setters
 void Zombie::setTurretPtr(Turret* pTurret) { pTurret_ = pTurret; }
 void Zombie::setBarricadePtr(Barricade* pBarricade) { pBarricade_ = pBarricade; }

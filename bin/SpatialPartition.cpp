@@ -111,13 +111,13 @@ void SpatialPartition::update(const sf::Time& dT)
 				type = "boom";
 				pTexture = &imageManager_->humanoidBoomTexture;
 			}
-			else if(random < 20 && *pWave_ > 1)
+			else if (random < 20 && *pWave_ > 1)
 			{
-			    type = "ranged";
-			    pTexture = &imageManager_->humanoidRangedTexture;
+				type = "ranged";
+				pTexture = &imageManager_->humanoidRangedTexture;
 			}
 
-			Zombie zombie = Zombie(player_, type, pTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f , (*pWave_ * 3.5f));
+			Zombie zombie = Zombie(player_, type, pTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f, (*pWave_ * 3.5f));
 			zombie.pTiles = pVTiles_;
 			zombie.setPositionGlobal(den.getPositionGlobal());
 			vZombies_.push_back(zombie);
@@ -127,10 +127,10 @@ void SpatialPartition::update(const sf::Time& dT)
 	//Zombies
 	for (auto iZombie = vZombies_.begin(); iZombie != vZombies_.end();)
 	{
-
-	    iZombie->setBulletListPtr(&lBullets_);
-	    if (iZombie->needsPath())
-		iZombie->findPath(pVTiles_);
+		shake_ += iZombie->getShake();
+		iZombie->setBulletListPtr(&lBullets_);
+		if (iZombie->needsPath())
+			iZombie->findPath(pVTiles_);
 
 		// std::thread pathThread(&Zombie::findPath, iZombie, pVTiles_);ull
 		if (targetClock_.getElapsedTime().asSeconds() >= 1.0f)
@@ -270,20 +270,29 @@ void SpatialPartition::update(const sf::Time& dT)
 				sf::Vector2f currentZomPos = zombie.getPositionGlobal();
 				float distance = sqrt(pow(currentZomPos.x - zomPos.x, 2) + pow(currentZomPos.y - zomPos.y, 2));
 				if (distance <= 150)
+				{
 					zombie.setHealth(zombie.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+					zombie.injure();
+				}
 			}
 			for (auto& partition : pSpatialPartitions_)
-				for (auto& zombie : vZombies_)
+				for (auto& zombie : partition->vZombies_)
 				{
 					sf::Vector2f currentZomPos = zombie.getPositionGlobal();
 					float distance = sqrt(pow(currentZomPos.x - zomPos.x, 2) + pow(currentZomPos.y - zomPos.y, 2));
 					if (distance <= 150)
+					{
 						zombie.setHealth(zombie.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+						zombie.injure();
+					}
 				}
 			sf::Vector2f playerPos = player_->getPositionGlobal();
 			float playerDistance = sqrt(pow(playerPos.x - zomPos.x, 2) + pow(playerPos.y - zomPos.y, 2));
 			if (playerDistance <= 150)
+			{
 				player_->setHealth(player_->getHealth() - 75.0f * (1.0f - playerDistance / 150.0f));
+				player_->injure();
+			}
 		}
 		//Adds blood splats if it is sliding on the floor
 		if (iZombie->bled())
@@ -328,19 +337,27 @@ void SpatialPartition::update(const sf::Time& dT)
 
 	for (auto iBullet = lBullets_.begin(); iBullet != lBullets_.end();)
 	{
+		shake_ += iBullet->getShake();
 		iBullet->update(dT);
 
 		sf::Vector2f bulletPos(iBullet->getPositionGlobal());
 		sf::Vector2i bulletTilePos((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32, (bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32);
 
 		//If hit or dead, remove, else increments iterater
-		if ((iBullet->isHit() && !iBullet->isRocket()) || (iBullet->isHit() && iBullet->isRocket() && iBullet->getRocketEmitter().isDead() && iBullet->getExplosionEmitter().isDead())|| ((bulletTilePos.x >= 0 && bulletTilePos.y >= 0 && bulletTilePos.x < 255 && bulletTilePos.y < 255) && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock"))
+		if ((iBullet->isHit() && !iBullet->isRocket()) || (iBullet->isHit() && iBullet->isRocket() && iBullet->getRocketEmitter().isDead() && iBullet->getExplosionEmitter().isDead()) || ((bulletTilePos.x >= 0 && bulletTilePos.y >= 0 && bulletTilePos.x < 255 && bulletTilePos.y < 255) && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock"))
+			if (pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock" && iBullet->isRocket())
+			{
+				pSoundManager_->playSound("explosion");
+				iBullet = lBullets_.erase(iBullet);
+			}
+			else
 			iBullet = lBullets_.erase(iBullet);
 		else
 		{
 			//If it is a rocket that was hit, update explosions n' stuff
 			if (iBullet->isHit() && iBullet->isRocket())
 			{
+
 				for (auto& zombie : vZombies_)
 				{
 					sf::Vector2f distanceVector(zombie.getPositionGlobal() - iBullet->getPositionGlobal());
@@ -624,160 +641,179 @@ void SpatialPartition::update(const sf::Time& dT)
 		//This partition's zombies
 		if (bullet.getSprite().getSize() != sf::Vector2f(7.5f, 7.5f))
 		{
-		    for (auto& zombie : vZombies_)
-		    {
-			if (!bullet.isHit() && isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) && zombie.getHealth() > 0)
+			for (auto& zombie : vZombies_)
 			{
-			    zombie.injure();
-			    zombie.setHealth(zombie.getHealth() - bullet.getDamage());
-			    bullet.setHit(true);
-			    pSoundManager_->playSound("hit");
-			    if (!bullet.isFromTurret())
-				player_->setPoints(player_->getPoints() + 10);
-
-			    if (bullet.isRocket())
-			    {
-				zombie.setHealth(0);
-				//This partition's zombies
-				for (auto& altZombie : vZombies_)
+				if (!bullet.isHit() && isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) && zombie.getHealth() > 0)
 				{
-				    if (&altZombie != &zombie)
-				    {
-					sf::Vector2f distanceVector(altZombie.getPositionGlobal() - bullet.getPositionGlobal());
-					float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+					zombie.injure();
+					zombie.setHealth(zombie.getHealth() - bullet.getDamage());
+					bullet.setHit(true);
+					pSoundManager_->playSound("hit");
+					if (!bullet.isFromTurret())
+						player_->setPoints(player_->getPoints() + 10);
 
-					//Damage the zombie if it is in 300
-					if (distance <= 300)
-					    altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+					if (zombie.getType() == "boom" && zombie.getHealth() <= 0)
+						pSoundManager_->playSound("explosion");
 
-					//Slide away from explosion upon death
-					if (altZombie.getHealth() <= 0)
+					if (bullet.isRocket())
 					{
-					    altZombie.setRotationGlobal(atan2(distanceVector.y, distanceVector.x) * 180 / 3.14159265358f);
+						pSoundManager_->playSound("explosion");
+
+						zombie.setHealth(0);
+						//This partition's zombies
+						for (auto& altZombie : vZombies_)
+						{
+							if (&altZombie != &zombie)
+							{
+								sf::Vector2f distanceVector(altZombie.getPositionGlobal() - bullet.getPositionGlobal());
+								float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+
+								//Damage the zombie if it is in 300
+								if (distance <= 300)
+									altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+
+								//Slide away from explosion upon death
+								if (altZombie.getHealth() <= 0)
+								{
+									altZombie.setRotationGlobal(atan2(distanceVector.y, distanceVector.x) * 180 / 3.14159265358f);
+								}
+							}
+						}
+						//Neighbor partition zombies
+						for (auto& partition : pSpatialPartitions_)
+							for (auto& altZombie : vZombies_)
+							{
+								if (&altZombie != &zombie)
+								{
+									sf::Vector2f distanceVector(bullet.getPositionGlobal() - altZombie.getPositionGlobal());
+									float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+
+									//Damage the zombie if it is in 300
+									if (distance <= 300)
+										altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+								}
+							}
 					}
-				    }
+
+					vEmitters_.push_back(Emitter(true,
+						position,
+						true,
+						5,
+						1000,
+						sf::Vector2f(5.0f, 5.0f),
+						sf::Vector2f(3.0f, 3.0f),
+						rotation - 25.0f,
+						rotation + 25.0f,
+						150.0f,
+						250.0f,
+						0.0f,
+						0.1f,
+						0.2f,
+						sf::Color(255, 25, 25, 255),
+						sf::Color(255, 25, 25, 255)));
+
+
+
 				}
-				//Neighbor partition zombies
-				for (auto& partition : pSpatialPartitions_)
-				    for (auto& altZombie : vZombies_)
-				    {
-					if (&altZombie != &zombie)
-					{
-					    sf::Vector2f distanceVector(bullet.getPositionGlobal() - altZombie.getPositionGlobal());
-					    float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
-
-					    //Damage the zombie if it is in 300
-					    if (distance <= 300)
-						altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
-					}
-				    }
-			    }
-
-			    vEmitters_.push_back(Emitter(true,
-							 position,
-							 true,
-							 5,
-							 1000,
-							 sf::Vector2f(5.0f, 5.0f),
-							 sf::Vector2f(3.0f, 3.0f),
-							 rotation - 25.0f,
-							 rotation + 25.0f,
-							 150.0f,
-							 250.0f,
-							 0.0f,
-							 0.1f,
-							 0.2f,
-							 sf::Color(255, 25, 25, 255),
-							 sf::Color(255, 25, 25, 255)));
-
-				
-
 			}
-		    }
 
-		    //Neighboring partition's zombies
-		    for (auto& partition : pSpatialPartitions_)
-			if (partition != nullptr)
-			    for (auto& zombie : partition->vZombies_)
-			    {
-				if (!bullet.isHit() && isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true && zombie.getHealth() > 0)
-				{
-				    zombie.injure();
-				    zombie.setHealth(zombie.getHealth() - bullet.getDamage());
-				    bullet.setHit(true);
-				    pSoundManager_->playSound("hit");
-				    if (!bullet.isFromTurret())
-					player_->setPoints(player_->getPoints() + 10);
-
-				    if (bullet.isRocket())
-				    {
-					zombie.setHealth(0);
-					//This partition's zombies
-					for (auto& altZombie : vZombies_)
+			//Neighboring partition's zombies
+			for (auto& partition : pSpatialPartitions_)
+				if (partition != nullptr)
+					for (auto& zombie : partition->vZombies_)
 					{
-					    if (&altZombie != &zombie)
-					    {
-						sf::Vector2f distanceVector(altZombie.getPositionGlobal() - bullet.getPositionGlobal());
-						float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
-
-						//Damage the zombie if it is in 300
-						if (distance <= 300)
-						    altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
-
-						//Slide away from explosion upon death
-						if (altZombie.getHealth() <= 0)
+						if (!bullet.isHit() && isColliding(zombie.getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true && zombie.getHealth() > 0)
 						{
-						    altZombie.setRotationGlobal(atan2(distanceVector.y, distanceVector.x) * 180 / 3.14159265358f);
+							zombie.injure();
+							zombie.setHealth(zombie.getHealth() - bullet.getDamage());
+							bullet.setHit(true);
+							pSoundManager_->playSound("hit");
+							if (!bullet.isFromTurret())
+								player_->setPoints(player_->getPoints() + 10);
+
+							if (zombie.getType() == "boom" && zombie.getHealth() <= 0)
+								pSoundManager_->playSound("explosion");
+							if (bullet.isRocket())
+							{
+								pSoundManager_->playSound("explosion");
+
+								zombie.setHealth(0);
+								//This partition's zombies
+								for (auto& altZombie : vZombies_)
+								{
+									if (&altZombie != &zombie)
+									{
+										sf::Vector2f distanceVector(altZombie.getPositionGlobal() - bullet.getPositionGlobal());
+										float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+
+										//Damage the zombie if it is in 300
+										if (distance <= 300)
+										{
+											altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+											altZombie.injure();
+										}
+
+										//Slide away from explosion upon death
+										if (altZombie.getHealth() <= 0)
+										{
+											altZombie.setRotationGlobal(atan2(distanceVector.y, distanceVector.x) * 180 / 3.14159265358f);
+										}
+									}
+								}
+								//Neighbor partition zombies
+								for (auto& partition : pSpatialPartitions_)
+									for (auto& altZombie : vZombies_)
+									{
+										if (&altZombie != &zombie)
+										{
+											sf::Vector2f distanceVector(bullet.getPositionGlobal() - altZombie.getPositionGlobal());
+											float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
+
+											//Damage the zombie if it is in 300
+											if (distance <= 300)
+											{
+												altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+												altZombie.injure();
+											}
+										}
+									}
+							}
+							vEmitters_.push_back(Emitter(true,
+								position,
+								true,
+								5,
+								1000,
+								sf::Vector2f(5.0f, 5.0f),
+								sf::Vector2f(3.0f, 3.0f),
+								rotation - 25.0f,
+								rotation + 25.0f,
+								150.0f,
+								250.0f,
+								0.0f,
+								0.1f,
+								0.2f,
+								sf::Color(255, 25, 25, 255),
+								sf::Color(255, 25, 25, 255)));
 						}
-					    }
 					}
-					//Neighbor partition zombies
-					for (auto& partition : pSpatialPartitions_)
-					    for (auto& altZombie : vZombies_)
-					    {
-						if (&altZombie != &zombie)
-						{
-						    sf::Vector2f distanceVector(bullet.getPositionGlobal() - altZombie.getPositionGlobal());
-						    float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
-
-						    //Damage the zombie if it is in 300
-						    if (distance <= 300)
-							altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
-						}
-					    }
-				    }
-				    vEmitters_.push_back(Emitter(true,
-								 position,
-								 true,
-								 5,
-								 1000,
-								 sf::Vector2f(5.0f, 5.0f),
-								 sf::Vector2f(3.0f, 3.0f),
-								 rotation - 25.0f,
-								 rotation + 25.0f,
-								 150.0f,
-								 250.0f,
-								 0.0f,
-								 0.1f,
-								 0.2f,
-								 sf::Color(255, 25, 25, 255),
-								 sf::Color(255, 25, 25, 255)));
-				}
-			    }
 		}
 		else
 		{
-		    if(!bullet.isHit() && isColliding(player_->getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true)
-		    {
-			bullet.setHit(true);
-			player_->setHealth(player_->getHealth() - 10);
-		    }
+			if (!bullet.isHit() && isColliding(player_->getHeadSprite(), bullet.getSprite(), bullet.getLastPosition()) == true)
+			{
+				bullet.setHit(true);
+				player_->setHealth(player_->getHealth() - 10);
+				player_->injure();
+			}
 		}
 		//This partition's trees
 		for (auto& tree : vTrees_)
 		{
 			if ((!bullet.isHit() && isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 			{
+				if (bullet.isRocket())
+					pSoundManager_->playSound("explosion");
+
 				bullet.setHit(true);
 
 				vEmitters_.push_back(Emitter(true,
@@ -806,6 +842,9 @@ void SpatialPartition::update(const sf::Time& dT)
 				{
 					if ((!bullet.isHit() && isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 					{
+						if (bullet.isRocket())
+							pSoundManager_->playSound("explosion");
+
 						bullet.setHit(true);
 
 						vEmitters_.push_back(Emitter(true,
@@ -912,7 +951,7 @@ void SpatialPartition::update(const sf::Time& dT)
 						//Damage the zombie if it is in range
 						if (distance <= range)
 							altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / range)) * damage);
-						
+
 						//Slide away from explosion upon death
 						if (altZombie.getHealth() <= 0)
 						{
@@ -1117,7 +1156,12 @@ std::vector<Barricade> SpatialPartition::getBarricades() const { return vBarrica
 std::vector<Mine> SpatialPartition::getMines() const { return vMines_; }
 std::array<SpatialPartition*, 8> SpatialPartition::getNeigborPartitions() const { return pSpatialPartitions_; }
 std::vector<Emitter> SpatialPartition::getEmitters() const { return vEmitters_; }
-
+float SpatialPartition::getShake()
+{
+	float shake = shake_;
+	shake_ = 0;
+	return shake;
+}
 //Pushers
 void SpatialPartition::pushZombie(const Zombie& zombie) { vZombies_.push_back(zombie); }
 void SpatialPartition::pushBullet(const Bullet& bullet) { lBullets_.push_back(bullet); }

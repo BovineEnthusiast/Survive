@@ -56,6 +56,8 @@ public:
     
     Camera camera_;    
     
+	//Camera shake
+	float shake_ = 0.0f;
     //Used as money
     int credits = 0;
     //True if the player dies

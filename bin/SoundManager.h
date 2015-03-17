@@ -21,13 +21,6 @@ private:
     //Magnum
     sf::SoundBuffer bufferMagnumSelect_;
     sf::SoundBuffer bufferMagnumOne_;
-    sf::SoundBuffer bufferMagnumTwo_;
-    sf::SoundBuffer bufferMagnumThree_;
-    sf::SoundBuffer bufferMagnumFour_;
-    sf::SoundBuffer bufferMagnumFive_;
-    sf::SoundBuffer bufferMagnumSix_;
-    sf::SoundBuffer bufferMagnumSeven_;
-    sf::SoundBuffer bufferMagnumEight_;
 
     //Shotgun
     sf::SoundBuffer bufferShotgunSelect_;
@@ -38,8 +31,9 @@ private:
     sf::SoundBuffer bufferRifleOne_;
     sf::SoundBuffer bufferRifleTwo_;
     sf::SoundBuffer bufferRifleThree_;
-    sf::SoundBuffer bufferRifleFour_;
     
+	//Explosion
+	sf::SoundBuffer bufferExplosion_;
     //Grass footsteps
     sf::SoundBuffer bufferGrassOne_;
     sf::SoundBuffer bufferGrassTwo_;

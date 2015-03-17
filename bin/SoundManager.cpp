@@ -22,20 +22,6 @@ SoundManager::SoundManager()
     std::cout << "Failed to load magnum select" << std::endl;
   if(!bufferMagnumOne_.loadFromFile("assets/sounds/gun/magnum/magnum_1.ogg"))
     std::cout << "Failed to load magnum 1" << std::endl;
-  if(!bufferMagnumTwo_.loadFromFile("assets/sounds/gun/magnum/magnum_2.ogg"))
-    std::cout << "Failed to load magnum 2" << std::endl;
-  if(!bufferMagnumThree_.loadFromFile("assets/sounds/gun/magnum/magnum_3.ogg"))
-    std::cout << "Failed to load magnum 3" << std::endl;
-  if(!bufferMagnumFour_.loadFromFile("assets/sounds/gun/magnum/magnum_4.ogg"))
-    std::cout << "Failed to load magnum 4" << std::endl;
-  if(!bufferMagnumFive_.loadFromFile("assets/sounds/gun/magnum/magnum_5.ogg"))
-    std::cout << "Failed to load magnum 5" << std::endl;
-  if(!bufferMagnumSix_.loadFromFile("assets/sounds/gun/magnum/magnum_6.ogg"))
-    std::cout << "Failed to load magnum 6" << std::endl;
-  if(!bufferMagnumSeven_.loadFromFile("assets/sounds/gun/magnum/magnum_7.ogg"))
-    std::cout << "Failed to load magnum 7" << std::endl;
-  if(!bufferMagnumSeven_.loadFromFile("assets/sounds/gun/magnum/magnum_8.ogg"))
-    std::cout << "Failed to load magnum 8" << std::endl;
 
   //Shotgun
   if(!bufferShotgunSelect_.loadFromFile("assets/sounds/gun/shotgun/shotgun_select.ogg"))
@@ -57,9 +43,9 @@ SoundManager::SoundManager()
   if(!bufferRifleThree_.loadFromFile("assets/sounds/gun/rifle/rifle_3.ogg"))
     std::cout << "Failed to load: sounds/gun/rifle/rifle_3.ogg" << std::endl;
   
-  if(!bufferRifleFour_.loadFromFile("assets/sounds/gun/rifle/rifle_4.ogg"))
-    std::cout << "Failed to load: assets/sounds/gun/rifle/rifle_4.ogg" << std::endl;
-  
+  //Explosion
+  if (!bufferExplosion_.loadFromFile("assets/sounds/gun/explosion/explosion.ogg"))
+	  std::cout << "Failed to load: assets/sounds/gun/explosion/explosion.ogg" << std::endl;
   
   //Grass
   if(!bufferGrassOne_.loadFromFile("assets/sounds/footstep/grass/grass_1.ogg"))
@@ -148,25 +134,8 @@ void SoundManager::playSound(const std::string& type)
 	}
       else if(type == "magnum")
 	{
-	  sf::Sound sound;
-	  int random = std::rand() % 8;
-	  if(random == 0)
-	    sound = sf::Sound(bufferMagnumOne_);
-	  else if(random == 1)
-	    sound = sf::Sound(bufferMagnumTwo_);
-	  else if(random == 2)
-	    sound = sf::Sound(bufferMagnumThree_);
-	  else if(random == 3)
-	    sound = sf::Sound(bufferMagnumFour_);
-	  else if(random == 4)
-	    sound = sf::Sound(bufferMagnumFive_);
-	  else if(random == 5)
-	    sound = sf::Sound(bufferMagnumSix_);
-	  else if(random == 6)
-	    sound = sf::Sound(bufferMagnumSeven_);
-	  else
-	    sound = sf::Sound(bufferMagnumEight_);
-	  
+	  sf::Sound sound = sf::Sound(bufferMagnumOne_);
+	  	  
 	  lSounds_.push_back(sound);
 	  lSounds_.back().play();
 	}
@@ -196,10 +165,8 @@ void SoundManager::playSound(const std::string& type)
             sound = sf::Sound(bufferRifleOne_);
 	  else if(random == 1)
             sound = sf::Sound(bufferRifleTwo_);
-	  else if(random == 2)
-            sound = sf::Sound(bufferRifleThree_);
 	  else
-            sound = sf::Sound(bufferRifleFour_);
+            sound = sf::Sound(bufferRifleThree_);
 	  
 	  lSounds_.push_back(sound);
 	  lSounds_.back().play();
@@ -210,6 +177,12 @@ void SoundManager::playSound(const std::string& type)
 	  lSounds_.push_back(sound);
 	  lSounds_.back().play();
 	}
+	  else if (type == "explosion")
+	  {
+		sf::Sound sound = sf::Sound(bufferExplosion_);
+		lSounds_.push_back(sound);
+		lSounds_.back().play();
+	  }
       else if(type == "grass")
 	{
 	  

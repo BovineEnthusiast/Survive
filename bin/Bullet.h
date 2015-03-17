@@ -30,6 +30,7 @@ class Bullet : public GameObject
   LightingPolygon getExplosionPolygon() const;
   float getExplosionTime() const;
   bool isFromTurret() const;
+  float getShake();
 
   //Pushers
   void pushSprite(const sf::Sprite&);
@@ -52,6 +53,9 @@ class Bullet : public GameObject
   bool rocket_ = false;
   Emitter rocketEmitter_;
   Emitter explosionEmitter_;
+
+  //Shake from explosion
+  float shake_ = 0.0f;
 
   //Dynamic lighting for explosion
   bool explosionLighting_ = false;

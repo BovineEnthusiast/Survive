@@ -47,9 +47,11 @@ void Level::update(const sf::Time& dT)
 	}
 	
     for(auto iPartitionRow = spatialPartitions_.begin(); iPartitionRow != spatialPartitions_.end(); ++iPartitionRow)
-		for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)		
+		for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
+		{
 			iPartition->update(dT);
-		
+			shake_ += iPartition->getShake();
+		}
 
 
 	if (player_.getHealth() <= 0)
@@ -57,9 +59,10 @@ void Level::update(const sf::Time& dT)
 
 
 	//Camera shake
-	float cameraShake = player_.getShake();
+	float cameraShake = player_.getShake() + shake_;
+	shake_ = 0;
 	if(cameraShake != 0)
-	  camera_.setShake(cameraShake);
+	  camera_.setShake(camera_.getShake() + cameraShake);
 	camera_.setPosition(player_.getPositionGlobal());
 	camera_.update(dT);
 	
@@ -74,7 +77,7 @@ void Level::generateLevel(const int width, const int height)
 {
 	//Resets the level in case of replay
 	player_.setHealth(100);
-	player_.setPoints(0);
+	player_.setPoints(100000);
 	player_.setHasMagnum(false);
 	player_.setHasShotgun(false);
 	player_.setHasRifle(false);

@@ -60,3 +60,4 @@ void Camera::setPosition(const sf::Vector2f& position) {posView_.setCenter(posit
 void Camera::setShake(const float shake) { shakeRadius_ = shake; }
 //Getters
 sf::View Camera::getView() {return view_;}
+float Camera::getShake() const { return shakeRadius_; }

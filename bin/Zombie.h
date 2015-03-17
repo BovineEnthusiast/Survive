@@ -36,7 +36,7 @@ class Zombie : public Humanoid
   LightingPolygon getLightingPolygon() const;
   Emitter getExplosionEmitter() const;
   bool damagedOthers() const;
-
+  float getShake();
   //Setters
   void setTurretPtr(Turret*);
   void setBarricadePtr(Barricade*);
@@ -101,6 +101,9 @@ class Zombie : public Humanoid
   float corpseSpeed_;
   float fadeAfter_ = 10.0f;
   float fadeFor_ = 5.0f;
+
+  //Shake from exploding zombie
+  float shake_ = 0.0f;
 
   //Type: boom
   LightingPolygon explosiveLight_;

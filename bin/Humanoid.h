@@ -52,12 +52,13 @@ protected:
     sf::Vector2f armRightTarget_;
     sf::Clock legAnimClock_;
     float legAnimLength_;
+	bool injured_ = false;
+
     
 private:
     
     sf::Clock sinClock_;
     sf::Clock injureClock_;
-    bool injured_ = false;
         
 };
 
