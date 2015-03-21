@@ -111,13 +111,18 @@ void SpatialPartition::update(const sf::Time& dT)
 				type = "boom";
 				pTexture = &imageManager_->humanoidBoomTexture;
 			}
-			else if (random < 20 && *pWave_ > 1)
+			else if (random < 20 && *pWave_ > 3)
 			{
 				type = "ranged";
 				pTexture = &imageManager_->humanoidRangedTexture;
 			}
+			else if (random < 22 && *pWave_ > 5)
+			{
+				type = "tank";
+				pTexture = &imageManager_->humanoidTankTexture;
+			}
 
-			Zombie zombie = Zombie(player_, type, pTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f, (*pWave_ * 3.5f));
+			Zombie zombie = Zombie(player_, pSoundManager_, type, pTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f, (*pWave_ * 3.5f));
 			zombie.pTiles = pVTiles_;
 			zombie.setPositionGlobal(den.getPositionGlobal());
 			vZombies_.push_back(zombie);
@@ -259,6 +264,15 @@ void SpatialPartition::update(const sf::Time& dT)
 		//pathThread.join();					
 		iZombie->update(dT);
 
+		if (iZombie->isDead() && !iZombie->droppedHealth())
+		{
+			iZombie->setDroppedHealth(true);
+			if (std::rand() % 25 == 1)
+			{
+				vHealthKits_.push_back(Health(&imageManager_->healthkitTexture));
+				vHealthKits_.back().setPositionGlobal(iZombie->getPositionGlobal());
+			}
+		}
 		//Damages those around if it is an explosive zombie
 		if (iZombie->getType() == "boom" && iZombie->isDead() && !iZombie->damagedOthers())
 		{
@@ -347,7 +361,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		if ((iBullet->isHit() && !iBullet->isRocket()) || (iBullet->isHit() && iBullet->isRocket() && iBullet->getRocketEmitter().isDead() && iBullet->getExplosionEmitter().isDead()) || ((bulletTilePos.x >= 0 && bulletTilePos.y >= 0 && bulletTilePos.x < 255 && bulletTilePos.y < 255) && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock"))
 			if (pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock" && iBullet->isRocket())
 			{
-				pSoundManager_->playSound("explosion");
+				pSoundManager_->playSound("explosion", iBullet->getPositionGlobal(), player_->getPositionGlobal());
 				iBullet = lBullets_.erase(iBullet);
 			}
 			else
@@ -404,6 +418,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	int xPos = 0;
 	int yPos = 0;
 
+	//Positions selection rect
 	int rotation = (int)player_->getHeadSprite().getRotation() % 360;
 	if (rotation <= 23 || rotation > 338)
 	{
@@ -462,7 +477,7 @@ void SpatialPartition::update(const sf::Time& dT)
 			{
 				pAboveTile->setHasItem(true);
 				player_->setTurrets(player_->getTurrets() - 1);
-				vTurrets_.push_back(Turret(pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
+				vTurrets_.push_back(Turret(player_, pAboveTile->getSprite().getPosition(), &lBullets_, imageManager_, pSoundManager_));
 			}
 		}
 	}
@@ -494,8 +509,8 @@ void SpatialPartition::update(const sf::Time& dT)
 		mine.setPositionGlobal(player_->getPositionGlobal());
 		mine.update(dT);
 
-		bool placed = false;
-
+		bool placed = true;
+		
 		for (auto& altMine : vMines_)
 			if (isColliding(mine.getMine(), altMine.getMine()) == sf::Vector2f(0.0f, 0.0f))
 				placed = true;
@@ -630,6 +645,15 @@ void SpatialPartition::update(const sf::Time& dT)
 
 	}
 
+	for (auto iKit = vHealthKits_.begin(); iKit != vHealthKits_.end();)
+	{
+		iKit->update(dT);
+		if (iKit->isCollected() || iKit->getDurationClock().getElapsedTime().asSeconds() >= 10.0f)
+			iKit = vHealthKits_.erase(iKit);
+		else
+			++iKit;
+	}
+
 
 	//-----------------COLLISION--------------------------------
 	for (auto& bullet : lBullets_)
@@ -648,16 +672,16 @@ void SpatialPartition::update(const sf::Time& dT)
 					zombie.injure();
 					zombie.setHealth(zombie.getHealth() - bullet.getDamage());
 					bullet.setHit(true);
-					pSoundManager_->playSound("hit");
+					pSoundManager_->playSound("hit", zombie.getPositionGlobal(), player_->getPositionGlobal());
 					if (!bullet.isFromTurret())
 						player_->setPoints(player_->getPoints() + 10);
 
 					if (zombie.getType() == "boom" && zombie.getHealth() <= 0)
-						pSoundManager_->playSound("explosion");
+						pSoundManager_->playSound("explosion", zombie.getPositionGlobal(), player_->getPositionGlobal());
 
 					if (bullet.isRocket())
 					{
-						pSoundManager_->playSound("explosion");
+						pSoundManager_->playSound("explosion", zombie.getPositionGlobal(), player_->getPositionGlobal());
 
 						zombie.setHealth(0);
 						//This partition's zombies
@@ -727,15 +751,15 @@ void SpatialPartition::update(const sf::Time& dT)
 							zombie.injure();
 							zombie.setHealth(zombie.getHealth() - bullet.getDamage());
 							bullet.setHit(true);
-							pSoundManager_->playSound("hit");
+							pSoundManager_->playSound("hit", zombie.getPositionGlobal(), player_->getPositionGlobal());
 							if (!bullet.isFromTurret())
 								player_->setPoints(player_->getPoints() + 10);
 
 							if (zombie.getType() == "boom" && zombie.getHealth() <= 0)
-								pSoundManager_->playSound("explosion");
+								pSoundManager_->playSound("explosion", zombie.getPositionGlobal(), player_->getPositionGlobal());
 							if (bullet.isRocket())
 							{
-								pSoundManager_->playSound("explosion");
+								pSoundManager_->playSound("explosion", zombie.getPositionGlobal(), player_->getPositionGlobal());
 
 								zombie.setHealth(0);
 								//This partition's zombies
@@ -812,7 +836,7 @@ void SpatialPartition::update(const sf::Time& dT)
 			if ((!bullet.isHit() && isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 			{
 				if (bullet.isRocket())
-					pSoundManager_->playSound("explosion");
+					pSoundManager_->playSound("explosion", bullet.getPositionGlobal(), player_->getPositionGlobal());
 
 				bullet.setHit(true);
 
@@ -843,7 +867,7 @@ void SpatialPartition::update(const sf::Time& dT)
 					if ((!bullet.isHit() && isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 					{
 						if (bullet.isRocket())
-							pSoundManager_->playSound("explosion");
+							pSoundManager_->playSound("explosion", bullet.getPositionGlobal(), player_->getPositionGlobal());
 
 						bullet.setHit(true);
 
@@ -937,6 +961,8 @@ void SpatialPartition::update(const sf::Time& dT)
 				zombie.setHealth(0);
 
 				mine.explode();
+				pSoundManager_->playSound("explosion", mine.getPositionGlobal(), player_->getPositionGlobal());
+
 				int range = mine.getRadius();
 				int damage = mine.getDamage();
 
@@ -1070,6 +1096,28 @@ void SpatialPartition::update(const sf::Time& dT)
 					player_->setPositionGlobal(player_->getPositionGlobal() + isColliding(barricade.getSprite(), playerHeadSprite));
 					player_->pushLightingSprite(barricade.getSprite());
 				}
+
+		//This partition's healthkits
+		for (auto& kit : vHealthKits_)
+			if (isColliding(player_->getHeadSprite(), kit.getSprite()) != sf::Vector2f(0.0f, 0.0f))
+			{
+				player_->setHealth(player_->getHealth() + 25);
+				if (player_->getHealth() > 100)
+					player_->setHealth(100);
+
+				kit.setCollected(true);
+			}
+		for (auto& partition : pSpatialPartitions_)
+			for (auto& kit : partition->vHealthKits_)
+				if (isColliding(player_->getHeadSprite(), kit.getSprite()) != sf::Vector2f(0.0f, 0.0f))
+				{
+					player_->setHealth(player_->getHealth() + 25);
+					if (player_->getHealth() > 100)
+						player_->setHealth(100);
+
+					kit.setCollected(true);
+				}
+		
 		//Unwalkable collision checks
 		for (int i = 0; i < 8; ++i)
 		{
@@ -1156,6 +1204,7 @@ std::vector<Barricade> SpatialPartition::getBarricades() const { return vBarrica
 std::vector<Mine> SpatialPartition::getMines() const { return vMines_; }
 std::array<SpatialPartition*, 8> SpatialPartition::getNeigborPartitions() const { return pSpatialPartitions_; }
 std::vector<Emitter> SpatialPartition::getEmitters() const { return vEmitters_; }
+std::vector<Health> SpatialPartition::getHealthkits() const { return vHealthKits_; }
 float SpatialPartition::getShake()
 {
 	float shake = shake_;

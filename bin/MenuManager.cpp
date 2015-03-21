@@ -212,7 +212,7 @@ void MenuManager::update(const sf::Time& dT)
 	//Plays hover sound
 	if (!soundPlayed_ && selectionRect_.getFillColor() == sf::Color(255, 0, 55, 200))
 	{
-		pSoundManager_->playSound("hover");
+		pSoundManager_->playSound("hover", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 		soundPlayed_ = true;
 	}
 	else if (selectionRect_.getFillColor() != sf::Color(255, 0, 55, 200))

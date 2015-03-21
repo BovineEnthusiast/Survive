@@ -1,7 +1,7 @@
 #include "Turret.h"
 
-Turret::Turret(const sf::Vector2f& position, std::list<Bullet>* pLBullets, ImageManager* pImageManager, SoundManager* pSoundManager)
-	:pLBullets_(pLBullets), pSoundManager_(pSoundManager)
+Turret::Turret(Player* pPlayer, const sf::Vector2f& position, std::list<Bullet>* pLBullets, ImageManager* pImageManager, SoundManager* pSoundManager)
+	:pPlayer_(pPlayer), pLBullets_(pLBullets), pSoundManager_(pSoundManager)
 {
 	positionGlobal_ = position;
 	pBaseTexture_ = &pImageManager->turretBaseTexture;
@@ -37,7 +37,7 @@ void Turret::update(const sf::Time& dT)
 		if (bullets_ > 0 && firerateClock_.getElapsedTime().asSeconds() > firerate_)
 		{
 			muzzleClock_.restart();
-			pSoundManager_->playSound("rifle");
+			pSoundManager_->playSound("rifle", positionGlobal_, pPlayer_->getPositionGlobal());
 			firerateClock_.restart();
 			pLBullets_->push_back(Bullet(false, positionGlobal_, sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180) * 1500, sin(rotationGlobal_ * 3.14159265358 / 180) * 1500), 10));
 			pLBullets_->back().setFromTurret(true);

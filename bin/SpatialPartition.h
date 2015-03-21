@@ -10,6 +10,7 @@
 #include "Den.h"
 #include "ImageManager.h"
 #include "Emitter.h"
+#include "Health.h"
 #include "Mine.h"
 #include "Player.h"
 #include "SoundManager.h"
@@ -43,6 +44,7 @@ public:
   std::array<SpatialPartition*, 8> getNeigborPartitions() const;
   sf::RectangleShape getSelectionRect() const;
   std::vector<Emitter> getEmitters() const;
+  std::vector<Health> getHealthkits() const;
   float getShake();
 
   //Pushers
@@ -81,6 +83,7 @@ public:
   std::vector<Mine> vMines_;
   std::vector<Emitter> vEmitters_; //Used for zombie blood
   std::deque<BloodSplat> dBloodSplats_;
+  std::vector<Health> vHealthKits_;
   Player* player_;
   std::vector<std::vector<SpatialPartition>>* partitions_;
   bool hasPlayer_ = false;

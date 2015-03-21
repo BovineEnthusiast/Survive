@@ -59,22 +59,22 @@ void Player::update(const sf::Time& dT)
 		//Switches out the gun if number is pressed
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && currentGun_ != 0)
 		{
-			pSoundManager_->playSound("pistol_select");
+			pSoundManager_->playSound("pistol_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 			currentGun_ = 0;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && hasMagnum_ && currentGun_ != 1)
 		{
-			pSoundManager_->playSound("magnum_select");
+			pSoundManager_->playSound("magnum_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 			currentGun_ = 1;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && hasShotgun_ && currentGun_ != 2)
 		{
-			pSoundManager_->playSound("shotgun_select");
+			pSoundManager_->playSound("shotgun_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 			currentGun_ = 2;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) && hasRifle_ && currentGun_ != 3)
 		{
-			pSoundManager_->playSound("rifle_select");
+			pSoundManager_->playSound("rifle_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 			currentGun_ = 3;
 		}
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) && hasRocket_ && currentGun_ != 4)
@@ -98,13 +98,30 @@ void Player::update(const sf::Time& dT)
 			velocity_ /= (float)sqrt(velocity_.x * velocity_.x + velocity_.y * velocity_.y);
 
 		velocity_ *= speed_;
+
+		if (sprint_ > 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		{
+			velocity_ *= 1.4f;
+			sprint_ -= dT.asSeconds();
+			if (sprint_ < 0.0f)
+				sprint_ = 0.0f;
+			sprintClock_.restart();
+		}
+		else if (sprintClock_.getElapsedTime().asSeconds() > 3.0f && sprint_ < 3.0f)
+		{
+			sprint_ += dT.asSeconds() * 2.0f;
+			if (sprint_ > 3.0f)
+				sprint_ = 3.0f;
+		}
+
+		
 		animate(dT);
 
 		//Footsteps
 		if (footstepClock_.getElapsedTime().asSeconds() > 0.15f && velocity_ != sf::Vector2f(0.0f, 0.0f))
 		{
 			footstepClock_.restart();
-			pSoundManager_->playSound("grass");
+			pSoundManager_->playSound("grass", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 		}
 		//float ratio = window->getView().getSize().y /  window->getSize().y;
 		headSprite_.setRotation(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358);
@@ -149,6 +166,7 @@ float Player::getShake()
 	shake_ = 0.0f;
 	return shake;
 }
+float Player::getSprint() const { return sprint_; }
 bool Player::hasMagnum() const { return hasMagnum_; }
 bool Player::hasShotgun() const { return hasShotgun_; }
 bool Player::hasRifle() const { return hasRifle_; }
@@ -204,13 +222,13 @@ void Player::swapGun(const bool left)
 		|| (currentGun_ == 3 && !hasRifle_))
 		recurse = true;
 	else if (currentGun_ == 0)
-		pSoundManager_->playSound("pistol_select");
+		pSoundManager_->playSound("pistol_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	else if (currentGun_ == 1)
-		pSoundManager_->playSound("magnum_select");
+		pSoundManager_->playSound("magnum_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	else if (currentGun_ == 2)
-		pSoundManager_->playSound("shotgun_select");
+		pSoundManager_->playSound("shotgun_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	else if (currentGun_ == 3)
-		pSoundManager_->playSound("rifle_select");
+		pSoundManager_->playSound("rifle_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 
 	if (recurse && left)
 		swapGun(true);

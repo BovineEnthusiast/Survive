@@ -5,6 +5,7 @@
 #include "SpatialPartition.h"
 #include "GUIManager.h"
 #include "Emitter.h"
+#include "Health.h"
 #include "Particle.h"
 #include <iostream>
 #include <deque>
@@ -194,6 +195,9 @@ void Engine::draw()
 			for (auto iPartition = iPartitionRow->begin(); iPartition != iPartitionRow->end(); ++iPartition)
 			{
 
+				//Health kits
+				for (auto& kit : iPartition->getHealthkits())
+					window_.draw(kit.getSprite());
 
 				//Zombies
 				std::vector<Zombie> vZombies = iPartition->getZombies();
@@ -333,6 +337,9 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getHealthOutOf());
 		window_.draw(GUIManagerCopy.getHealthCurrent());
 
+		window_.draw(GUIManagerCopy.getSprintOutOf());
+		window_.draw(GUIManagerCopy.getSprintCurrent());
+
 		//Ammo
 		window_.draw(GUIManagerCopy.getReloadOutOf());
 		window_.draw(GUIManagerCopy.getReloadCurrent());
@@ -340,6 +347,14 @@ void Engine::draw()
 
 		//Store		
 		window_.draw(GUIManagerCopy.getBuyMenuBackground());
+		window_.draw(GUIManagerCopy.getPistolSprite());
+		window_.draw(GUIManagerCopy.getMagnumSprite());
+		window_.draw(GUIManagerCopy.getShotgunSprite());
+		window_.draw(GUIManagerCopy.getRifleSprite());
+		window_.draw(GUIManagerCopy.getRocketSprite());
+		window_.draw(GUIManagerCopy.getBarricadeSprite());
+		window_.draw(GUIManagerCopy.getTurretSprite());
+		window_.draw(GUIManagerCopy.getMineSprite());
 		window_.draw(GUIManagerCopy.getStoreText());
 		window_.draw(GUIManagerCopy.getSelectionRect());
 		window_.draw(GUIManagerCopy.getPistolText());
@@ -349,7 +364,6 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getRocketText());
 		window_.draw(GUIManagerCopy.getBarricadeText());
 		window_.draw(GUIManagerCopy.getTurretText());
-		window_.draw(GUIManagerCopy.getRocketTurretText());
 		window_.draw(GUIManagerCopy.getMineText());
 		window_.draw(GUIManagerCopy.getBuyMagnumText());
 		window_.draw(GUIManagerCopy.getBuyShotgunText());
@@ -357,7 +371,6 @@ void Engine::draw()
 		window_.draw(GUIManagerCopy.getBuyRocketText());
 		window_.draw(GUIManagerCopy.getBuyBarricadeText());
 		window_.draw(GUIManagerCopy.getBuyTurretText());
-		window_.draw(GUIManagerCopy.getBuyRocketTurretText());
 		window_.draw(GUIManagerCopy.getBuyMineText());
 		window_.draw(GUIManagerCopy.getBuyPistolAmmoText());
 		window_.draw(GUIManagerCopy.getBuyMagnumAmmoText());

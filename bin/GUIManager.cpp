@@ -3,8 +3,8 @@
 #include "Humanoid.h"
 #include "Player.h"
 
-GUIManager::GUIManager(sf::RenderWindow* pWindow, Player* pPlayer, int* pWave, int* pZombiesAlive)
-	:pWindow_(pWindow), pPlayer_(pPlayer), pWave_(pWave), pZombiesAlive_(pZombiesAlive)
+GUIManager::GUIManager(ImageManager* pImageManager, sf::RenderWindow* pWindow, Player* pPlayer, int* pWave, int* pZombiesAlive)
+	:pImageManager_(pImageManager), pWindow_(pWindow), pPlayer_(pPlayer), pWave_(pWave), pZombiesAlive_(pZombiesAlive)
 {
 	if (!font_.loadFromFile("assets/fonts/font.otf"))
 		std::cout << "Failed to load font." << std::endl;
@@ -48,6 +48,12 @@ void GUIManager::update(const sf::Time& dT)
 	healthOutOf_.setPosition(currentWindowPos.x + viewSize.x * healthOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * healthOffset_.y);
 	healthCurrent_.setPosition(currentWindowPos.x + viewSize.x * healthOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * healthOffset_.y);
 
+	//Sprint
+	sprintOutOf_.setScale(viewSize.x * healthSize_.x, viewSize.y * healthSize_.y);
+	sprintCurrent_.setScale(viewSize.x * healthSize_.x * (pPlayer_->getSprint() / 3.0f), viewSize.y * healthSize_.y);
+	sprintOutOf_.setPosition(currentWindowPos.x + viewSize.x * sprintOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * sprintOffset_.y);
+	sprintCurrent_.setPosition(currentWindowPos.x + viewSize.x * sprintOffset_.x, currentWindowPos.y + viewSize.y - viewSize.y * sprintOffset_.y);
+
 	//Reload
 	Gun gun = pPlayer_->getGuns().at(pPlayer_->getCurrentGunIndex());
 	if (gun.isReloading())
@@ -90,29 +96,39 @@ void GUIManager::update(const sf::Time& dT)
 
 			sf::Vector2f size(buyMenuBackground_.getGlobalBounds().width, buyMenuBackground_.getGlobalBounds().height);
 			sf::Vector2f pos = buyMenuBackground_.getPosition();
-			showInStore(storeText_, 5.0f, 2.5f, itemTextSize_ * 2);
-			showInStore(pistolText_, 1.0f, 4.0f, itemTextSize_);
-			showInStore(magnumText_, 2.0f, 4.0f, itemTextSize_);
-			showInStore(shotgunText_, 3.0f, 4.0f, itemTextSize_);
-			showInStore(rifleText_, 4.0f, 4.0f, itemTextSize_);
-			showInStore(rocketText_, 5.0f, 4.0f, itemTextSize_);
-			showInStore(barricadeText_, 6.0f, 4.0f, itemTextSize_);
-			showInStore(turretText_, 7.0f, 4.0f, itemTextSize_);
-			showInStore(rocketTurretText_, 8.0f, 4.0f, itemTextSize_);
-			showInStore(mineText_, 9.0f, 4.0f, itemTextSize_);
-			showInStore(buyMagnumText_, 2.0f, 8.0f, itemTextSize_);
-			showInStore(buyShotgunText_, 3.0f, 8.0f, itemTextSize_);
-			showInStore(buyRifleText_, 4.0f, 8.0f, itemTextSize_);
-			showInStore(buyRocketText_, 5.0f, 8.0f, itemTextSize_);
-			showInStore(buyBarricadeText_, 6.0f, 8.0f, itemTextSize_);
-			showInStore(buyTurretText_, 7.0f, 8.0f, itemTextSize_);
-			showInStore(buyRocketTurretText_, 8.0f, 8.0f, itemTextSize_);
-			showInStore(buyMineText_, 9.0f, 8.0f, itemTextSize_);
-			showInStore(buyPistolAmmoText_, 1.0f, -16.0f, itemTextSize_ / 1.5f);
-			showInStore(buyMagnumAmmoText_, 2.0f, -16.0f, itemTextSize_ / 1.5f);
-			showInStore(buyShotgunAmmoText_, 3.0f, -16.0f, itemTextSize_ / 1.5f);
-			showInStore(buyRifleAmmoText_, 4.0f, -16.0f, itemTextSize_ / 1.5f);
-			showInStore(buyRocketAmmoText_, 5.0f, -16.0f, itemTextSize_ / 1.5f);
+			showInStore(storeText_, 5.0f, 2.2f, itemTextSize_ * 2);
+
+			showInStore(pistolSprite_, 1.5f, 10.0f);
+			showInStore(magnumSprite_, 2.5f, 10.0f);
+			showInStore(shotgunSprite_, 3.5f, 10.0f);
+			showInStore(rifleSprite_, 4.5f, 10.0f);
+			showInStore(rocketSprite_, 5.5f, 10.0f);
+			showInStore(barricadeSprite_, 6.5f, 10.0f);
+			showInStore(turretSprite_, 7.5f, 10.0f);
+			showInStore(mineSprite_, 8.5f, 10.0f);
+
+			showInStore(pistolText_, 1.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(magnumText_, 2.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(shotgunText_, 3.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(rifleText_, 4.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(rocketText_, 5.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(barricadeText_, 6.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(turretText_, 7.5f, 3.0f, itemTextSize_ * 1.25f);
+			showInStore(mineText_, 8.5f, 3.0f, itemTextSize_ * 1.25f);
+
+			showInStore(buyMagnumText_, 2.5f, -8.0f, itemTextSize_);
+			showInStore(buyShotgunText_, 3.5f, -8.0f, itemTextSize_);
+			showInStore(buyRifleText_, 4.5f, -8.0f, itemTextSize_);
+			showInStore(buyRocketText_, 5.5f, -8.0f, itemTextSize_);
+			showInStore(buyBarricadeText_, 6.5f, -8.0f, itemTextSize_);
+			showInStore(buyTurretText_, 7.5f, -8.0f, itemTextSize_);
+			showInStore(buyMineText_, 8.5f, -8.0f, itemTextSize_);
+
+			showInStore(buyPistolAmmoText_, 1.5f, -4.0f, itemTextSize_ / 1.5f);
+			showInStore(buyMagnumAmmoText_, 2.5f, -4.0f, itemTextSize_ / 1.5f);
+			showInStore(buyShotgunAmmoText_, 3.5f, -4.0f, itemTextSize_ / 1.5f);
+			showInStore(buyRifleAmmoText_, 4.5f, -4.0f, itemTextSize_ / 1.5f);
+			showInStore(buyRocketAmmoText_, 5.5f, -4.0f, itemTextSize_ / 1.5f);
 			if (hover(buyMagnumText_))
 			{
 			    if( !pPlayer_->hasMagnum() && pPlayer_->getPoints() >= priceMagnum_ && !clickDown_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
@@ -168,10 +184,6 @@ void GUIManager::update(const sf::Time& dT)
 				pPlayer_->setTurrets(pPlayer_->getTurrets() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceTurret_);
 			    }
-			}
-			else if (hover(buyRocketTurretText_))
-			{
-
 			}
 			else if (hover(buyMineText_))
 			{
@@ -236,6 +248,14 @@ void GUIManager::update(const sf::Time& dT)
 	else
 	{
 		storeText_.setColor(sf::Color::Transparent);
+		pistolSprite_.setColor(sf::Color::Transparent);
+		magnumSprite_.setColor(sf::Color::Transparent);
+		shotgunSprite_.setColor(sf::Color::Transparent);
+		rifleSprite_.setColor(sf::Color::Transparent);
+		rocketSprite_.setColor(sf::Color::Transparent);
+		barricadeSprite_.setColor(sf::Color::Transparent);
+		turretSprite_.setColor(sf::Color::Transparent);
+		mineSprite_.setColor(sf::Color::Transparent);
 		buyMenuBackground_.setFillColor(sf::Color::Transparent);
 		pistolText_.setColor(sf::Color::Transparent);
 		magnumText_.setColor(sf::Color::Transparent);
@@ -244,7 +264,6 @@ void GUIManager::update(const sf::Time& dT)
 		rocketText_.setColor(sf::Color::Transparent);
 		barricadeText_.setColor(sf::Color::Transparent);
 		turretText_.setColor(sf::Color::Transparent);
-		rocketTurretText_.setColor(sf::Color::Transparent);
 		mineText_.setColor(sf::Color::Transparent);
 		buyMagnumText_.setColor(sf::Color::Transparent);
 		buyShotgunText_.setColor(sf::Color::Transparent);
@@ -252,7 +271,6 @@ void GUIManager::update(const sf::Time& dT)
 		buyRocketText_.setColor(sf::Color::Transparent);
 		buyBarricadeText_.setColor(sf::Color::Transparent);
 		buyTurretText_.setColor(sf::Color::Transparent);
-		buyRocketTurretText_.setColor(sf::Color::Transparent);
 		buyMineText_.setColor(sf::Color::Transparent);
 		buyPistolAmmoText_.setColor(sf::Color::Transparent);
 		buyMagnumAmmoText_.setColor(sf::Color::Transparent);
@@ -268,6 +286,24 @@ void GUIManager::update(const sf::Time& dT)
 //Helpers
 void GUIManager::reset()
 {
+	pistolSprite_.setTexture(pImageManager_->storePistol);
+	magnumSprite_.setTexture(pImageManager_->storeMagnum);
+	shotgunSprite_.setTexture(pImageManager_->storeShotgun);
+	rifleSprite_.setTexture(pImageManager_->storeRifle);
+	rocketSprite_.setTexture(pImageManager_->storeRocket);
+	barricadeSprite_.setTexture(pImageManager_->storeBarricade);
+	turretSprite_.setTexture(pImageManager_->storeTurret);
+	mineSprite_.setTexture(pImageManager_->storeMine);
+
+	pistolSprite_.setOrigin(225.0f, 225.0f);
+	magnumSprite_.setOrigin(225.0f, 225.0f);
+	shotgunSprite_.setOrigin(225.0f, 225.0f);
+	rifleSprite_.setOrigin(225.0f, 225.0f);
+	rocketSprite_.setOrigin(225.0f, 225.0f);
+	barricadeSprite_.setOrigin(225.0f, 225.0f);
+	turretSprite_.setOrigin(225.0f, 225.0f);
+	mineSprite_.setOrigin(225.0f, 225.0f);
+
 	//Wave
 	waveText_.setFont(font_);
 	zombiesText_.setFont(font_);
@@ -285,6 +321,14 @@ void GUIManager::reset()
 	healthCurrent_.setSize(sf::Vector2f(3.0f, 3.0f));
 	healthOutOf_.setOrigin(0.0f, 3.0f);
 	healthCurrent_.setOrigin(0.0f, 3.0f);
+
+	//Sprint
+	sprintOutOf_.setFillColor(sf::Color(23, 24, 25));
+	sprintCurrent_.setFillColor(sf::Color(200, 200, 200));
+	sprintOutOf_.setSize(sf::Vector2f(3.0f, 3.0f));
+	sprintCurrent_.setSize(sf::Vector2f(3.0f, 3.0f));
+	sprintOutOf_.setOrigin(1.5f, 3.0f);
+	sprintCurrent_.setOrigin(1.5f, 3.0f);
 
 	//Ammo
 	ammo_.setFont(font_);
@@ -311,7 +355,6 @@ void GUIManager::reset()
 	setUpText(rocketText_, "Rocket");
 	setUpText(barricadeText_, "Barricade");
 	setUpText(turretText_, "Turret");
-	setUpText(rocketTurretText_, "Rocket Turret");
 	setUpText(mineText_, "Mine");
 	setUpText(buyMagnumText_, "Buy: " + std::to_string(priceMagnum_));
 	setUpText(buyShotgunText_, "Buy: " + std::to_string(priceShotgun_));
@@ -319,7 +362,6 @@ void GUIManager::reset()
 	setUpText(buyRocketText_, "Buy: " + std::to_string(priceRocket_));
 	setUpText(buyBarricadeText_, "Buy: " + std::to_string(priceBarricade_));
 	setUpText(buyTurretText_, "Buy: " + std::to_string(priceTurret_));
-	setUpText(buyRocketTurretText_, "Buy: ");
 	setUpText(buyMineText_, "Buy: " + std::to_string(priceMine_));
 	setUpText(buyPistolAmmoText_, "Ammo: $" + std::to_string(priceAmmoPistol_) + "(+" + std::to_string(pistolAmmoIncrease_) + ")");
 	setUpText(buyMagnumAmmoText_, "Ammo: $" + std::to_string(priceAmmoMagnum_) + "(+" + std::to_string(magnumAmmoIncrease_) + ")");
@@ -334,14 +376,23 @@ void GUIManager::setUpText(sf::Text& text, const std::string& string)
 	text.setString(string);
 	text.setOrigin(text.getLocalBounds().width / 2.0f, text.getLocalBounds().height / 2);
 }
-void GUIManager::showInStore(sf::Text& text, const int x, const int y, const float charSize)
+void GUIManager::showInStore(sf::Text& text, const float x, const float y, const float charSize)
 {
 	sf::Vector2f size(buyMenuBackground_.getGlobalBounds().width, buyMenuBackground_.getGlobalBounds().height);
 	sf::Vector2f pos = buyMenuBackground_.getPosition();
-	text.setPosition(sf::Vector2f(pos.x - (size.x / 2.0f) + (size.x / 10.0f) * x, pos.y - size.y / y));
 	text.setCharacterSize(charSize * size.y * 2);
+	text.setOrigin(text.getLocalBounds().width / 2.0f, text.getLocalBounds().height / 2.0f);
+	text.setPosition(sf::Vector2f(pos.x - (size.x / 2.0f) + (size.x / 10.0f) * x, pos.y - size.y / y));
 	text.setScale(0.5f, 0.5f);
-	text.setColor(sf::Color(40, 42, 43));
+	text.setColor(sf::Color(40, 42, 43, 220));
+}
+void GUIManager::showInStore(sf::Sprite& sprite, const float x, const float y)
+{
+	sf::Vector2f size(buyMenuBackground_.getGlobalBounds().width, buyMenuBackground_.getGlobalBounds().height);
+	sf::Vector2f pos = buyMenuBackground_.getPosition();
+	sprite.setScale(size.y * 0.0005f, size.y * 0.0005f);
+	sprite.setPosition(sf::Vector2f(pos.x - (size.x / 2.0f) + (size.x / 10.0f) * x, pos.y - size.y / y));
+	sprite.setColor(sf::Color(255, 255, 255, 175));
 }
 bool GUIManager::hover(const sf::Text& text)
 {
@@ -356,6 +407,10 @@ bool GUIManager::hover(const sf::Text& text)
 		selectionRect_.setFillColor(sf::Color(255, 0, 55, 200));
 		selectionRect_.setSize(sf::Vector2f(bounds.width + bounds.width * 0.75f, bounds.height + bounds.height * 0.25f));
 		selectionRect_.setPosition(text.getGlobalBounds().left - text.getGlobalBounds().width * 0.375f, text.getGlobalBounds().top - text.getGlobalBounds().height * 0.175f);
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			selectionRect_.setFillColor(sf::Color(150, 0, 0, 225));
+
 		return true;
 	}
 	else
@@ -365,6 +420,8 @@ bool GUIManager::hover(const sf::Text& text)
 //Getters
 sf::RectangleShape GUIManager::getHealthOutOf() const { return healthOutOf_; }
 sf::RectangleShape GUIManager::getHealthCurrent() const { return healthCurrent_; }
+sf::RectangleShape GUIManager::getSprintOutOf() const { return sprintOutOf_; }
+sf::RectangleShape GUIManager::getSprintCurrent() const { return sprintCurrent_; }
 sf::RectangleShape GUIManager::getReloadOutOf() const { return reloadOutOf_; }
 sf::RectangleShape GUIManager::getReloadCurrent() const { return reloadCurrent_; }
 sf::Text GUIManager::getTotalAmmo() const { return ammo_; }
@@ -381,7 +438,6 @@ sf::Text GUIManager::getRifleText() const { return rifleText_; }
 sf::Text GUIManager::getRocketText() const { return rocketText_; }
 sf::Text GUIManager::getBarricadeText() const { return barricadeText_; }
 sf::Text GUIManager::getTurretText() const { return turretText_; }
-sf::Text GUIManager::getRocketTurretText() const { return rocketTurretText_; }
 sf::Text GUIManager::getMineText() const { return mineText_; }
 sf::Text GUIManager::getBuyMagnumText() const { return buyMagnumText_; }
 sf::Text GUIManager::getBuyShotgunText() const { return buyShotgunText_; }
@@ -389,7 +445,6 @@ sf::Text GUIManager::getBuyRifleText() const { return buyRifleText_; }
 sf::Text GUIManager::getBuyRocketText() const { return buyRocketText_; }
 sf::Text GUIManager::getBuyBarricadeText() const { return buyBarricadeText_; }
 sf::Text GUIManager::getBuyTurretText() const { return buyTurretText_; }
-sf::Text GUIManager::getBuyRocketTurretText() const { return buyRocketTurretText_; }
 sf::Text GUIManager::getBuyMineText() const { return buyMineText_; }
 sf::Text GUIManager::getPointsText() const { return pointsText_; }
 sf::Text GUIManager::getBuyPistolAmmoText() const { return buyPistolAmmoText_; }
@@ -397,4 +452,12 @@ sf::Text GUIManager::getBuyMagnumAmmoText() const { return buyMagnumAmmoText_; }
 sf::Text GUIManager::getBuyShotgunAmmoText() const { return buyShotgunAmmoText_; }
 sf::Text GUIManager::getBuyRifleAmmoText() const { return buyRifleAmmoText_; }
 sf::Text GUIManager::getBuyRocketAmmoText() const { return buyRocketAmmoText_; }
+sf::Sprite GUIManager::getPistolSprite() const { return pistolSprite_; }
+sf::Sprite GUIManager::getMagnumSprite() const { return magnumSprite_; }
+sf::Sprite GUIManager::getShotgunSprite() const { return shotgunSprite_; }
+sf::Sprite GUIManager::getRifleSprite() const { return rifleSprite_; }
+sf::Sprite GUIManager::getRocketSprite() const { return rocketSprite_; }
+sf::Sprite GUIManager::getBarricadeSprite() const { return barricadeSprite_; }
+sf::Sprite GUIManager::getTurretSprite() const { return turretSprite_; }
+sf::Sprite GUIManager::getMineSprite() const { return mineSprite_; }
 bool GUIManager::isOpen() const { return storeOpen_; }

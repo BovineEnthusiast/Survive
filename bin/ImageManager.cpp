@@ -1,6 +1,6 @@
 #include "ImageManager.h"
 
-ImageManager::ImageManager() 
+ImageManager::ImageManager()
 {
   tileSheetTexture.loadFromFile("assets/tiles.jpg");
   //Guns
@@ -21,8 +21,29 @@ ImageManager::ImageManager()
   humanoidPlayerTexture.loadFromFile("assets/humanoid/player_new.png");
   humanoidBoomTexture.loadFromFile("assets/humanoid/zombie_boom.png");
   humanoidRangedTexture.loadFromFile("assets/humanoid/zombie_ranged.png");
+  humanoidTankTexture.loadFromFile("assets/humanoid/zombie_tank.png");
   zombieDenTexture.loadFromFile("assets/den.png");
-  
+  healthkitTexture.loadFromFile("assets/healthkit.png");
+
+  //Store pics
+  storePistol.loadFromFile("assets/store/pistol.png");
+  storeMagnum.loadFromFile("assets/store/magnum.png");
+  storeShotgun.loadFromFile("assets/store/shotgun.png");
+  storeRifle.loadFromFile("assets/store/rifle.png");
+  storeRocket.loadFromFile("assets/store/rocket.png");
+  storeBarricade.loadFromFile("assets/store/barricade.png");
+  storeTurret.loadFromFile("assets/store/turret.png");
+  storeMine.loadFromFile("assets/store/mine.png");
+
+  storePistol.setSmooth(true);
+  storeMagnum.setSmooth(true);
+  storeShotgun.setSmooth(true);
+  storeRifle.setSmooth(true);
+  storeRocket.setSmooth(true);
+  storeBarricade.setSmooth(true);
+  storeTurret.setSmooth(true);
+  storeMine.setSmooth(true);
+
   //Blood splatters
   vBloodSplatTextures.push_back(sf::Texture());
   vBloodSplatTextures.push_back(sf::Texture());

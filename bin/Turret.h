@@ -7,11 +7,12 @@
 #include "SoundManager.h"
 #include "LightingPolygon.h"
 #include "GameObject.h"
+#include "Player.h"
 #include "Bullet.h"
 class Turret : public GameObject
 {
 public:
-  Turret(const sf::Vector2f&, std::list<Bullet>*, ImageManager*, SoundManager*);
+  Turret(Player*, const sf::Vector2f&, std::list<Bullet>*, ImageManager*, SoundManager*);
 	void update(const sf::Time&);
 	void preUpdate(const std::vector<sf::Vector2f>&); //Horrible workaround to not being able to throw this into update
 
@@ -36,6 +37,7 @@ private:
 	SoundManager* pSoundManager_;
 	sf::Texture* pBaseTexture_;
 	sf::Texture* pTurretTexture_;
+	Player* pPlayer_;
 	sf::Sprite baseSprite_;
 	sf::Sprite turretSprite_;
 	std::vector<sf::Vector2f> vZomPositions_;

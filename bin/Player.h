@@ -22,6 +22,7 @@ public:
     int getBarricades() const;
     int getMines() const;
     float getShake();
+	float getSprint() const;
     bool hasMagnum() const;
     bool hasShotgun() const;
     bool hasRifle() const;
@@ -70,7 +71,9 @@ public:
     std::vector<Gun> vGuns_;
     SoundManager* pSoundManager_;
     float shake_;
+	float sprint_ = 3.0f;
     sf::Clock footstepClock_;
+	sf::Clock sprintClock_;
 
     //Helper functions
     void swapGun(const bool);

@@ -85,12 +85,13 @@ void Level::generateLevel(const int width, const int height)
 	player_.setTurrets(0);
 	player_.setBarricades(0);
 	player_.setMines(0);
+	
 	spatialPartitions_.clear();
 	tiles.clear();
 	GUIManager_.reset();
-	wave_ = 2;
+	wave_ = 4;
 	zombiesAlive_ = 0;
-	zombiesToSpawn_ = 20;
+	zombiesToSpawn_ = 40;
 
     //Resizes tiles vectores
     tiles.resize(width - 1);
@@ -173,7 +174,7 @@ void Level::generateLevel(const int width, const int height)
                 
                 //Assigns midpoint and adds a std::random variance that is reduced every iteration
                 if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] == -10)
-                    heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = squareValueAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.6, iteration);  
+                    heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = squareValueAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);  
                
                 if(heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] > 1)
                     heightmap[square * shapeSize + (shapeSize / 2)][shapeSize / 2] = 1;
@@ -199,7 +200,7 @@ void Level::generateLevel(const int width, const int height)
 
                 //Assigns midpoint and adds a std::random variance that is reduced every iteration
                 if(heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] == -10)
-                    heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] = squareValueAverage  + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.6, iteration);
+                    heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] = squareValueAverage  + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
                 
                 //Clamps to -1 to 1
                 if(heightmap[(square % modNumber) * shapeSize + (shapeSize / 2)][(int)floor(square / pow(2, iteration - 1)) * shapeSize + shapeSize / 2] > 1)
@@ -242,7 +243,7 @@ void Level::generateLevel(const int width, const int height)
                         
             //Assigns the average +- std::random to the midpoint of the diamond
             if(heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] == -10)
-                heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] = leftPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
+                heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] = leftPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.4, iteration);
             
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x - shapeSize / 2][squareMidpoints[midpoint].y] > 1)
@@ -276,7 +277,7 @@ void Level::generateLevel(const int width, const int height)
             
             //Assigns the average +- std::random to the midpoint of the diamond
             if(heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] == -10)
-                heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] = rightPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
+                heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] = rightPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.4, iteration);
             
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x + shapeSize / 2][squareMidpoints[midpoint].y] > 1)
@@ -309,7 +310,7 @@ void Level::generateLevel(const int width, const int height)
             
             //Assigns the average +- std::random to the midpoint of the diamond
             if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] == -10)
-                heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] = topPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
+                heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] = topPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.4, iteration);
            
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y - shapeSize / 2] > 1)
@@ -341,7 +342,7 @@ void Level::generateLevel(const int width, const int height)
             
             //Assigns the average +- std::random to the midpoint of the diamond
             if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] == -10)
-                heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] = bottomPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.5, iteration);
+                heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] = bottomPointAverage + (float)(std::rand() % 100 - 50) / 50.0f * pow(0.4, iteration);
             
             //binds it to -1 - 1
             if(heightmap[squareMidpoints[midpoint].x][squareMidpoints[midpoint].y + shapeSize / 2] > 1)
@@ -451,9 +452,9 @@ void Level::generateLevel(const int width, const int height)
 				heightmap[xPos][yPos] = 8;
 			else
 				heightmap[xPos][yPos] = 10;
-        }
-    }
-	
+	   }
+	}
+
 	for (int xPos = 0; xPos < width - 1; ++xPos)
 	{
 		for (int yPos = 0; yPos < height - 1; ++yPos)
@@ -474,40 +475,40 @@ void Level::generateLevel(const int width, const int height)
 
 			int ring = (hTL + hTR + hBL + hBR) >> 2;
 
-			int row = (ring << 1) | saddle;
+			int row = ((ring << 1) | saddle) >> 1;
 			int col = shape - (ring & 1);
 
 
 			bool hasItem = false;
 			//Places trees and dens
-			 if (row > 5 && row <= 9 && std::rand() % 100 <= 1)
-			 {
-				 Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
-				 tree.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
-				 spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
-				 hasItem = true;
-			 }
-			 if (row > 5 && row <= 9 && std::rand() % 1000 < 2)
-			 {
-				 Den den = Den(&imageManager_.zombieDenTexture);
-				 den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
-				 spatialPartitions_.at(yPos / 10).at(xPos / 10).pushDen(den);
-			 }
+			if (row == 4 && std::rand() % 100 <= 1)
+			{
+				Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
+				tree.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
+				spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
+				hasItem = true;
+			}
+			if (row == 4 && std::rand() % 1000 < 2)
+			{
+				Den den = Den(&imageManager_.zombieDenTexture);
+				den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
+				spatialPartitions_.at(yPos / 10).at(xPos / 10).pushDen(den);
+			}
 
-			 std::string type;
-			if (row <= 3)
-			  type = "water";
-			else if(row >= 10)
-			  type = "rock";
+			std::string type;
+			if (row <= 1)
+				type = "water";
+			else if (row == 5)
+				type = "rock";
 			else
-			  type = "walkable";
+				type = "walkable";
 
-			if(hasItem)
-			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "tree");
+			if (hasItem)
+				tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "tree");
 			else
-			  tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
-			 
-			  
+				tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
+
+
 			if (type == "walkable")
 				player_.setPosition(sf::Vector2f(32 * xPos, 32 * yPos));
 		}

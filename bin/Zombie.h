@@ -11,11 +11,12 @@
 #include "Node.h"
 #include "LightingPolygon.h"
 #include "Barricade.h"
+#include "SoundManager.h"
 
 class Zombie : public Humanoid
 {
  public:
-  Zombie(Player*, const std::string, sf::Texture*, sf::Texture*, const int, const int);
+  Zombie(Player*, SoundManager*, const std::string, sf::Texture*, sf::Texture*, const int, const int);
   void update(const sf::Time&);
 
   //Fills the sPNodes_ stack with node ptr
@@ -25,6 +26,7 @@ class Zombie : public Humanoid
   bool needsPath();
   bool countedDead();
   bool bled();
+  bool droppedHealth() const;
   bool isStill() const;
   bool isDead() const;
   bool isDeletable() const;
@@ -44,7 +46,7 @@ class Zombie : public Humanoid
   void setExploded(const bool);
   void setDamagedOthers(const bool);
   void setBulletListPtr(std::list<Bullet>*);
-  
+  void setDroppedHealth(const bool);
   //Pushers
   void pushSprite(const sf::Sprite&);
     
@@ -84,6 +86,7 @@ class Zombie : public Humanoid
   sf::Texture* pCorpseTexture_;
   sf::Sprite corpseSprite_;
     
+  bool droppedHealth_ = false;
   sf::Clock armClock_;
   sf::Clock attackClock_;
   bool attacking_ = false;
@@ -116,7 +119,10 @@ class Zombie : public Humanoid
   //Type: ranged
   //Pointer to the bullets list(for ranged zombies)
   std::list<Bullet>* pLBullets_;
-   
+  
+  //Sound manager
+  SoundManager* pSoundManager_;
+
   //Clocks
   sf::Clock fadeAfterClock_;
   sf::Clock fadeForClock_;

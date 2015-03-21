@@ -24,6 +24,16 @@ class ImageManager
   sf::Texture zombieDenTexture;
   sf::Texture humanoidBoomTexture;
   sf::Texture humanoidRangedTexture;
+  sf::Texture humanoidTankTexture;
+  sf::Texture healthkitTexture;
+  sf::Texture storePistol;
+  sf::Texture storeMagnum;
+  sf::Texture storeShotgun;
+  sf::Texture storeRifle;
+  sf::Texture storeRocket;
+  sf::Texture storeBarricade;
+  sf::Texture storeTurret;
+  sf::Texture storeMine;
   std::vector<sf::Texture> vBloodSplatTextures;
 };
 

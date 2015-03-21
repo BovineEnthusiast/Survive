@@ -3,16 +3,19 @@
 #define	GUIMANAGER_H
 #include <SFML/Graphics.hpp>
 #include "Player.h"
+#include "ImageManager.h"
 class GUIManager
 {
  public:
-  GUIManager(sf::RenderWindow*, Player*, int*, int*);
+  GUIManager(ImageManager*, sf::RenderWindow*, Player*, int*, int*);
   void update(const sf::Time&);
   void reset();
     
   //Getters
   sf::RectangleShape getHealthOutOf() const;
   sf::RectangleShape getHealthCurrent() const;
+  sf::RectangleShape getSprintOutOf() const;
+  sf::RectangleShape getSprintCurrent() const;
   sf::Text getCurrentAmmo() const;
   sf::Text getTotalAmmo() const;
   sf::RectangleShape getReloadOutOf() const;
@@ -31,7 +34,6 @@ class GUIManager
   sf::Text getRocketText() const;
   sf::Text getBarricadeText() const;
   sf::Text getTurretText() const; 
-  sf::Text getRocketTurretText() const;
   sf::Text getMineText() const;
   sf::Text getBuyMagnumText() const;
   sf::Text getBuyShotgunText() const;
@@ -39,7 +41,6 @@ class GUIManager
   sf::Text getBuyRocketText() const;
   sf::Text getBuyBarricadeText() const;
   sf::Text getBuyTurretText() const;
-  sf::Text getBuyRocketTurretText() const;
   sf::Text getBuyMineText() const;
   sf::Text getPointsText() const;
   sf::Text getBuyPistolAmmoText() const;
@@ -47,15 +48,26 @@ class GUIManager
   sf::Text getBuyShotgunAmmoText() const;
   sf::Text getBuyRifleAmmoText() const;
   sf::Text getBuyRocketAmmoText() const;
+  sf::Sprite getPistolSprite() const;
+  sf::Sprite getMagnumSprite() const;
+  sf::Sprite getShotgunSprite() const;
+  sf::Sprite getRifleSprite() const;
+  sf::Sprite getRocketSprite() const;
+  sf::Sprite getBarricadeSprite() const;
+  sf::Sprite getTurretSprite() const;
+  sf::Sprite getMineSprite() const;
   bool isOpen() const;
     
  private:
   //Allows only clicks to buy
   bool clickDown_ = false;
     
+  ImageManager* pImageManager_;
   //Helpers for text
   void setUpText(sf::Text&, const std::string&);
-  void showInStore(sf::Text&, const int, const int, const float);
+  void showInStore(sf::Text&, const float, const float, const float);
+  void showInStore(sf::Sprite&, const float, const float);
+
   bool hover(const sf::Text&);
   sf::RenderWindow* pWindow_;
   Player* pPlayer_;
@@ -63,6 +75,16 @@ class GUIManager
   int* pWave_;
   int* pZombiesAlive_;
     
+  //Store pics
+  sf::Sprite pistolSprite_;
+  sf::Sprite magnumSprite_;
+  sf::Sprite shotgunSprite_;
+  sf::Sprite rifleSprite_;
+  sf::Sprite rocketSprite_;
+  sf::Sprite barricadeSprite_;
+  sf::Sprite turretSprite_;
+  sf::Sprite mineSprite_;
+
   //Wave info
   sf::Text waveText_;
   sf::Text zombiesText_;
@@ -84,6 +106,11 @@ class GUIManager
   sf::Vector2f healthOffset_ = sf::Vector2f(0.01f, 0.01f); //In percent of window size
   sf::Vector2f healthSize_ = sf::Vector2f(0.075f, 0.01f); //In percent of window size
     
+  //Sprint
+  sf::RectangleShape sprintOutOf_;
+  sf::RectangleShape sprintCurrent_;
+  sf::Vector2f sprintOffset_ = sf::Vector2f(0.5, 0.01f);
+
   //Weapon
   sf::Text ammo_;
   sf::Vector2f ammoOffset_ = sf::Vector2f(0.015f, 0.015f);
@@ -120,7 +147,6 @@ class GUIManager
   sf::Text rocketText_;
   sf::Text barricadeText_;
   sf::Text turretText_;
-  sf::Text rocketTurretText_;
   sf::Text mineText_;
   float itemTextSize_ = 0.05f;
   float titleTextSize_ = 0.1f;
@@ -150,7 +176,6 @@ class GUIManager
   sf::Text buyRocketText_;
   sf::Text buyBarricadeText_;
   sf::Text buyTurretText_;
-  sf::Text buyRocketTurretText_;
   sf::Text buyMineText_;
   sf::Text buyPistolAmmoText_;
   sf::Text buyMagnumAmmoText_;
