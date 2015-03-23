@@ -10,6 +10,8 @@ class ImageManager
   sf::Texture treeLowerLeafTexture;
   sf::Texture treeTrunkTexture;
   sf::Texture zombieCorpseTexture;
+  sf::Texture zombieRangedCorpseTexture;
+  sf::Texture zombieTankCorpseTexture;
   sf::Texture humanoidZombieTexture;
   sf::Texture humanoidPlayerTexture;
   sf::Texture gunPistolTexture;

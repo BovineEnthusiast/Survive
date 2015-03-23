@@ -17,6 +17,8 @@ ImageManager::ImageManager()
   treeLowerLeafTexture.loadFromFile("assets/tree/tree_lower.png");
   treeTrunkTexture.loadFromFile("assets/tree/tree_trunk.png");
   zombieCorpseTexture.loadFromFile("assets/humanoid/zombie_new_corpse.png");
+  zombieRangedCorpseTexture.loadFromFile("assets/humanoid/zombie_ranged_corpse.png");
+  zombieTankCorpseTexture.loadFromFile("assets/humanoid/zombie_tank_corpse.png");
   humanoidZombieTexture.loadFromFile("assets/humanoid/zombie_new.png");
   humanoidPlayerTexture.loadFromFile("assets/humanoid/player_new.png");
   humanoidBoomTexture.loadFromFile("assets/humanoid/zombie_boom.png");

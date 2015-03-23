@@ -36,7 +36,6 @@ void Turret::update(const sf::Time& dT)
 		turretSprite_.setRotation(rotationGlobal_);
 		if (bullets_ > 0 && firerateClock_.getElapsedTime().asSeconds() > firerate_)
 		{
-			muzzleClock_.restart();
 			pSoundManager_->playSound("rifle", positionGlobal_, pPlayer_->getPositionGlobal());
 			firerateClock_.restart();
 			pLBullets_->push_back(Bullet(false, positionGlobal_, sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180) * 1500, sin(rotationGlobal_ * 3.14159265358 / 180) * 1500), 10));
@@ -45,12 +44,6 @@ void Turret::update(const sf::Time& dT)
 	}
 	if (health_ <= 0)
 		dead_ = true;
-	if (muzzleClock_.getElapsedTime().asSeconds() <= 0.05f)
-	{
-		muzzleLight_.setPosition(positionGlobal_);
-		muzzleLight_.createPolygon();
-	}
-	muzzleLight_.clearSprites();
 }
 void Turret::preUpdate(const std::vector<sf::Vector2f>& positions) { vZomPositions_ = positions; }
 //Getters
@@ -59,10 +52,6 @@ bool Turret::isDead() const { return dead_; }
 bool Turret::isSafeToDelete() const { return safeToDelete_; }
 sf::Sprite Turret::getBaseSprite() const { return baseSprite_; }
 sf::Sprite Turret::getTurretSprite() const { return turretSprite_; }
-std::vector<sf::ConvexShape> Turret::getMuzzleTriangles() const { return muzzleLight_.getTriangles(); }
-bool Turret::isMuzzleLight() const { return muzzleClock_.getElapsedTime().asSeconds() <= 0.05; }
 //Setters
 void Turret::setHealth(const int health) { health_ = health; }
 
-//Setters
-void Turret::pushMuzzleLightSprite(const sf::Sprite& sprite) { muzzleLight_.pushSprite(sprite); }

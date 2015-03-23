@@ -18,8 +18,6 @@ MenuManager::MenuManager(sf::RenderWindow* pWindow, SettingsManager* pSettingsMa
 	setUp(settingsText_);
 	setUp(quitText_);
 	setUp(settingsTitleText_);
-	setUp(audioText_);
-	setUp(gameplayText_);
 	setUp(graphicsText_);
 	setUp(gameplayTitleText_);
 	setUp(mapSizeText_);
@@ -36,8 +34,6 @@ MenuManager::MenuManager(sf::RenderWindow* pWindow, SettingsManager* pSettingsMa
 	settingsText_.setString("Settings");
 	quitText_.setString("Quit");
 	settingsTitleText_.setString("Settings");
-	audioText_.setString("Audio");
-	gameplayText_.setString("Gameplay");
 	graphicsText_.setString("Graphics");
 	gameplayTitleText_.setString("Gameplay");
 	mapSizeText_.setString("Map Size: 257");
@@ -128,19 +124,12 @@ void MenuManager::update(const sf::Time& dT)
 		selectionRect_.setFillColor(sf::Color::Transparent);
 		highlight(settingsTitleText_);
 		position(settingsTitleText_, 1);
-		position(audioText_, 3);
-		position(gameplayText_, 4);
-		position(graphicsText_, 5);
-		position(backText_, 6);
+		position(graphicsText_, 3);
+		position(backText_, 4);
 		
-		if (hover(audioText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			currentMenu_ = audioMenu;
-		else if (hover(gameplayText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			currentMenu_ = gameplayMenu;
-		else if (hover(graphicsText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
-		{
+		
+		if (hover(graphicsText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			currentMenu_ = graphicsMenu;
-		}
 		else if (hover(backText_) && click_ && sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			currentMenu_ = mainMenu;
 
@@ -282,8 +271,6 @@ sf::Text MenuManager::getPlayText() const { return playText_; }
 sf::Text MenuManager::getSettingsText() const { return settingsText_; }
 sf::Text MenuManager::getQuitText() const { return quitText_; }
 sf::Text MenuManager::getSettingsTitleText() const { return settingsTitleText_; }
-sf::Text MenuManager::getAudioText() const { return audioText_; }
-sf::Text MenuManager::getGameplayText() const { return gameplayText_; }
 sf::Text MenuManager::getGraphicsTitleText() const { return graphicsTitleText_; }
 sf::Text MenuManager::getVSyncText() const { return vSyncText_; }
 sf::Text MenuManager::getWindowText() const { return windowText_; }

@@ -113,7 +113,7 @@ private:
 	sf::Clock fireRateClock_;
 	sf::Clock reloadClock_;
 	sf::Clock animationClock_;
-
+	sf::Clock anticrashClock_;
 
 };
 

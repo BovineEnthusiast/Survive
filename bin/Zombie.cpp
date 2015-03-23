@@ -24,14 +24,20 @@ Zombie::Zombie(Player* player, SoundManager* pSoundManager, const std::string ty
 	}
 	else if (type_ == "tank")
 	{
-		finalSpeed_ = 3 + std::rand() % (int)(speed) / 2;
+		finalSpeed_ = 3 + std::rand() % (int)(speed) * 1.25f;
 		health_ = 1000 + health;
+		corpseSprite_.setOrigin(22.0f, 23.5f);
 	}
 	else
 	{
 		finalSpeed_ = 3 + std::rand() % (int)(speed);
 		health_ = 100 + health;
 	}
+
+	if (finalSpeed_ > 30)
+		finalSpeed_ = 30;
+
+	moanTime_ += std::rand() % 25;
 }
 void Zombie::update(const sf::Time& dT)
 {
@@ -43,6 +49,13 @@ void Zombie::update(const sf::Time& dT)
 
 	if (!dead_)
 	{
+		//Play moans
+		if (moanClock_.getElapsedTime().asSeconds() > moanTime_ && std::rand() % 15 == 0)
+		{
+			pSoundManager_->playSound("zombie", positionGlobal_, pPlayer_->getPositionGlobal());
+			moanClock_.restart();
+		}
+
 		float multiplier = (type_ == "tank") ? 1.6f : 1.0f;
 		float playerDistance = sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2));
 		float turretDistance;
@@ -468,7 +481,6 @@ return *this;
 		return false;
 
 }
- LightingPolygon Zombie::getLightingPolygon() const { return explosiveLight_; }
  Emitter Zombie::getExplosionEmitter() const { return explosionEmitter_; }
  std::string Zombie::getType() const { return type_; }
  bool Zombie::damagedOthers() const { return explosionDamagedOthers_; }
@@ -486,5 +498,3 @@ return *this;
  void Zombie::setDamagedOthers(const bool damaged) { explosionDamagedOthers_ = damaged; }
  void Zombie::setBulletListPtr(std::list<Bullet>* ptr) { pLBullets_ = ptr; }
  void Zombie::setDroppedHealth(const bool dropped) { droppedHealth_ = dropped; }
-//Pushers
- void Zombie::pushSprite(const sf::Sprite& sprite) { explosiveLight_.pushSprite(sprite); }

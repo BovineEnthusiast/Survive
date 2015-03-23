@@ -54,8 +54,6 @@ void Engine::draw()
 		{
 			window_.draw(menuManager_.getSelectionRect());
 			window_.draw(menuManager_.getSettingsTitleText());
-			window_.draw(menuManager_.getAudioText());
-			window_.draw(menuManager_.getGameplayText());
 			window_.draw(menuManager_.getGraphicsText());
 			window_.draw(menuManager_.getBackText());
 		}
@@ -143,24 +141,6 @@ void Engine::draw()
 				for (auto& mine : vMines)
 				{
 					window_.draw(mine.getMine());
-
-					if (mine.exploded() && mine.getExplosionTime() <= 0.75f)
-					{
-						sf::Vector2f windowCoord((mine.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
-						windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
-						shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
-						shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 150, 0, 255));
-						shaderGlow_.setParameter("frag_Attenuation", 0.005f + (mine.getExplosionTime() / 0.75f) * 0.1f);
-						sf::RenderStates rs;
-						rs.shader = &shaderGlow_;
-						rs.blendMode = sf::BlendAdd;
-
-						std::vector<sf::ConvexShape> triangles = mine.getLightingPolygon().getTriangles();
-						for (auto& triangle : triangles)
-							window_.draw(triangle, rs);
-
-					}
-
 				}
 			}
 
@@ -239,14 +219,6 @@ void Engine::draw()
 				{
 					window_.draw(turret.getBaseSprite());
 					window_.draw(turret.getTurretSprite());
-
-					windowCoord = ((turret.getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
-					windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
-					shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
-
-					if (turret.isMuzzleLight())
-						for (auto& triangle : turret.getMuzzleTriangles())
-							window_.draw(triangle, rs);
 				}
 
 				for (auto& barricade : iPartition->getBarricades())

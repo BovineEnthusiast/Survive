@@ -35,6 +35,13 @@ private:
 	//Explosion
 	sf::SoundBuffer bufferExplosion_;
 
+	//Zombie
+	sf::SoundBuffer bufferZombieOne_;
+	sf::SoundBuffer bufferZombieTwo_;
+	sf::SoundBuffer bufferZombieThree_;
+	sf::SoundBuffer bufferZombieFour_;
+	sf::SoundBuffer bufferZombieFive_;
+
 	//Ranged zombie gun
 	sf::SoundBuffer bufferRangedZombie_;
     //Grass footsteps

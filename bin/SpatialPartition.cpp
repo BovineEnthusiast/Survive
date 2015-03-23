@@ -104,6 +104,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 			//Randomize zombie type
 			sf::Texture* pTexture = &imageManager_->humanoidZombieTexture;
+			sf::Texture* pCorpseTexture = &imageManager_->zombieCorpseTexture;
 			std::string type = "normal";
 			int random = std::rand() % 100;
 			if (random < 10 && *pWave_ > 1)
@@ -115,14 +116,17 @@ void SpatialPartition::update(const sf::Time& dT)
 			{
 				type = "ranged";
 				pTexture = &imageManager_->humanoidRangedTexture;
+				pCorpseTexture = &imageManager_->zombieRangedCorpseTexture;
+				
 			}
-			else if (random < 22 && *pWave_ > 5)
+			else if (random < 25 && *pWave_ > 5)
 			{
 				type = "tank";
 				pTexture = &imageManager_->humanoidTankTexture;
+				pCorpseTexture = &imageManager_->zombieTankCorpseTexture;
 			}
 
-			Zombie zombie = Zombie(player_, pSoundManager_, type, pTexture, &imageManager_->zombieCorpseTexture, log(*pWave_) / log(2) * 2.5f, (*pWave_ * 3.5f));
+			Zombie zombie = Zombie(player_, pSoundManager_, type, pTexture, pCorpseTexture, log(*pWave_) / log(2) * 2.5f, (*pWave_ * 3.5f));
 			zombie.pTiles = pVTiles_;
 			zombie.setPositionGlobal(den.getPositionGlobal());
 			vZombies_.push_back(zombie);
@@ -540,50 +544,6 @@ void SpatialPartition::update(const sf::Time& dT)
 	for (auto iTurret = vTurrets_.begin(); iTurret != vTurrets_.end();)
 	{
 
-		iTurret->pushMuzzleLightSprite(player_->getHeadSprite());
-
-		for (auto& zombie : vZombies_)
-			iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
-
-		//Neigboring partition's zombies
-		for (auto& partition : pSpatialPartitions_)
-			if (partition != nullptr)
-				for (auto& zombie : partition->vZombies_)
-					iTurret->pushMuzzleLightSprite(zombie.getHeadSprite());
-
-		//This partition's trees
-		for (auto& tree : vTrees_)
-			iTurret->pushMuzzleLightSprite(tree.getTrunk());
-
-		//Neighboring partitions's tree
-		for (auto& partition : pSpatialPartitions_)
-			if (partition != nullptr)
-				for (auto& tree : partition->vTrees_)
-					iTurret->pushMuzzleLightSprite(tree.getTrunk());
-		//This partition's turrets
-		for (auto& turret : vTurrets_)
-			if (turret.getPositionGlobal() != iTurret->getPositionGlobal())
-				iTurret->pushMuzzleLightSprite(turret.getBaseSprite());
-
-		//Neighboring partition's turrets
-		for (auto& partition : pSpatialPartitions_)
-			if (partition != nullptr)
-				for (auto& turret : vTurrets_)
-					if (turret.getPositionGlobal() != iTurret->getPositionGlobal())
-						iTurret->pushMuzzleLightSprite(turret.getBaseSprite());
-
-		//This partition's barricades
-		for (auto& barricade : vBarricades_)
-			iTurret->pushMuzzleLightSprite(barricade.getSprite());
-
-		//Neighboring partition's barricades
-		for (auto& partition : pSpatialPartitions_)
-			if (partition != nullptr)
-				for (auto& barricade : partition->vBarricades_)
-					iTurret->pushMuzzleLightSprite(barricade.getSprite());
-
-
-
 		iTurret->preUpdate(zomPositions);
 		iTurret->update(dT);
 		if (iTurret->isSafeToDelete())
@@ -612,30 +572,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	for (auto iMine = vMines_.begin(); iMine != vMines_.end();)
 	{
 		iMine->update(dT);
-		if (iMine->exploded() && iMine->getExplosionTime() <= 0.75f)
-		{
-			for (auto& zombie : vZombies_)
-			{
-				sf::Vector2f distanceVector(zombie.getPositionGlobal() - iMine->getPositionGlobal());
-				float distance = sqrt(distanceVector.x * distanceVector.x + distanceVector.y * distanceVector.y);
 
-				//Minumim distance to allow light to shine instead of hitting near zombies
-				if (distance > 150.0f)
-					iMine->pushSprite(zombie.getHeadSprite());
-			}
-			for (auto& tree : vTrees_)
-				iMine->pushSprite(tree.getTrunk());
-
-			for (auto& partition : pSpatialPartitions_)
-			{
-				for (auto& zombie : partition->getZombies())
-					iMine->pushSprite(zombie.getHeadSprite());
-
-				for (auto& tree : partition->getTrees())
-					iMine->pushSprite(tree.getTrunk());
-			}
-
-		}
 		//Deletes the mine if it is done.
 		Emitter emitter = iMine->getEmitter();
 		if (iMine->isDead())

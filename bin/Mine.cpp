@@ -11,19 +11,12 @@ void Mine::update(const sf::Time& dT)
 	if (exploded_)
 	{
 		emitter_.update(dT);
-		float currentTime = explosionLightClock_.getElapsedTime().asSeconds();
-		if (currentTime <= 0.75f)
-		{
-			light_.createPolygon();
-			light_.clearSprites();
-		}
-		else if (emitter_.isDead())
-		{
+	
+		if (emitter_.isDead())
 			dead_ = true;
-		}
+		
 	}
 
-	light_.setPosition(positionGlobal_);
 	mineSprite_.setPosition(positionGlobal_);
 	mineSprite_.setRotation(rotationGlobal_);
 }
@@ -34,11 +27,7 @@ int Mine::getRadius() const { return radius_; }
 sf::Sprite Mine::getMine() const { return mineSprite_; }
 bool Mine::exploded() const { return exploded_; }
 Emitter Mine::getEmitter() const { return emitter_; }
-float Mine::getExplosionTime() const { return explosionLightClock_.getElapsedTime().asSeconds(); }
-LightingPolygon Mine::getLightingPolygon() const { return light_; }
 bool Mine::isDead() const { return dead_; }
-//Pushers
-void Mine::pushSprite(const sf::Sprite& sprite) { light_.pushSprite(sprite); }
 //Helpers
 void Mine::explode()
 {
@@ -63,7 +52,6 @@ void Mine::explode()
 
 		exploded_ = true;
 		mineSprite_.setColor(sf::Color::Transparent);
-		explosionLightClock_.restart();
 	}
 }
 

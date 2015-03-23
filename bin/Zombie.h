@@ -9,7 +9,6 @@
 #include "Tile.h"
 #include "Turret.h"
 #include "Node.h"
-#include "LightingPolygon.h"
 #include "Barricade.h"
 #include "SoundManager.h"
 
@@ -35,7 +34,6 @@ class Zombie : public Humanoid
   std::vector<Emitter> getEmitters() const;
   sf::Sprite getCorpseSprite() const;
   std::stack<Node> getNodes() const;
-  LightingPolygon getLightingPolygon() const;
   Emitter getExplosionEmitter() const;
   bool damagedOthers() const;
   float getShake();
@@ -47,8 +45,6 @@ class Zombie : public Humanoid
   void setDamagedOthers(const bool);
   void setBulletListPtr(std::list<Bullet>*);
   void setDroppedHealth(const bool);
-  //Pushers
-  void pushSprite(const sf::Sprite&);
     
   //Operator overloading
   bool operator== (const Zombie&) const;
@@ -108,8 +104,6 @@ class Zombie : public Humanoid
   //Shake from exploding zombie
   float shake_ = 0.0f;
 
-  //Type: boom
-  LightingPolygon explosiveLight_;
   bool exploded_ = false;
   bool explosionDamagedOthers_ = false;
 
@@ -123,11 +117,13 @@ class Zombie : public Humanoid
   //Sound manager
   SoundManager* pSoundManager_;
 
+  float moanTime_ = 5.0f;
   //Clocks
   sf::Clock fadeAfterClock_;
   sf::Clock fadeForClock_;
   sf::Clock bleedClock_;
   sf::Clock pathClock_;
+  sf::Clock moanClock_;
 };
 
 //Functor used to compare Node pointers

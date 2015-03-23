@@ -36,8 +36,6 @@ public:
 	sf::Text getSettingsText() const;
 	sf::Text getQuitText() const;
 	sf::Text getSettingsTitleText() const;
-	sf::Text getAudioText() const;
-	sf::Text getGameplayText() const;
 	sf::Text getGraphicsTitleText() const;
 	sf::Text getGraphicsText() const;
 	sf::Text getVSyncText() const;
@@ -92,8 +90,6 @@ private:
 	//====================================Settings====================================
 
 	sf::Text settingsTitleText_;
-	sf::Text audioText_;
-	sf::Text gameplayText_;
 	sf::Text controlsText_;
 	sf::Text graphicsText_;
 

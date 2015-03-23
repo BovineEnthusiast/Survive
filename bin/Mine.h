@@ -3,7 +3,6 @@
 #include "GameObject.h"
 #include "Emitter.h"
 #include "ImageManager.h"
-#include "LightingPolygon.h"
 
 class Mine : public GameObject
 {
@@ -14,15 +13,12 @@ class Mine : public GameObject
   //Getters
   int getDamage() const;
   int getRadius() const;
-  LightingPolygon getLightingPolygon() const;
   sf::Sprite getMine() const;
   bool exploded() const;
   Emitter getEmitter() const;
   float getExplosionTime() const;
   bool isDead() const;
   
-  //Pushers
-  void pushSprite(const sf::Sprite&);
   //Helpers
   void explode();
   
@@ -30,13 +26,11 @@ class Mine : public GameObject
   sf::Texture* pTexture_;
   sf::Sprite mineSprite_;
   Emitter emitter_;
-  LightingPolygon light_;
   bool exploded_ = false;
   bool needLight_ = false;
   bool dead_ = false;
   int damage_ = 300;
   int radius_  = 300;
 
-  sf::Clock explosionLightClock_;
 };
 #endif

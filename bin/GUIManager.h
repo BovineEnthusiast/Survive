@@ -151,18 +151,18 @@ class GUIManager
   float itemTextSize_ = 0.05f;
   float titleTextSize_ = 0.1f;
   //Gun/Item prices
-  int priceMagnum_ = 2500;
-  int priceShotgun_ = 5500;
-  int priceRifle_ = 9500;
-  int priceRocket_ = 15000;
+  int priceMagnum_ = 1750;
+  int priceShotgun_ = 3250;
+  int priceRifle_ = 5000;
+  int priceRocket_ = 7500;
   int priceBarricade_ = 100;
   int priceTurret_ = 3000;
-  int priceMine_ = 300;
+  int priceMine_ = 150;
   int priceAmmoPistol_ = 25;
   int priceAmmoMagnum_ = 75;
   int priceAmmoShotgun_ = 150;
   int priceAmmoRifle_ = 250;
-  int priceAmmoRocket_ = 600;
+  int priceAmmoRocket_ = 300;
   int pistolAmmoIncrease_ = 45;
   int magnumAmmoIncrease_ = 24;
   int shotgunAmmoIncrease_ = 10;

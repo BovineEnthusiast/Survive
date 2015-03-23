@@ -47,6 +47,23 @@ SoundManager::SoundManager()
 	if (!bufferExplosion_.loadFromFile("assets/sounds/gun/explosion/explosion.ogg"))
 		std::cout << "Failed to load: assets/sounds/gun/explosion/explosion.ogg" << std::endl;
 
+	//Zombies
+
+	if (!bufferZombieOne_.loadFromFile("assets/sounds/zombie/moan_1.ogg"))
+		std::cout << "Failed to load: assets/sounds/zombie/moan_1.ogg" << std::endl;
+
+	if (!bufferZombieTwo_.loadFromFile("assets/sounds/zombie/moan_2.ogg"))
+		std::cout << "Failed to load: assets/sounds/zombie/moan_2.ogg" << std::endl;
+	
+	if (!bufferZombieThree_.loadFromFile("assets/sounds/zombie/moan_3.ogg"))
+		std::cout << "Failed to load: assets/sounds/zombie/moan_3.ogg" << std::endl;
+	
+	if (!bufferZombieFour_.loadFromFile("assets/sounds/zombie/moan_4.ogg"))
+		std::cout << "Failed to load: assets/sounds/zombie/moan_4.ogg" << std::endl;
+	
+	if (!bufferZombieFive_.loadFromFile("assets/sounds/zombie/moan_5.ogg"))
+		std::cout << "Failed to load: assets/sounds/zombie/moan_5.ogg" << std::endl;
+
 	//Ranged Zombie
 	if (!bufferRangedZombie_.loadFromFile("assets/sounds/gun/zombie_ranged/zombie_ranged.ogg"))
 		std::cout << "Failed to load: assets/sounds/gun/zombie_ranged/zombie_ranged.ogg" << std::endl;
@@ -191,6 +208,23 @@ void SoundManager::playSound(const std::string& type, const sf::Vector2f& positi
 				sf::Sound sound = sf::Sound(bufferExplosion_);
 				lSounds_.push_back(sound);
 			}
+			else if (type == "zombie")
+			{
+				sf::Sound sound;
+				int random = 0;
+
+				if (random == 0)
+					sound = sf::Sound(bufferZombieOne_);
+				else if (random == 1)
+					sound = sf::Sound(bufferZombieTwo_);
+				else if (random == 2)
+					sound = sf::Sound(bufferZombieThree_);
+				else if (random == 3)
+					sound = sf::Sound(bufferGrassFour_);
+				else
+					sound = sf::Sound(bufferGrassFive_);
+				lSounds_.push_back(sound);
+			}
 			else if (type == "zombie_ranged")
 			{
 				sf::Sound sound(bufferRangedZombie_);
@@ -248,7 +282,7 @@ void SoundManager::playSound(const std::string& type, const sf::Vector2f& positi
 			{
 				lSounds_.push_back(sf::Sound(bufferClick_));
 			}
-			lSounds_.back().setVolume((1.0f - (distance / 800.0f)) * 100.0f);
+			lSounds_.back().setVolume((1.0f - (distance / 800.0f)) * 200.0f);
 			lSounds_.back().play();
 		}
 	}

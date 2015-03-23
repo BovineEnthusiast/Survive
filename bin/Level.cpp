@@ -77,7 +77,7 @@ void Level::generateLevel(const int width, const int height)
 {
 	//Resets the level in case of replay
 	player_.setHealth(100);
-	player_.setPoints(100000);
+	player_.setPoints(1000000);
 	player_.setHasMagnum(false);
 	player_.setHasShotgun(false);
 	player_.setHasRifle(false);
@@ -89,9 +89,9 @@ void Level::generateLevel(const int width, const int height)
 	spatialPartitions_.clear();
 	tiles.clear();
 	GUIManager_.reset();
-	wave_ = 4;
+	wave_ = 1;
 	zombiesAlive_ = 0;
-	zombiesToSpawn_ = 40;
+	zombiesToSpawn_ = 10;
 
     //Resizes tiles vectores
     tiles.resize(width - 1);
@@ -103,8 +103,7 @@ void Level::generateLevel(const int width, const int height)
 
     //Seeds random
     std::srand(time(0));
-    
-    float rangeDeepWater = -0.25f;
+	float rangeDeepWater = -0.5f;
     float rangeShallowWater = 0.0f;
     float rangeSand = 0.10f;
     float rangeDirt = 0.15f;
