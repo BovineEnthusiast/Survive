@@ -74,7 +74,7 @@ void GUIManager::update(const sf::Time& dT)
 
 
 	//Store
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::B) && !toggled_)
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::B) || (storeOpen_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Esc))) && !toggled_)
 	{
 		toggled_ = true;
 		if (storeOpen_)

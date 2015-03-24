@@ -55,7 +55,7 @@ public:
     GUIManager GUIManager_ = GUIManager(&imageManager_, pWindow_, &player_, &wave_, &zombiesAlive_);
     
     Camera camera_;    
-    
+    	
 	//Camera shake
 	float shake_ = 0.0f;
     //Used as money

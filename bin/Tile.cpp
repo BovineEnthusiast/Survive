@@ -15,3 +15,4 @@ bool Tile::hasItem() const { return hasItem_; }
 //Setters
 void Tile::setSpritePos(const sf::Vector2f& pos) {sprite_.setPosition(pos);}
 void Tile::setHasItem(bool hasItem) { hasItem_ = hasItem; }
+void Tile::setType(const std::string type) { type_ = type; }

@@ -27,7 +27,8 @@ private:
     int tileSize_ = 32;
     bool windowFocused_ = true;
 	bool inMenu_ = true;
-    void update();
+    bool paused_ = false;
+	void update();
     void draw();
 
     //Shaders

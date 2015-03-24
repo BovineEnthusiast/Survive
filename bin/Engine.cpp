@@ -366,12 +366,21 @@ int Engine::run()
 			if (menuManager_.isPlayClicked())
 			{
 				inMenu_ = false;
-				level_.generateLevel(257, 257);
+				
+				if(!paused_)
+					level_.generateLevel(257, 257);
+				else
+					paused_ = false;
 			}
 			window_.setView(sf::View(sf::FloatRect(0.0f, 0.0f, window_.getSize().x, window_.getSize().y)));
 		}
 		else
 		{
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Esc))
+			{
+				paused_ = true;
+				inMenu_ = true;
+			}
 
 			//update cam
 			//	level_.setCameraPosition(level_.getPlayer().getPositionGlobal());

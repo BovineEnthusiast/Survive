@@ -478,33 +478,43 @@ void Level::generateLevel(const int width, const int height)
 			int col = shape - (ring & 1);
 
 
-			bool hasItem = false;
+			std::string type;
+			
+			std::string tileOne = tiles[xPos - 1][yPos].getType();
+			std::string tileTwo = tiles[xPos -1][yPos - 1].getType();
+			std::string tileThree = tiles[xPos][yPos - 1].getType();
+			
+			bool placeable = (tileOne != "tree" && tileOne != "den") && (tileTwo != "tree" && tileTwo != "den") && (tileTwo != "tree" && tileTwo != "den");
+			
 			//Places trees and dens
-			if (row == 4 && std::rand() % 100 <= 1)
+			if (placeable && row == 4 && std::rand() % 100 <= 1)
 			{
+				
+				if(tiles[xPos -1][yPos - 1].getType() != 
 				Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
 				tree.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
 				spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
-				hasItem = true;
+				type = "tree";
 			}
-			if (row == 4 && std::rand() % 1000 < 2)
+			if (placeable && row == 4 && std::rand() % 1000 < 2)
 			{
 				Den den = Den(&imageManager_.zombieDenTexture);
 				den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
 				spatialPartitions_.at(yPos / 10).at(xPos / 10).pushDen(den);
+				type = "den";
+				
+				tiles[xPos - 1][yPos].setType("den");
+				tiles[xPos -1][yPos - 1].setType("den");
+				tiles[xPos][yPos - 1].setType("den");
 			}
 
-			std::string type;
 			if (row <= 1)
 				type = "water";
 			else if (row == 5)
 				type = "rock";
-			else
+			else if(type != "tree" || type != "den")
 				type = "walkable";
 
-			if (hasItem)
-				tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), "tree");
-			else
 				tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
 
 
@@ -512,8 +522,6 @@ void Level::generateLevel(const int width, const int height)
 				player_.setPosition(sf::Vector2f(32 * xPos, 32 * yPos));
 		}
 	}
-	
-	std::cout << "Done gen";
 }
 //Camera
 void Level::moveCamera(const sf::Vector2f& move) {camera_.move(move);}

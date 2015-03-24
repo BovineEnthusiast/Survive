@@ -14,6 +14,7 @@ public:
     
     //Setters
     void setSpritePos(const sf::Vector2f&);
+	void setType(const std::string);
     void setHasItem(bool);
     void setTileTexture();
     void setTileTextureRect();
