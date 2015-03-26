@@ -42,7 +42,7 @@ private:
 	bool reloading_ = false;
 	bool dead_ = false;
 	bool safeToDelete_ = false;
-	float firerate_ = 0.1;
+	float firerate_ = 0.1f;
 	float reloadTime_ = 5.0f;
 	//Clocks
 	sf::Clock firerateClock_;

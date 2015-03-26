@@ -7,7 +7,7 @@ BloodSplat::BloodSplat(sf::Texture* texture)
     bloodSplatSprite_.setTexture(*pBloodSplatTexture_);
     bloodSplatSprite_.setColor(color_);
     bloodSplatSprite_.setOrigin(25.0f,25.0f);
-    bloodSplatSprite_.setRotation(std::rand() % 361);
+    bloodSplatSprite_.setRotation((float)(std::rand() % 361));
 	bloodSplatSprite_.setScale(0.67f, 0.67f);
 }
 void BloodSplat::update(const sf::Time&)

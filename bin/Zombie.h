@@ -94,9 +94,9 @@ class Zombie : public Humanoid
   bool bleed_ = false; //Used for bleeding when sliding
   bool fading_ = false;
   float armLeftVerticalOffset_ = (float)(std::rand() % 7);
-  float armRightVerticalOffset_ = (float)std::rand() % 7);
-  float armLeftHorizontalOffset_ = (float)std::rand() % 7);
-  float armRightHorizontalOffset_ = (float)std::rand() % 7);
+  float armRightVerticalOffset_ = (float)(std::rand() % 7);
+  float armLeftHorizontalOffset_ = (float)(std::rand() % 7);
+  float armRightHorizontalOffset_ = (float)(std::rand() % 7);
   float corpseSpeed_;
   float fadeAfter_ = 10.0f;
   float fadeFor_ = 5.0f;
