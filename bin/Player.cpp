@@ -42,7 +42,7 @@ void Player::update(const sf::Time& dT)
 
 	if (health_ > 0)
 	{
-		
+
 		if (!downSwapLeft_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 		{
 			downSwapLeft_ = true;
@@ -99,7 +99,7 @@ void Player::update(const sf::Time& dT)
 
 		velocity_ *= speed_;
 
-		if (sprint_ > 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		if (sprint_ > 0.0f && sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)))
 		{
 			velocity_ *= 1.4f;
 			sprint_ -= dT.asSeconds();

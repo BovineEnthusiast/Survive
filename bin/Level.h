@@ -64,6 +64,9 @@ public:
     bool lost_ = false;
     //The amount of time between zombie spawns in ms
     int zombieSpawnTime_ = 5.0f;
+
+	//The amounts of dens placed
+	int dens_ = 0;
     
     //Time between waves
     float waveTime_ = 5.0f;

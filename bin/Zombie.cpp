@@ -411,8 +411,6 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 				Node parent = *sPNodes.top().getParentNodePtr();
 				sPNodes.push(parent);
 			}
-			//Pops the top node as the zombie is already on it
-			sPNodes.pop();
 
 			//Locks actual stack
 			//std::lock_guard<std::mutex> lock(mutexStack);

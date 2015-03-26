@@ -1,8 +1,11 @@
 #include "Tile.h"
+#include <iostream>
 Tile::Tile(){}
 Tile::Tile(sf::Texture* pTexture, const sf::IntRect& intRect, const std::string& type)
 	: type_(type), pTexture_(pTexture)
 {
+	if (type == "rock")
+	std::cout << type << std::endl;
     sprite_.setTexture(*pTexture_);
     sprite_.setTextureRect(intRect);
     sprite_.setOrigin(sprite_.getLocalBounds().width / 2.0f, sprite_.getLocalBounds().height / 2.0f);

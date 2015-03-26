@@ -455,7 +455,6 @@ void Level::generateLevel(const int width, const int height)
 	}
 
 	for (int xPos = 0; xPos < width - 1; ++xPos)
-	{
 		for (int yPos = 0; yPos < height - 1; ++yPos)
 		{
 			int topLeft = heightmap[xPos][yPos];
@@ -480,25 +479,34 @@ void Level::generateLevel(const int width, const int height)
 
 			std::string type;
 			
-			std::string tileOne = tiles[xPos - 1][yPos].getType();
-			std::string tileTwo = tiles[xPos -1][yPos - 1].getType();
-			std::string tileThree = tiles[xPos][yPos - 1].getType();
+			std::string tileOne = "";
+			std::string tileTwo = "";
+			std::string tileThree = "";
+
+			if (xPos != 0)
+			{
+				tileOne = tiles[xPos - 1][yPos].getType();
+
+				if(yPos != 0)
+					tileTwo = tiles[xPos - 1][yPos - 1].getType();
+			}
+			if (yPos != 0)
+				tileThree = tiles[xPos][yPos - 1].getType();
 			
 			bool placeable = (tileOne != "tree" && tileOne != "den") && (tileTwo != "tree" && tileTwo != "den") && (tileTwo != "tree" && tileTwo != "den");
 			
 			//Places trees and dens
 			if (placeable && row == 4 && std::rand() % 100 <= 1)
 			{
-				
-				if(tiles[xPos -1][yPos - 1].getType() != 
-				Tree tree = Tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
+				Tree tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
 				tree.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
 				spatialPartitions_.at(yPos / 10).at(xPos / 10).pushTree(tree);
 				type = "tree";
 			}
-			if (placeable && row == 4 && std::rand() % 1000 < 2)
+			if (dens_ < 10 && placeable && row == 4 && std::rand() % 1000 < 2)
 			{
-				Den den = Den(&imageManager_.zombieDenTexture);
+				++dens_;
+				Den den(&imageManager_.zombieDenTexture);
 				den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
 				spatialPartitions_.at(yPos / 10).at(xPos / 10).pushDen(den);
 				type = "den";
@@ -512,16 +520,52 @@ void Level::generateLevel(const int width, const int height)
 				type = "water";
 			else if (row == 5)
 				type = "rock";
-			else if(type != "tree" || type != "den")
+			else if(type != "tree" && type != "den")
 				type = "walkable";
 
-				tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
+			tiles[xPos][yPos] = Tile(&imageManager_.tileSheetTexture, sf::IntRect(col * 32, row * 32, 32, 32), type);
 
 
 			if (type == "walkable")
 				player_.setPosition(sf::Vector2f(32 * xPos, 32 * yPos));
 		}
-	}
+	
+	//Ensures 10 dens
+	if (dens_ < 10)
+		for (int xPos = 0; xPos < width - 1; ++xPos)
+			for (int yPos = 0; yPos < height - 1; ++yPos)
+			{
+				std::string type;
+
+				std::string tileOne = "";
+				std::string tileTwo = "";
+				std::string tileThree = "";
+
+				if (xPos != 0)
+				{
+					tileOne = tiles[xPos - 1][yPos].getType();
+
+					if (yPos != 0)
+						tileTwo = tiles[xPos - 1][yPos - 1].getType();
+				}
+				if (yPos != 0)
+					tileThree = tiles[xPos][yPos - 1].getType();
+
+				bool placeable = (tileOne != "tree" && tileOne != "den") && (tileTwo != "tree" && tileTwo != "den") && (tileTwo != "tree" && tileTwo != "den") && tiles[xPos][yPos].getType() == "walkable";
+
+				if (dens_ < 10 && placeable && std::rand() % 1000 < 2)
+				{
+					++dens_;
+					Den den(&imageManager_.zombieDenTexture);
+					den.setPositionGlobal(sf::Vector2f(xPos * 32 + 16, yPos * 32 + 16));
+					spatialPartitions_.at(yPos / 10).at(xPos / 10).pushDen(den);
+
+					tiles[xPos - 1][yPos].setType("den");
+					tiles[xPos - 1][yPos - 1].setType("den");
+					tiles[xPos][yPos - 1].setType("den");
+					tiles[xPos][yPos].setType("den");
+				}
+			}
 }
 //Camera
 void Level::moveCamera(const sf::Vector2f& move) {camera_.move(move);}

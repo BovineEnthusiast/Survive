@@ -357,14 +357,19 @@ int Engine::run()
 	//Game Loop
 	while (window_.isOpen())
 	{
+		//Force clicks(holding a key doesn't mean repeated clicks)
+		if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+			escapeClickable_ = true;
+
 		// delta time
 		_dT = _dTClock.restart();
 		update();
 
 		if (inMenu_)
 		{
-			if (menuManager_.isPlayClicked())
+			if (menuManager_.isPlayClicked() || (paused_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && escapeClickable_))
 			{
+				escapeClickable_ = false;
 				inMenu_ = false;
 				
 				if(!paused_)
@@ -376,8 +381,9 @@ int Engine::run()
 		}
 		else
 		{
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Esc))
+			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && !level_.getGUIManager().isOpen() && escapeClickable_)
 			{
+				escapeClickable_ = false;
 				paused_ = true;
 				inMenu_ = true;
 			}
@@ -435,7 +441,7 @@ int Engine::run()
 
 		window_.clear(sf::Color(40, 42, 43));
 		draw();
-		window_.display();
+		window_.display();			
 	}
 	return 0;
 }

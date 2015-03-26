@@ -293,7 +293,22 @@ void SpatialPartition::update(const sf::Time& dT)
 					zombie.injure();
 				}
 			}
+			for (auto& turret : vTurrets_)
+			{
+				sf::Vector2f turretPos = turret.getPositionGlobal();
+				float distance = sqrt(pow(turretPos.x - zomPos.x, 2) + pow(turretPos.y - zomPos.y, 2));
+				if (distance <= 150)
+					turret.setHealth(turret.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+			}
+			for (auto& barricade : vBarricades_)
+			{
+				sf::Vector2f barricadePos = barricade.getPositionGlobal();
+				float distance = sqrt(pow(barricadePos.x - zomPos.x, 2) + pow(barricadePos.y - zomPos.y, 2));
+				if (distance <= 150)
+					barricade.setHealth(barricade.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+			}
 			for (auto& partition : pSpatialPartitions_)
+			{
 				for (auto& zombie : partition->vZombies_)
 				{
 					sf::Vector2f currentZomPos = zombie.getPositionGlobal();
@@ -304,6 +319,21 @@ void SpatialPartition::update(const sf::Time& dT)
 						zombie.injure();
 					}
 				}
+				for (auto& turret : partition->vTurrets_)
+				{
+					sf::Vector2f turretPos = turret.getPositionGlobal();
+					float distance = sqrt(pow(turretPos.x - zomPos.x, 2) + pow(turretPos.y - zomPos.y, 2));
+					if (distance <= 150)
+						turret.setHealth(turret.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+				}
+				for (auto& barricade : partition->vBarricades_)
+				{
+					sf::Vector2f barricadePos = barricade.getPositionGlobal();
+					float distance = sqrt(pow(barricadePos.x - zomPos.x, 2) + pow(barricadePos.y - zomPos.y, 2));
+					if (distance <= 150)
+						barricade.setHealth(barricade.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+				}
+			}
 			sf::Vector2f playerPos = player_->getPositionGlobal();
 			float playerDistance = sqrt(pow(playerPos.x - zomPos.x, 2) + pow(playerPos.y - zomPos.y, 2));
 			if (playerDistance <= 150)
