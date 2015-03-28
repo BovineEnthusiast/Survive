@@ -18,8 +18,6 @@ Bullet::Bullet(const bool rocket, const sf::Vector2f& startPos, const sf::Vector
 		bullet_.setFillColor(sf::Color(255, 204, 49, 255));
 		bullet_.setOrigin(bullet_.getLocalBounds().width / 2.0f, bullet_.getLocalBounds().height / 2.0f);
 
-		//Light
-		light_.setRadius(100.0f);
 		//Critical
 		if (std::rand() % 100 == 0)
 		{
@@ -72,8 +70,8 @@ void Bullet::update(const sf::Time& dT)
 			positionGlobal_ = lastPosition_;
 			bullet_.setPosition(positionGlobal_);
 			explosionEmitter_.update(dT);
-			explosionLight_.createPolygon();
-			explosionLight_.clearSprites();
+			
+			
 		}
 	}
 
@@ -103,8 +101,7 @@ void Bullet::setHit(bool hit)
 			1.25f,
 			sf::Color(255, 225, 50, 255),
 			sf::Color(250, 250, 250, 255));
-		explosionClock_.restart();
-		explosionLight_.setPosition(positionGlobal_);
+
 	}
 }
 void Bullet::setFromTurret(const bool isFromTurret) { fromTurret_ = isFromTurret; }
@@ -119,10 +116,10 @@ bool Bullet::isHit() const { return hit_; }
 bool Bullet::isRocket() const { return rocket_; }
 Emitter Bullet::getExplosionEmitter() const { return explosionEmitter_; }
 Emitter Bullet::getRocketEmitter() const { return rocketEmitter_; }
-float Bullet::getExplosionTime() const { return explosionClock_.getElapsedTime().asSeconds(); }
+
 int Bullet::getDamage() const { return damage_; }
-LightingPolygon Bullet::getExplosionPolygon() const { return explosionLight_; }
-sf::CircleShape Bullet::getLight() const { return light_; }
+
+
 sf::RectangleShape Bullet::getSprite() const { return bullet_; }
 sf::Vector2f Bullet::getLastPosition() { return lastPosition_; }
 float Bullet::getShake()
@@ -131,5 +128,4 @@ float Bullet::getShake()
 	shake_ = 0;
 	return shake;
 }
-//Pusher
-void Bullet::pushSprite(const sf::Sprite& sprite) { explosionLight_.pushSprite(sprite); }
+

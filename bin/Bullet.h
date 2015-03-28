@@ -1,7 +1,6 @@
 #ifndef BULLET_H
 #define	BULLET_H
 #include "GameObject.h"
-#include "LightingPolygon.h"
 #include "Emitter.h"
 #include <SFML/Graphics.hpp>
 class Bullet : public GameObject
@@ -19,7 +18,6 @@ class Bullet : public GameObject
   
   //Getters
   sf::RectangleShape getSprite() const;
-  sf::CircleShape getLight() const;
   int getDamage() const;
   bool isDead() const;
   bool isHit() const;
@@ -27,17 +25,10 @@ class Bullet : public GameObject
   sf::Vector2f getLastPosition();
   Emitter getRocketEmitter() const;
   Emitter getExplosionEmitter() const;
-  LightingPolygon getExplosionPolygon() const;
-  float getExplosionTime() const;
   bool isFromTurret() const;
   float getShake();
 
-  //Pushers
-  void pushSprite(const sf::Sprite&);
- private:
-  //Light caused by the bullet
-  sf::CircleShape light_;
-    
+ private:   
   sf::RectangleShape bullet_;
   sf::Vector2f velocity_;
   sf::Vector2f lastPosition_;
@@ -57,9 +48,6 @@ class Bullet : public GameObject
   //Shake from explosion
   float shake_ = 0.0f;
 
-  //Dynamic lighting for explosion
-  bool explosionLighting_ = false;
-  LightingPolygon explosionLight_;
   sf::Clock explosionClock_;
 };
 

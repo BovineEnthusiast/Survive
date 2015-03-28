@@ -251,24 +251,10 @@ void Engine::draw()
 						for (auto& particle : rocketEmitter.getParticles())
 							window_.draw(particle.getParticle());
 
-						if (iBullet->isHit())
-						{
-							sf::Vector2f windowCoord((iBullet->getPositionGlobal() - viewTopLeft) * (windowSize.x / viewSize.x));
-							windowCoord = sf::Vector2f(windowCoord.x, windowSize.y - windowCoord.y);
-							shaderGlow_.setParameter("frag_LightOrigin", windowCoord);
-							shaderGlow_.setParameter("frag_LightColor", sf::Color(255, 150, 0, 255));
-							shaderGlow_.setParameter("frag_Attenuation", 0.005f + (iBullet->getExplosionTime() / 0.75f) * 0.1f);
-							sf::RenderStates rs;
-							rs.shader = &shaderGlow_;
-							rs.blendMode = sf::BlendAdd;
-
-							Emitter explosionEmitter = iBullet->getExplosionEmitter();
-							for (auto& particle : explosionEmitter.getParticles())
-								window_.draw(particle.getParticle());
-
-							for (auto& triangle : iBullet->getExplosionPolygon().getTriangles())
-								window_.draw(triangle, rs);
-						}
+						if (iBullet->isHit())						
+						    for (auto& particle : iBullet->getExplosionEmitter().getParticles())
+							window_.draw(particle.getParticle());
+						
 					}
 				}
 				std::vector<Mine> vMines = iPartition->getMines();
