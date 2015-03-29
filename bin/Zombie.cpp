@@ -7,30 +7,35 @@
 //Functor to compare Node pointers
 bool compNode::operator() (Node* lhv, Node* rhv) { return lhv->getTotalValue() > rhv->getTotalValue(); }
 
-Zombie::Zombie(Player* player, SoundManager* pSoundManager, const std::string type, sf::Texture* texture, sf::Texture* pCorpseTexture, const int health, const int speed)
+Zombie::Zombie(Player* player, SoundManager* pSoundManager, const std::string& type, sf::Texture* texture, sf::Texture* pCorpseTexture, const int health, const int speed)
 	: Humanoid(texture), pSoundManager_(pSoundManager), type_(type), pCorpseTexture_(pCorpseTexture), pPlayer_(player)
 {
+	armLeftVerticalOffset_ = (float)(std::rand() % 7);
+	armRightVerticalOffset_ = (float)(std::rand() % 7);
+	armLeftHorizontalOffset_ = (float)(std::rand() % 7);
+	armRightHorizontalOffset_ = (float)(std::rand() % 7);
+
 	corpseSprite_.setTexture(*pCorpseTexture_);
 	corpseSprite_.setOrigin(17.0f, 14.0f);
 	if (type_ == "boom")
 	{
-		finalSpeed_ = 3 + std::rand() % (int)(speed)* 2;
+		finalSpeed_ = 3.0f + (float)(std::rand() % speed * 2);
 		health_ = (100 + health) / 10;
 	}
 	else if (type_ == "ranged")
 	{
-		finalSpeed_ = 3 + std::rand() % (int)(speed);
+		finalSpeed_ = 3.0f + (float)(std::rand() % speed);
 		health_ = 100 + health;
 	}
 	else if (type_ == "tank")
 	{
-		finalSpeed_ = 3 + std::rand() % (int)(speed) * 1.25f;
+		finalSpeed_ = 3.0f + (float)(std::rand() % speed * 1.25f);
 		health_ = 1000 + health;
 		corpseSprite_.setOrigin(22.0f, 23.5f);
 	}
 	else
 	{
-		finalSpeed_ = 3 + std::rand() % (int)(speed);
+		finalSpeed_ = 3.0f + (float)(std::rand() % speed);
 		health_ = 100 + health;
 	}
 
@@ -69,16 +74,16 @@ void Zombie::update(const sf::Time& dT)
 
 		if (pTurret_ != nullptr && turretDistance < closerDistance)
 		{
-			targetPosition_ = sf::Vector2i(pTurret_->getPositionGlobal().x - fmod(pTurret_->getPositionGlobal().x, 32.0f) + 16.0f, pTurret_->getPositionGlobal().y - fmod(pTurret_->getPositionGlobal().y, 32.0f) + 16.0f);
+			targetPosition_ = sf::Vector2i((int)(pTurret_->getPositionGlobal().x - fmod(pTurret_->getPositionGlobal().x, 32.0f) + 16.0f), (int)(pTurret_->getPositionGlobal().y - fmod(pTurret_->getPositionGlobal().y, 32.0f) + 16.0f));
 			closerDistance = turretDistance;
 		}
 		if (pBarricade_ != nullptr && barricadeDistance < closerDistance)
 		{
-			targetPosition_ = sf::Vector2i(pBarricade_->getPositionGlobal().x - fmod(pBarricade_->getPositionGlobal().x, 32.0f) + 16.0f, pBarricade_->getPositionGlobal().y - fmod(pBarricade_->getPositionGlobal().y, 32.0f) + 16.0f);
+			targetPosition_ = sf::Vector2i((int)(pBarricade_->getPositionGlobal().x - fmod(pBarricade_->getPositionGlobal().x, 32.0f) + 16.0f), (int)(pBarricade_->getPositionGlobal().y - fmod(pBarricade_->getPositionGlobal().y, 32.0f) + 16.0f));
 			closerDistance = barricadeDistance;
 		}
 		else
-			targetPosition_ = sf::Vector2i(pPlayer_->getPositionGlobal().x - fmod(pPlayer_->getPositionGlobal().x, 32.0f) + 16.0f, pPlayer_->getPositionGlobal().y - fmod(pPlayer_->getPositionGlobal().y, 32.0f) + 16.0f);
+			targetPosition_ = sf::Vector2i((int)(pPlayer_->getPositionGlobal().x - fmod(pPlayer_->getPositionGlobal().x, 32.0f) + 16.0f), (int)(pPlayer_->getPositionGlobal().y - fmod(pPlayer_->getPositionGlobal().y, 32.0f) + 16.0f));
 
 		if (targetPosition_ != lastTargetPosition_ && pathClock_.getElapsedTime().asSeconds() > 1.5f)
 		{
@@ -131,8 +136,8 @@ void Zombie::update(const sf::Time& dT)
 			attacking_ = true;
 		}
 		animate(dT);
-		sf::Vector2f perpVector = sf::Vector2f(cos((rotationGlobal_ + 90.0f) * 3.14159265358f / 180.0f), sin((rotationGlobal_ + 90.0f)  * 3.14159265358 / 180.0f));
-		sf::Vector2f forwardVector = sf::Vector2f(cos((rotationGlobal_)* 3.14159265358f / 180.0f), sin((rotationGlobal_)* 3.14159265358 / 180.0f));
+		sf::Vector2f perpVector = sf::Vector2f((float)cos((rotationGlobal_ + 90.0f) * 3.14159265358f / 180.0f), (float)sin((rotationGlobal_ + 90.0f)  * 3.14159265358 / 180.0f));
+		sf::Vector2f forwardVector = sf::Vector2f((float)cos((rotationGlobal_)* 3.14159265358f / 180.0f), (float)sin((rotationGlobal_)* 3.14159265358 / 180.0f));
 
 		headSprite_.setRotation(atan2(forwardVector.y, forwardVector.x) / 3.14159265358f * 180);
 
@@ -249,7 +254,7 @@ void Zombie::update(const sf::Time& dT)
 		{
 			if (!still_ && corpseSpeed_ > 0.0f)
 			{
-				sf::Vector2f forwardVector = sf::Vector2f(cos((rotationGlobal_)* 3.14159265358f / 180.0f), sin((rotationGlobal_)* 3.14159265358 / 180.0f));
+				sf::Vector2f forwardVector = sf::Vector2f((float)cos((rotationGlobal_)* 3.14159265358f / 180.0f), (float)sin((rotationGlobal_)* 3.14159265358 / 180.0f));
 				positionGlobal_ += forwardVector * corpseSpeed_ * 13.5f * dT.asSeconds();
 				corpseSprite_.setPosition(positionGlobal_);
 				corpseSprite_.setRotation(rotationGlobal_);
@@ -269,7 +274,7 @@ void Zombie::update(const sf::Time& dT)
 			else if (fading_ && fadeForClock_.getElapsedTime().asSeconds() < fadeFor_)
 			{
 				sf::Color corpseColor = corpseSprite_.getColor();
-				corpseSprite_.setColor(sf::Color(corpseColor.r, corpseColor.g, corpseColor.b, 255.0f - (fadeForClock_.getElapsedTime().asSeconds() / fadeFor_ * 255.0f)));
+				corpseSprite_.setColor(sf::Color(corpseColor.r, corpseColor.g, corpseColor.b, 255 - (int)(fadeForClock_.getElapsedTime().asSeconds() / fadeFor_ * 255.0f)));
 			}
 			else if (fading_)
 				delete_ = true;
@@ -292,7 +297,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 		while (!sPNodes_.empty())
 			sPNodes_.pop();
 
-		if (targetPosition_ != sf::Vector2i(0.0f, 0.0f))
+		if (targetPosition_ != sf::Vector2i(0, 0))
 		{
 			readyToRepath_ = false;
 
@@ -303,7 +308,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 
 			//Initiates the great journey
 			Node* pStartNode = &mNodes_.at((int)(positionGlobal_.x / 32) * 257 + (int)(positionGlobal_.y / 32));
-			pStartNode->setPosition(sf::Vector2i(positionGlobal_.x - fmod(positionGlobal_.x, 32.0f) + 16, positionGlobal_.y - fmod(positionGlobal_.y, 32.0f) + 16));
+			pStartNode->setPosition(sf::Vector2i((int)(positionGlobal_.x - fmod(positionGlobal_.x, 32.0f) + 16), (int)(positionGlobal_.y - fmod(positionGlobal_.y, 32.0f) + 16)));
 			pStartNode->setIsStartNode(true);
 			pStartNode->setIsOnOpen(true);
 			openList.push(pStartNode);
@@ -391,7 +396,7 @@ void Zombie::findPath(std::vector< std::vector<Tile> >* pVTiles)
 							node.setDistanceValue(parentDistanceValue + 32.0f);
 
 						//Gets the distance to the target(Heuristic) and then gets the total(Distance + Heuristic)
-						node.setHeuristicValue(abs(targetPosition_.x - nodePosition.x) + abs(targetPosition_.y - nodePosition.y));
+						node.setHeuristicValue((float)(abs(targetPosition_.x - nodePosition.x) + abs(targetPosition_.y - nodePosition.y)));
 						node.setTotalValue();
 
 						//If the node is not already on the open/closed list
