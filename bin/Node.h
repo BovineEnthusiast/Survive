@@ -36,7 +36,7 @@ public:
  private:
 
   //Values
-  Node* parentNodePtr_;
+  Node* parentNodePtr_ = nullptr;
   sf::Vector2i position_;
   bool isOnOpen_ = false;
   bool isOnClosed_ = false;

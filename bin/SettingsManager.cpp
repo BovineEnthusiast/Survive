@@ -10,7 +10,7 @@ SettingsManager::SettingsManager()
 	{
 		//Gets the length of the text
 		file.seekg(0, std::ios::end);
-		length = file.tellg();
+		length = (int)file.tellg();
 		file.seekg(0, std::ios::beg);
 
 		file.close();

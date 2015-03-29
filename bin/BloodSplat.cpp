@@ -15,7 +15,7 @@ void BloodSplat::update(const sf::Time&)
     bloodSplatSprite_.setPosition(positionGlobal_);
     if(lifeClock_.getElapsedTime().asMilliseconds() > fadeAfter_)
     {
-        color_ = sf::Color(color_.r,0,0, 150 - ((lifeClock_.getElapsedTime().asMilliseconds() - fadeAfter_) / fadeFor_ * 150));
+        color_ = sf::Color(color_.r,0,0, 150 - (int)((lifeClock_.getElapsedTime().asMilliseconds() - fadeAfter_) / fadeFor_ * 150));
         bloodSplatSprite_.setColor(color_);
         if(lifeClock_.getElapsedTime().asMilliseconds() > fadeAfter_ + fadeFor_)
             faded_ = true;

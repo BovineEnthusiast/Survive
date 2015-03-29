@@ -52,11 +52,11 @@ void Humanoid::animate(const sf::Time& dT)
 
     if(injureClock_.getElapsedTime().asSeconds() < 0.15f)
     {
-        headSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
-        armLeftSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
-        armRightSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
-        legLeftSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
-        legRightSprite_.setColor(sf::Color(255, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100, 255 - sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100));
+		headSprite_.setColor(sf::Color(255, (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100), (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100)));
+		armLeftSprite_.setColor(sf::Color(255, (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100), (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100)));
+		armRightSprite_.setColor(sf::Color(255, (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100), (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100)));
+		legLeftSprite_.setColor(sf::Color(255, (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100), (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100)));
+		legRightSprite_.setColor(sf::Color(255, (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100), (int)(255 - (float)sin(injureClock_.getElapsedTime().asSeconds() * 3.14f / 0.15f) * 100)));
         speed_ = finalSpeed_ - 2;
     }
     else
@@ -79,7 +79,7 @@ void Humanoid::animate(const sf::Time& dT)
 	positionGlobal_ += velocity_ * dT.asSeconds() * 13.5f;
       }
     if(velocity_ != sf::Vector2f(0.0f,0.0f))
-        rotationGlobal_ = atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358;
+		rotationGlobal_ = (float)atan2(velocity_.y, velocity_.x) * 180 / 3.14159265358f;
     
     //REMEMBER: normalized -1/(y/x)
     sf::Vector2f perpVec;

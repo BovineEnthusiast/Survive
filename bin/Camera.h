@@ -24,7 +24,7 @@ private:
     unsigned int _size = 480;
     
     //Size of the actual view
-    sf::Vector2f viewSize_ = sf::Vector2f(_size, _size);
+    sf::Vector2f viewSize_ = sf::Vector2f((float)_size, (float)_size);
     
     //The view to send to the window
     sf::View view_;

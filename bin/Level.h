@@ -63,7 +63,7 @@ public:
     //True if the player dies
     bool lost_ = false;
     //The amount of time between zombie spawns in ms
-    int zombieSpawnTime_ = 5.0f;
+    int zombieSpawnTime_ = 5;
 
 	//The amounts of dens placed
 	int dens_ = 0;

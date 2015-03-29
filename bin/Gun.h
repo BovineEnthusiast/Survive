@@ -16,7 +16,7 @@ public:
 	Gun(const std::string&, ImageManager*, SoundManager*);
 	void update(const sf::Time&);
 
-	sf::RenderWindow* window;
+	sf::RenderWindow* window = nullptr;
 
 	//Getters
 	sf::Vector2f getArmRightPos();
@@ -48,6 +48,10 @@ public:
 
 	//Pushers
 	void pushMuzzleLightSprite(const sf::Sprite&);
+
+	//Helpers
+	void reset();
+
 private:
 	sf::Texture* pTexture_;
 	sf::Sprite gun_;
@@ -63,7 +67,7 @@ private:
 	//The player's properties
 	sf::Vector2f playerPos_;
 	sf::Vector2f playerVelocity_;
-	float playerRotation_;
+	float playerRotation_ = 0;
 
 	//The position on the gun that the left/right arm is touching
 	sf::Vector2f armRightPosGlobal_;
@@ -75,7 +79,7 @@ private:
 	sf::Vector2f bulletSpawnPos_ = sf::Vector2f(10.0f, 0);
 
 	//Stores all active bullets
-	std::list<Bullet>* pLBullets_;
+	std::list<Bullet>* pLBullets_ = nullptr;
 
 	//Gun properties
 	sf::Vector2f gunPosition_;
@@ -84,6 +88,7 @@ private:
 	int bulletsPerMag_ = 15; //How much per reload
 	int currentBullets_ = 15; //In current reload
 	int totalBullets_ = 45; //Total ammo
+	int originalBullets_ = 45;
 	float recoilAmount_ = 4.0f; //In game "pixels"
 	float fireRate_ = 0.1f; // bullets/sec
 	bool reloading_ = false;
@@ -113,7 +118,6 @@ private:
 	sf::Clock fireRateClock_;
 	sf::Clock reloadClock_;
 	sf::Clock animationClock_;
-	sf::Clock anticrashClock_;
 
 };
 

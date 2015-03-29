@@ -249,7 +249,7 @@ void MenuManager::highlight(const sf::Text& text)
 {
 	sf::FloatRect bounds = text.getGlobalBounds();
 	titleRect_.setFillColor(sf::Color(255, 0, 55, 200));
-	titleRect_.setSize(sf::Vector2f(pWindow_->getSize().x, bounds.height + bounds.height * 0.25f));
+	titleRect_.setSize(sf::Vector2f((float)pWindow_->getSize().x, (float)bounds.height + (float)bounds.height * 0.25f));
 	titleRect_.setPosition(0, text.getGlobalBounds().top - text.getGlobalBounds().height * 0.175f);
 }
 //Getters

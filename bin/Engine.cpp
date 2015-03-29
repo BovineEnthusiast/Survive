@@ -84,19 +84,19 @@ void Engine::draw()
 		sf::Vector2f viewTopLeft(view.getCenter().x - viewSize.x / 2.0f, view.getCenter().y - viewSize.y / 2.0f);
 
 		//Vector positions of tiles to render
-		int topLeftX = (camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_;
-		int topLeftY = (camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_;
+		int topLeftX = (int)((camTopLeft.x - fmod(camTopLeft.x, tileSize_)) / tileSize_);
+		int topLeftY = (int)((camTopLeft.y - fmod(camTopLeft.y, tileSize_)) / tileSize_);
 		int bottomRightX;
 		int bottomRightY;
 
 		if (32 - fmod(camBottomRight.x, tileSize_) == 0)
-			bottomRightX = (camBottomRight.x / tileSize_);
+			bottomRightX = (int)(camBottomRight.x / tileSize_);
 		else
-			bottomRightX = (camBottomRight.x + (32 - fmod(camBottomRight.x, tileSize_))) / tileSize_;
+			bottomRightX = (int)((camBottomRight.x + (32 - fmod(camBottomRight.x, tileSize_))) / tileSize_);
 		if (32 - fmod(camBottomRight.y, tileSize_) == 0)
-			bottomRightY = (camBottomRight.y / tileSize_);
+			bottomRightY = (int)(camBottomRight.y / tileSize_);
 		else
-			bottomRightY = (camBottomRight.y + (32 - fmod(camBottomRight.y, tileSize_))) / tileSize_;
+			bottomRightY = (int)((camBottomRight.y + (32 - fmod(camBottomRight.y, tileSize_))) / tileSize_);
 
 		//Prevents out of bounds exception
 		if (bottomRightX > 255)
@@ -199,7 +199,7 @@ void Engine::draw()
 							sf::RectangleShape visualNode(sf::Vector2f(32.0f, 32.0f));
 							visualNode.setOrigin(16.0f, 16.0f);
 							visualNode.setFillColor(sf::Color(255, 0, 0, 25));
-							visualNode.setPosition(pos.x, pos.y);
+							visualNode.setPosition((float)pos.x, (float)pos.y);
 							window_.draw(visualNode);
 						}
 					}
@@ -363,7 +363,7 @@ int Engine::run()
 				else
 					paused_ = false;
 			}
-			window_.setView(sf::View(sf::FloatRect(0.0f, 0.0f, window_.getSize().x, window_.getSize().y)));
+			window_.setView(sf::View(sf::FloatRect(0.0f, 0.0f, (float)window_.getSize().x, (float)window_.getSize().y)));
 		}
 		else
 		{
@@ -409,7 +409,7 @@ int Engine::run()
 			{
 				if (inMenu_)
 				{
-					sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+					sf::FloatRect visibleArea(0.0f, 0.0f, (float)event.size.width, (float)event.size.height);
 					window_.setView(sf::View(visibleArea));
 				}
 				else

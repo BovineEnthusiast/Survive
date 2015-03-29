@@ -38,7 +38,7 @@ Emitter::Emitter(const bool relativeParticles,
     
 void Emitter::update(const sf::Time& dT)
 {
-	if (particlesToSpawn_ <= 0 && lParticles_.size() == 0)
+	if (particlesToSpawn_ <= 0 && lParticles_.empty())
 		dead_ = true;
 
 	sf::Vector2f offset = lastPos_ - positionGlobal_;
@@ -52,9 +52,9 @@ void Emitter::update(const sf::Time& dT)
 
 	    for (int i = 0; i < numToSpawn; ++i)
 	    {
-		float direction = minDirection_ + fmod(std::rand(), (maxDirection_ - minDirection_));
-		float speed = minSpeed_ + fmod(std::rand(), (maxSpeed_ - minSpeed_));
-		float life = minLife_ + fmod(std::rand(), (maxLife_ - minLife_));
+			float direction = minDirection_ + (float)fmod(std::rand(), (maxDirection_ - minDirection_));
+			float speed = minSpeed_ + (float)fmod(std::rand(), (maxSpeed_ - minSpeed_));
+			float life = minLife_ + (float)fmod(std::rand(), (maxLife_ - minLife_));
 		lParticles_.push_back(Particle(positionGlobal_,
 					       startingParticleSize_,
 					       endingParticleSize_,

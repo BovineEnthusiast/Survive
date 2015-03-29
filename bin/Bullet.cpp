@@ -10,7 +10,7 @@ Bullet::Bullet(const bool rocket, const sf::Vector2f& startPos, const sf::Vector
 	//Bullet visual description
 	positionGlobal_ = startPos;
 	lastPosition_ = positionGlobal_;
-	bullet_.setRotation(atan2(velocity_.y, velocity_.x) / 3.14159265358 * 180);
+	bullet_.setRotation((float)atan2(velocity_.y, velocity_.x) / 3.14159265358f * 180);
 	
 	if (!rocket_)
 	{

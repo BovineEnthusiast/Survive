@@ -11,8 +11,7 @@ class Player : public Humanoid
 public:
     Player(sf::Texture*, ImageManager*, SoundManager*);
     void update(const sf::Time&);
-    bool windowFocus;
-    sf::RenderWindow* window;
+    sf::RenderWindow* window = nullptr;
     
     //Getters
     std::vector<Gun> getGuns();
@@ -47,6 +46,9 @@ public:
     //Pushers
     void pushLightingSprite(const sf::Sprite&);
 
+	//Helper
+	void reset();
+
  private:
     //The lighting/line of sight of the player
     LightingPolygon lighting_;
@@ -70,7 +72,7 @@ public:
     int currentGun_ = 0;
     std::vector<Gun> vGuns_;
     SoundManager* pSoundManager_;
-    float shake_;
+    float shake_ = 0;
 	float sprint_ = 3.0f;
     sf::Clock footstepClock_;
 	sf::Clock sprintClock_;

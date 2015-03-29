@@ -21,7 +21,7 @@ void GUIManager::update(const sf::Time& dT)
 		toggled_ = false;
 	sf::Vector2f viewSize(pWindow_->getView().getSize());
 	sf::Vector2u windowSize(pWindow_->getSize());
-	sf::Vector2f currentWindowPos(pWindow_->getView().getCenter().x - viewSize.x / 2.0f, pWindow_->getView().getCenter().y - viewSize.y / 2.);
+	sf::Vector2f currentWindowPos(pWindow_->getView().getCenter().x - viewSize.x / 2.0f, pWindow_->getView().getCenter().y - viewSize.y / 2.0f);
 
 	//Wave info
 	waveBackground_.setPosition(currentWindowPos.x + viewSize.x, currentWindowPos.y);
@@ -29,17 +29,17 @@ void GUIManager::update(const sf::Time& dT)
 	waveText_.setString("Wave: " + std::to_string(*pWave_));
 	waveText_.setOrigin(waveText_.getLocalBounds().width, 0.0f);
 	waveText_.setPosition(currentWindowPos.x + viewSize.x - (waveTextOffset_.x * viewSize.x), currentWindowPos.y + (waveTextOffset_.y * viewSize.y));
-	waveText_.setCharacterSize(windowSize.y * waveTextSize_);
+	waveText_.setCharacterSize((int)(windowSize.y * waveTextSize_));
 	waveText_.setScale(0.5f, 0.5f);
 	zombiesText_.setString("Zombies: " + std::to_string(*pZombiesAlive_));
 	zombiesText_.setOrigin(zombiesText_.getLocalBounds().width, 0.0f);
 	zombiesText_.setPosition(currentWindowPos.x + viewSize.x - (zombiesTextOffset_.x * viewSize.x), currentWindowPos.y + (zombiesTextOffset_.y * viewSize.y));
-	zombiesText_.setCharacterSize(windowSize.y * zombiesTextSize_);
+	zombiesText_.setCharacterSize((int)(windowSize.y * zombiesTextSize_));
 	zombiesText_.setScale(0.5f, 0.5f);
 	pointsText_.setString("Points: " + std::to_string(pPlayer_->getPoints()));
 	pointsText_.setOrigin(pointsText_.getLocalBounds().width, 0.0f);
 	pointsText_.setPosition(currentWindowPos.x + viewSize.x - (pointsTextOffset_.x * viewSize.x), currentWindowPos.y + (pointsTextOffset_.y * viewSize.y));
-	pointsText_.setCharacterSize(windowSize.y * pointsTextSize_);
+	pointsText_.setCharacterSize((int)(windowSize.y * pointsTextSize_));
 	pointsText_.setScale(0.5f, 0.5f);
 
 	//Health  
@@ -68,7 +68,7 @@ void GUIManager::update(const sf::Time& dT)
 	//Ammo
 	ammo_.setString(std::to_string(pPlayer_->getGuns().at(pPlayer_->getCurrentGunIndex()).getCurrentBullets()) + " / " + std::to_string(pPlayer_->getGuns().at(pPlayer_->getCurrentGunIndex()).getTotalAmmo()));
 	ammo_.setOrigin(ammo_.getLocalBounds().width / 2, ammo_.getLocalBounds().height / 2.0f);
-	ammo_.setCharacterSize(0.75f * reloadOutOf_.getGlobalBounds().height * 2);
+	ammo_.setCharacterSize((int)(0.75f * reloadOutOf_.getGlobalBounds().height * 2));
 	ammo_.setScale(0.5f, 0.5f);
 	ammo_.setPosition(reloadOutOf_.getPosition().x - reloadOutOf_.getGlobalBounds().width / 2.0f, reloadOutOf_.getPosition().y - reloadOutOf_.getGlobalBounds().height / 2.0f);
 
@@ -241,7 +241,7 @@ void GUIManager::update(const sf::Time& dT)
 		{
 
 			buyMenuBackground_.setScale(sf::Vector2f(storeSize_.x * viewSize.x * (time / storeOpenTime_), storeSize_.y * viewSize.y * (time / storeOpenTime_)));
-			buyMenuBackground_.setFillColor(sf::Color(226, 232, 235, 235 * (time / storeOpenTime_)));
+			buyMenuBackground_.setFillColor(sf::Color(226, 232, 235, (int)(235 * (time / storeOpenTime_))));
 			buyMenuBackground_.setPosition(pWindow_->getView().getCenter());
 		}
 	}
@@ -380,7 +380,7 @@ void GUIManager::showInStore(sf::Text& text, const float x, const float y, const
 {
 	sf::Vector2f size(buyMenuBackground_.getGlobalBounds().width, buyMenuBackground_.getGlobalBounds().height);
 	sf::Vector2f pos = buyMenuBackground_.getPosition();
-	text.setCharacterSize(charSize * size.y * 2);
+	text.setCharacterSize((int)(charSize * size.y * 2));
 	text.setOrigin(text.getLocalBounds().width / 2.0f, text.getLocalBounds().height / 2.0f);
 	text.setPosition(sf::Vector2f(pos.x - (size.x / 2.0f) + (size.x / 10.0f) * x, pos.y - size.y / y));
 	text.setScale(0.5f, 0.5f);

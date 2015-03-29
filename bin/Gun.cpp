@@ -25,6 +25,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		bulletsPerMag_ = 8;
 		currentBullets_ = 8;
 		totalBullets_ = 32;
+		originalBullets_ = 32;
 		recoilAmount_ = 8.0f;
 		fireRate_ = 0.15f; // ~12rps 
 		auto_ = false;
@@ -43,6 +44,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		bulletsPerMag_ = 30;
 		currentBullets_ = 30;
 		totalBullets_ = 120;
+		originalBullets_ = 120;
 		recoilAmount_ = 3.3f;
 		fireRate_ = 0.08f; // ~12rps 
 		auto_ = true;
@@ -61,6 +63,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		bulletsPerMag_ = 2;
 		currentBullets_ = 2;
 		totalBullets_ = 20;
+		originalBullets_ = 20;
 		recoilAmount_ = 8.0f;
 		fireRate_ = 0.15f; // ~12rps 
 		auto_ = false;
@@ -80,6 +83,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 		bulletsPerMag_ = 1;
 		currentBullets_ = 1;
 		totalBullets_ = 3;
+		originalBullets_ = 3;
 		recoilAmount_ = 25.0f;
 		fireRate_ = 0.1f; 
 		auto_ = false;
@@ -92,8 +96,7 @@ Gun::Gun(const std::string& type, ImageManager* pImageManager, SoundManager* pSo
 }
 void Gun::update(const sf::Time& dT)
 {
-	if (anticrashClock_.getElapsedTime().asSeconds() > 0.5f)
-	{
+	
 		if (clicked_ && !sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			clicked_ = false;
 
@@ -123,7 +126,7 @@ void Gun::update(const sf::Time& dT)
 			recoilOffset_ = sf::Vector2f(0, 0);
 
 		//Value used to rotate sprites to player's rotation
-		float rotateBy = playerRotation_ * 3.14159265358 / 180;
+		float rotateBy = playerRotation_ * 3.14159265358f / 180;
 
 
 		//rotates the offsets based on player rotation
@@ -134,7 +137,7 @@ void Gun::update(const sf::Time& dT)
 		positionGlobal_ = playerPos_ + sf::Vector2f(positionLocal_.x * cos(rotateBy) - positionLocal_.y * sin(rotateBy), positionLocal_.x * sin(rotateBy) + positionLocal_.y * cos(rotateBy));
 		armLeftPosGlobal_ = sf::Vector2f(recoilOffset_.x + swayOffset_.x + armLeftPosLocal_.x * cos(rotateBy) - armLeftPosLocal_.y * sin(rotateBy), recoilOffset_.y + swayOffset_.y + armLeftPosLocal_.x * sin(rotateBy) + armLeftPosLocal_.y * cos(rotateBy));
 		armRightPosGlobal_ = sf::Vector2f(recoilOffset_.x + swayOffset_.x + armRightPosLocal_.x * cos(rotateBy) - armRightPosLocal_.y * sin(rotateBy), recoilOffset_.y + swayOffset_.y + armRightPosLocal_.x * sin(rotateBy) + armRightPosLocal_.y * cos(rotateBy));
-		rotationGlobal_ = atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358;
+		rotationGlobal_ = (float)(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358f);
 		gun_.setPosition(positionGlobal_ + swayOffset_ + recoilOffset_);
 		gun_.setRotation(rotationGlobal_);
 
@@ -150,7 +153,7 @@ void Gun::update(const sf::Time& dT)
 			if (fireRateClock_.getElapsedTime().asSeconds() >= fireRate_ && currentBullets_ > 0 && !reloading_ && (auto_ || !clicked_) && ptrSet_)
 			{
 				//Converts the rotation to a vector, times it by bulletSpeed_, and creates a bullet
-				sf::Vector2f spawnPos = positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180));
+				sf::Vector2f spawnPos = positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * (float)cos(rotationGlobal_ * 3.14159265358f / 180) - bulletSpawnPos_.y * (float)sin(rotationGlobal_ * 3.14159265358f / 180), bulletSpawnPos_.x * (float)sin(rotationGlobal_ * 3.14159265358f / 180) + bulletSpawnPos_.y * (float)cos(rotationGlobal_ * 3.14159265358f / 180));
 
 
 				if (shotgun_)
@@ -158,7 +161,7 @@ void Gun::update(const sf::Time& dT)
 					pSoundManager_->playSound(gunType_, sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 					for (int bullet = 0; bullet < 9; ++bullet)
 					{
-						sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358f / 180 + (3.14159265358f / 64.0f) * (bullet - 4)), sin(rotationGlobal_ * 3.14159265358 / 180 + (3.14159265358f / 64.0f) * (bullet - 4))) * bulletSpeed_;
+						sf::Vector2f bulletVelocity = sf::Vector2f((float)cos(rotationGlobal_ * 3.14159265358f / 180 + (3.14159265358f / 64.0f) * (bullet - 4)), (float)sin(rotationGlobal_ * 3.14159265358 / 180 + (3.14159265358f / 64.0f) * (bullet - 4))) * bulletSpeed_;
 						pLBullets_->push_back(Bullet(false, spawnPos, bulletVelocity, bulletDamage_));
 					}
 					currentBullets_ -= 1;
@@ -172,7 +175,7 @@ void Gun::update(const sf::Time& dT)
 				{
 					pSoundManager_->playSound(gunType_, sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 
-					sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180), sin(rotationGlobal_ * 3.14159265358 / 180)) * (bulletSpeed_ / 3.0f);
+					sf::Vector2f bulletVelocity = sf::Vector2f((float)cos(rotationGlobal_ * 3.14159265358 / 180), (float)sin(rotationGlobal_ * 3.14159265358 / 180)) * (bulletSpeed_ / 3.0f);
 					pLBullets_->push_back(Bullet(true, spawnPos, bulletVelocity, bulletDamage_));
 
 					currentBullets_ -= 1;
@@ -183,7 +186,7 @@ void Gun::update(const sf::Time& dT)
 				}
 				else
 				{
-					sf::Vector2f bulletVelocity = sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180), sin(rotationGlobal_ * 3.14159265358 / 180)) * bulletSpeed_;
+					sf::Vector2f bulletVelocity = sf::Vector2f((float)cos(rotationGlobal_ * 3.14159265358 / 180), (float)sin(rotationGlobal_ * 3.14159265358 / 180)) * bulletSpeed_;
 					pLBullets_->push_back(Bullet(false, spawnPos, bulletVelocity, bulletDamage_));
 					fireRateClock_.restart();
 					pSoundManager_->playSound(gunType_, sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
@@ -246,7 +249,7 @@ void Gun::update(const sf::Time& dT)
 		//Update Emitters
 		for (auto iEmitter = vEmitters_.begin(); iEmitter != vEmitters_.end();)
 		{
-			iEmitter->setPositionGlobal(positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180)));
+			iEmitter->setPositionGlobal(positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * (float)cos(rotationGlobal_ * 3.14159265358f / 180) - bulletSpawnPos_.y * (float)sin(rotationGlobal_ * 3.14159265358f / 180), bulletSpawnPos_.x * (float)sin(rotationGlobal_ * 3.14159265358f / 180) + bulletSpawnPos_.y * (float)cos(rotationGlobal_ * 3.14159265358f / 180)));
 			iEmitter->update(dT);
 
 			if (iEmitter->isDead())
@@ -258,11 +261,11 @@ void Gun::update(const sf::Time& dT)
 		//Draw lighting if muzzle is flashing
 		if (muzzleClock_.getElapsedTime().asSeconds() <= 0.05f)
 		{
-			muzzleLight_.setPosition((positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180))));
+			muzzleLight_.setPosition((positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * (float)cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * (float)sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * (float)sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * (float)cos(rotationGlobal_ * 3.14159265358 / 180))));
 			muzzleLight_.createPolygon();
 		}
 		muzzleLight_.clearSprites();
-	}
+	
 }
 
 
@@ -280,7 +283,7 @@ bool Gun::isReloading() const { return reloading_; }
 bool Gun::isMuzzleLight() const { return muzzleClock_.getElapsedTime().asSeconds() <= 0.05f; }
 std::vector<sf::ConvexShape> Gun::getMuzzleTriangles() const { return muzzleLight_.getTriangles(); }
 std::vector<Emitter> Gun::getEmitters() const { return vEmitters_; }
-sf::Vector2f Gun::getBulletSpawnPos() const { return (positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * cos(rotationGlobal_ * 3.14159265358 / 180) - bulletSpawnPos_.y * sin(rotationGlobal_ * 3.14159265358 / 180), bulletSpawnPos_.x * sin(rotationGlobal_ * 3.14159265358 / 180) + bulletSpawnPos_.y * cos(rotationGlobal_ * 3.14159265358 / 180))); }
+sf::Vector2f Gun::getBulletSpawnPos() const { return (positionGlobal_ + sf::Vector2f(bulletSpawnPos_.x * (float)cos(rotationGlobal_ * 3.14159265358f / 180) - bulletSpawnPos_.y * (float)sin(rotationGlobal_ * 3.14159265358f / 180), bulletSpawnPos_.x * (float)sin(rotationGlobal_ * 3.14159265358f / 180) + bulletSpawnPos_.y * (float)cos(rotationGlobal_ * 3.14159265358f / 180))); }
 float Gun::getShake()
 {
   float shake = shake_;
@@ -298,3 +301,10 @@ void Gun::setInStore(const bool inStore) { inStore_ = inStore; }
 void Gun::setReloading(const bool reloading) { reloading_ = reloading; }
 //Pushers
 void Gun::pushMuzzleLightSprite(const sf::Sprite& sprite) { muzzleLight_.pushSprite(sprite); }
+
+//Helper
+void Gun::reset()
+{
+	currentBullets_ = bulletsPerMag_;
+	totalBullets_ = originalBullets_;
+}

@@ -77,7 +77,7 @@ private:
 	sf::Text backText_;
 	//The sizes of selectable buttons and title texts in percent
 	float titleSize_ = 0.15f;
-	float buttonSize_ = 0.05;
+	float buttonSize_ = 0.05f;
 	float textOffset_ = 0.1f;
 	//==================================Main Screen===================================
 

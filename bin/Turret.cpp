@@ -32,13 +32,13 @@ void Turret::update(const sf::Time& dT)
 
 	if (closestZomDistance <= 320.0f)
 	{
-		rotationGlobal_ = atan2(closestZomPos.y - positionGlobal_.y, closestZomPos.x - positionGlobal_.x) * 180 / 3.14159265358;
+		rotationGlobal_ = (float)atan2(closestZomPos.y - positionGlobal_.y, closestZomPos.x - positionGlobal_.x) * 180 / 3.14159265358f;
 		turretSprite_.setRotation(rotationGlobal_);
 		if (bullets_ > 0 && firerateClock_.getElapsedTime().asSeconds() > firerate_)
 		{
 			pSoundManager_->playSound("rifle", positionGlobal_, pPlayer_->getPositionGlobal());
 			firerateClock_.restart();
-			pLBullets_->push_back(Bullet(false, positionGlobal_, sf::Vector2f(cos(rotationGlobal_ * 3.14159265358 / 180) * 1500, sin(rotationGlobal_ * 3.14159265358 / 180) * 1500), 10));
+			pLBullets_->push_back(Bullet(false, positionGlobal_, sf::Vector2f((float)cos(rotationGlobal_ * 3.14159265358f / 180) * 1500, (float)sin(rotationGlobal_ * 3.14159265358f / 180) * 1500), 10));
 			pLBullets_->back().setFromTurret(true);
 		}
 	}

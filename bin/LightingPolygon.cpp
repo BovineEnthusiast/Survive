@@ -72,7 +72,6 @@ void LightingPolygon::createPolygon()
 		//Keep track of the smallest intersection
 		sf::Vector2f smallestIntersectionVector;
 		float smallestRayScalar = std::numeric_limits<float>::max();
-		float lineScalarTest;
 
 		//Test against world boundries
 		std::array<sf::Vector2f, 4> worldVerticies;
@@ -113,7 +112,6 @@ void LightingPolygon::createPolygon()
 			if (rayScalar < smallestRayScalar && rayScalar > 0 && lineScalar >= 0 && lineScalar <= 1)
 			{
 				smallestRayScalar = rayScalar;
-				lineScalarTest = lineScalar;
 				smallestIntersectionVector = sf::Vector2f(rayStart_.x + rayDirection.x * rayScalar, rayStart_.y + rayDirection.y * rayScalar);
 			}
 
@@ -171,16 +169,11 @@ void LightingPolygon::createPolygon()
 				if (rayScalar < smallestRayScalar && rayScalar > 0 && lineScalar >= 0 && lineScalar <= 1)
 				{
 					smallestRayScalar = rayScalar;
-					lineScalarTest = lineScalar;
 					smallestIntersectionVector = sf::Vector2f(rayStart_.x + rayDirection.x * rayScalar, rayStart_.y + rayDirection.y * rayScalar);
 				}
 
 			}
 		}
-		//if (smallestRayScalar != std::numeric_limits<float>::max())
-		//{
-		float angleTest = atan2(smallestIntersectionVector.x - rayStart_.x, smallestIntersectionVector.y - rayStart_.y) * 180 / 3.14159265358f;
-		
 			++numPoint;
 			vTrianglePoints_.push_back(smallestIntersectionVector);
 		

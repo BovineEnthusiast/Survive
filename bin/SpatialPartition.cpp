@@ -14,8 +14,8 @@ bool SpatialPartition::clickMineDown_;
 SpatialPartition::SpatialPartition(const sf::FloatRect& partitionSpace, Player* player, std::vector<std::vector<SpatialPartition> >* partitions, SoundManager* pSoundManager, int* pZombiesAlive, int* pZombiesToSpawn, int* pWave)
     :partitionSpace_(partitionSpace), player_(player), partitions_(partitions), pSoundManager_(pSoundManager), pZombiesAlive_(pZombiesAlive), pZombiesToSpawn_(pZombiesToSpawn), pWave_(pWave)
 {
-    xPos_ = partitionSpace.left / 320;
-    yPos_ = partitionSpace.top / 320;
+    xPos_ = (int)(partitionSpace.left / 320);
+    yPos_ = (int)(partitionSpace.top / 320);
 
     //Static variable initialization      
     selecting_ = false;
@@ -38,23 +38,23 @@ void SpatialPartition::update(const sf::Time& dT)
 	    pSpatialPartitions_[1] = &partitions_->at(yPos_ - 1).at(xPos_);
 	else
 	    pSpatialPartitions_[1] = nullptr;
-	if (xPos_ + 1 < partitions_->size() && yPos_ - 1 >= 0)
+	if (xPos_ + 1 < (int)partitions_->size() && yPos_ - 1 >= 0)
 	    pSpatialPartitions_[2] = &partitions_->at(yPos_ - 1).at(xPos_ + 1);
 	else
 	    pSpatialPartitions_[2] = nullptr;
-	if (xPos_ + 1 < partitions_->size())
+	if (xPos_ + 1 < (int)partitions_->size())
 	    pSpatialPartitions_[3] = &partitions_->at(yPos_).at(xPos_ + 1);
 	else
 	    pSpatialPartitions_[3] = nullptr;
-	if (xPos_ + 1 < partitions_->size() && yPos_ + 1 < partitions_->size())
+	if (xPos_ + 1 < (int)partitions_->size() && yPos_ + 1 < (int)partitions_->size())
 	    pSpatialPartitions_[4] = &partitions_->at(yPos_ + 1).at(xPos_ + 1);
 	else
 	    pSpatialPartitions_[4] = nullptr;
-	if (yPos_ + 1 < partitions_->size())
+	if (yPos_ + 1 <(int)partitions_->size())
 	    pSpatialPartitions_[5] = &partitions_->at(yPos_ + 1).at(xPos_);
 	else
 	    pSpatialPartitions_[5] = nullptr;
-	if (xPos_ - 1 >= 0 && yPos_ + 1 < partitions_->size())
+	if (xPos_ - 1 >= 0 && yPos_ + 1 < (int)partitions_->size())
 	    pSpatialPartitions_[6] = &partitions_->at(yPos_ + 1).at(xPos_ - 1);
 	else
 	    pSpatialPartitions_[6] = nullptr;
@@ -126,7 +126,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		pCorpseTexture = &imageManager_->zombieTankCorpseTexture;
 	    }
 
-	    Zombie zombie = Zombie(player_, pSoundManager_, type, pTexture, pCorpseTexture, log(*pWave_) / log(2) * 2.5f, (*pWave_ * 3.5f));
+	    Zombie zombie = Zombie(player_, pSoundManager_, type, pTexture, pCorpseTexture, (int)(log(*pWave_) / log(2) * 2.5f), (int)(*pWave_ * 3.5f));
 	    zombie.pTiles = pVTiles_;
 	    zombie.setPositionGlobal(den.getPositionGlobal());
 	    vZombies_.push_back(zombie);
@@ -289,7 +289,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		float distance = sqrt(pow(currentZomPos.x - zomPos.x, 2) + pow(currentZomPos.y - zomPos.y, 2));
 		if (distance <= 150)
 		{
-		    zombie.setHealth(zombie.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+		    zombie.setHealth(zombie.getHealth() - (int)(300.0f * (1.0f - distance / 150.0f)));
 		    zombie.injure();
 		}
 	    }
@@ -298,14 +298,14 @@ void SpatialPartition::update(const sf::Time& dT)
 		sf::Vector2f turretPos = turret.getPositionGlobal();
 		float distance = sqrt(pow(turretPos.x - zomPos.x, 2) + pow(turretPos.y - zomPos.y, 2));
 		if (distance <= 150)
-		    turret.setHealth(turret.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+			turret.setHealth(turret.getHealth() - (int)(300.0f * (1.0f - distance / 150.0f)));
 	    }
 	    for (auto& barricade : vBarricades_)
 	    {
 		sf::Vector2f barricadePos = barricade.getPositionGlobal();
 		float distance = sqrt(pow(barricadePos.x - zomPos.x, 2) + pow(barricadePos.y - zomPos.y, 2));
 		if (distance <= 150)
-		    barricade.setHealth(barricade.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+			barricade.setHealth(barricade.getHealth() - (int)(300.0f * (1.0f - distance / 150.0f)));
 	    }
 	    for (auto& partition : pSpatialPartitions_)
 	    {
@@ -315,7 +315,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		    float distance = sqrt(pow(currentZomPos.x - zomPos.x, 2) + pow(currentZomPos.y - zomPos.y, 2));
 		    if (distance <= 150)
 		    {
-			zombie.setHealth(zombie.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+				zombie.setHealth(zombie.getHealth() - (int)(300.0f * (1.0f - distance / 150.0f)));
 			zombie.injure();
 		    }
 		}
@@ -324,21 +324,21 @@ void SpatialPartition::update(const sf::Time& dT)
 		    sf::Vector2f turretPos = turret.getPositionGlobal();
 		    float distance = sqrt(pow(turretPos.x - zomPos.x, 2) + pow(turretPos.y - zomPos.y, 2));
 		    if (distance <= 150)
-			turret.setHealth(turret.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+				turret.setHealth(turret.getHealth() - (int)(300.0f * (1.0f - distance / 150.0f)));
 		}
 		for (auto& barricade : partition->vBarricades_)
 		{
 		    sf::Vector2f barricadePos = barricade.getPositionGlobal();
 		    float distance = sqrt(pow(barricadePos.x - zomPos.x, 2) + pow(barricadePos.y - zomPos.y, 2));
 		    if (distance <= 150)
-			barricade.setHealth(barricade.getHealth() - 300.0f * (1.0f - distance / 150.0f));
+				barricade.setHealth(barricade.getHealth() - (int)(300.0f * (1.0f - distance / 150.0f)));
 		}
 	    }
 	    sf::Vector2f playerPos = player_->getPositionGlobal();
 	    float playerDistance = sqrt(pow(playerPos.x - zomPos.x, 2) + pow(playerPos.y - zomPos.y, 2));
 	    if (playerDistance <= 150)
 	    {
-		player_->setHealth(player_->getHealth() - 75.0f * (1.0f - playerDistance / 150.0f));
+			player_->setHealth(player_->getHealth() - (int)(75.0f * (1.0f - playerDistance / 150.0f)));
 		player_->injure();
 	    }
 	}
@@ -389,7 +389,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	iBullet->update(dT);
 
 	sf::Vector2f bulletPos(iBullet->getPositionGlobal());
-	sf::Vector2i bulletTilePos((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32, (bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32);
+	sf::Vector2i bulletTilePos((int)((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32), (int)((bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32));
 
 	//If hit or dead, remove, else increments iterater
 	if ((iBullet->isHit() && !iBullet->isRocket())
@@ -467,7 +467,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	yPos = -1;
     }
 
-    Tile* pAboveTile = &pVTiles_->at((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32 + xPos).at((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32 + yPos);
+	Tile* pAboveTile = &pVTiles_->at((int)((playerPosition.x - fmod(playerPosition.x, 32.0f)) / 32 + xPos)).at((int)((playerPosition.y - fmod(playerPosition.y, 32.0f)) / 32 + yPos));
 
 
     //Turret Addition
@@ -551,7 +551,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	if (iTurret->isSafeToDelete())
 	{
 	    sf::Vector2f turretPosition = iTurret->getPositionGlobal();
-	    pVTiles_->at((turretPosition.x - fmod(turretPosition.x, 32.0f)) / 32).at((turretPosition.y - fmod(turretPosition.y, 32.0f)) / 32).setHasItem(false);
+		pVTiles_->at((int)((turretPosition.x - fmod(turretPosition.x, 32.0f)) / 32)).at((int)((turretPosition.y - fmod(turretPosition.y, 32.0f)) / 32)).setHasItem(false);
 	    iTurret = vTurrets_.erase(iTurret);
 	}
 	else
@@ -564,7 +564,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	if (iBarricade->isSafeToDelete())
 	{
 	    sf::Vector2f barricadePosition = iBarricade->getPositionGlobal();
-	    pVTiles_->at((barricadePosition.x - fmod(barricadePosition.x, 32.0f)) / 32).at((barricadePosition.y - fmod(barricadePosition.y, 32.0f)) / 32).setHasItem(false);
+		pVTiles_->at((int)((barricadePosition.x - fmod(barricadePosition.x, 32.0f)) / 32)).at((int)((barricadePosition.y - fmod(barricadePosition.y, 32.0f)) / 32)).setHasItem(false);
 	    iBarricade = vBarricades_.erase(iBarricade);
 	}
 	else
@@ -604,7 +604,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	if (bullet.getSprite().getSize() != sf::Vector2f(7.5f, 7.5f))
 	{
 	    sf::Vector2f bulletPos(bullet.getPositionGlobal());
-	    sf::Vector2i bulletTilePos((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32, (bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32);
+		sf::Vector2i bulletTilePos((int)((bulletPos.x - fmod(bulletPos.x, 32.0f) + 16) / 32), (int)((bulletPos.y - fmod(bulletPos.y, 32.0f) + 16) / 32));
 	    
 	    if (!bullet.isHit() && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock")
 	    {
@@ -623,7 +623,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 			//Damage the zombie if it is in 300
 			if (distance <= 300)
-			    altZombie.setHealth(altZombie.getHealth() - (1.0f - (distance / 300)) * 300);
+				altZombie.setHealth(altZombie.getHealth() - (int)((1.0f - (distance / 300)) * 300));
 
 			//Slide away from explosion upon death
 			if (altZombie.getHealth() <= 0)
@@ -643,7 +643,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 				//Damage the zombie if it is in 300
 				if (distance <= 300)
-				    altZombie.setHealth(altZombie.getHealth() - (1.0f - (distance / 300)) * 300);
+					altZombie.setHealth(altZombie.getHealth() - (int)((1.0f - (distance / 300)) * 300));
 			    				
 			}		   
 		}
@@ -677,7 +677,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 				//Damage the zombie if it is in 300
 				if (distance <= 300)
-				    altZombie.setHealth(altZombie.getHealth() - (1.0f - (distance / 300)) * 300);
+					altZombie.setHealth(altZombie.getHealth() - (int)((1.0f - (distance / 300)) * 300));
 
 				//Slide away from explosion upon death
 				if (altZombie.getHealth() <= 0)
@@ -697,7 +697,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 				    //Damage the zombie if it is in 300
 				    if (distance <= 300)
-					altZombie.setHealth(altZombie.getHealth() - (1.0f - (distance / 300)) * 300);
+						altZombie.setHealth(altZombie.getHealth() - (int)((1.0f - (distance / 300)) * 300));
 				}
 			    }
 		    }
@@ -756,7 +756,7 @@ void SpatialPartition::update(const sf::Time& dT)
 					//Damage the zombie if it is in 300
 					if (distance <= 300)
 					{
-					    altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+						altZombie.setHealth(zombie.getHealth() - (int)((1.0f - (distance / 300)) * 300));
 					    altZombie.injure();
 					}
 
@@ -779,7 +779,7 @@ void SpatialPartition::update(const sf::Time& dT)
 					    //Damage the zombie if it is in 300
 					    if (distance <= 300)
 					    {
-						altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / 300)) * 300);
+							altZombie.setHealth(zombie.getHealth() - (int)((1.0f - (distance / 300)) * 300));
 						altZombie.injure();
 					    }
 					}
@@ -959,7 +959,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 			//Damage the zombie if it is in range
 			if (distance <= range)
-			    altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / range)) * damage);
+				altZombie.setHealth(zombie.getHealth() - (int)((1.0f - (distance / range)) * damage));
 
 			//Slide away from explosion upon death
 			if (altZombie.getHealth() <= 0)
@@ -979,7 +979,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 			    //Damage the zombie if it is in range
 			    if (distance <= range)
-				altZombie.setHealth(zombie.getHealth() - (1.0f - (distance / range)) * damage);
+					altZombie.setHealth(zombie.getHealth() - (int)((1.0f - (distance / range)) * damage));
 			}
 		    }
 	    }
@@ -1007,7 +1007,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		yPos = -1;
 
 	    sf::Vector2f zombiePosition(zombie.getPositionGlobal());
-	    sf::Vector2u zombieTilePos((zombiePosition.x - fmod(zombiePosition.x, 32.0f) + 16) / 32, (zombiePosition.y - fmod(zombiePosition.y, 32.0f) + 16) / 32);
+		sf::Vector2u zombieTilePos((int)((zombiePosition.x - fmod(zombiePosition.x, 32.0f) + 16) / 32), (int)((zombiePosition.y - fmod(zombiePosition.y, 32.0f) + 16) / 32));
 	    std::string tileType = pVTiles_->at(zombieTilePos.x + xPos).at(zombieTilePos.y + yPos).getType();
 	    if (tileType == "rock" || tileType == "water")
 	    {
@@ -1124,7 +1124,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		yPos = -1;
 
 	    sf::Vector2f playerPosition = player_->getPositionGlobal();
-	    sf::Vector2u playerTilePos((playerPosition.x - fmod(playerPosition.x, 32.0f) + 16) / 32, (playerPosition.y - fmod(playerPosition.y, 32.0f) + 16) / 32);
+		sf::Vector2u playerTilePos((int)((playerPosition.x - fmod(playerPosition.x, 32.0f) + 16) / 32), (int)((playerPosition.y - fmod(playerPosition.y, 32.0f) + 16) / 32));
 	    if (playerTilePos.x + xPos >= 0 && playerTilePos.y + yPos >= 0 && playerTilePos.x + xPos < 256 && playerTilePos.y + yPos < 256)
 	    {
 		std::string tileType = pVTiles_->at(playerTilePos.x + xPos).at(playerTilePos.y + yPos).getType();

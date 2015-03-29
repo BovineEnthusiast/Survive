@@ -15,7 +15,7 @@
 class Zombie : public Humanoid
 {
  public:
-  Zombie(Player*, SoundManager*, const std::string, sf::Texture*, sf::Texture*, const int, const int);
+  Zombie(Player*, SoundManager*, const std::string&, sf::Texture*, sf::Texture*, const int, const int);
   void update(const sf::Time&);
 
   //Fills the sPNodes_ stack with node ptr
@@ -93,11 +93,11 @@ class Zombie : public Humanoid
   bool countedDead_ = false;
   bool bleed_ = false; //Used for bleeding when sliding
   bool fading_ = false;
-  float armLeftVerticalOffset_ = (float)(std::rand() % 7);
-  float armRightVerticalOffset_ = (float)(std::rand() % 7);
-  float armLeftHorizontalOffset_ = (float)(std::rand() % 7);
-  float armRightHorizontalOffset_ = (float)(std::rand() % 7);
-  float corpseSpeed_;
+  float armLeftVerticalOffset_;
+  float armRightVerticalOffset_;
+  float armLeftHorizontalOffset_;
+  float armRightHorizontalOffset_;
+  float corpseSpeed_ = 0;
   float fadeAfter_ = 10.0f;
   float fadeFor_ = 5.0f;
 
@@ -112,7 +112,7 @@ class Zombie : public Humanoid
 
   //Type: ranged
   //Pointer to the bullets list(for ranged zombies)
-  std::list<Bullet>* pLBullets_;
+  std::list<Bullet>* pLBullets_ = nullptr;
   
   //Sound manager
   SoundManager* pSoundManager_;

@@ -88,9 +88,9 @@ public:
   std::vector<std::vector<SpatialPartition>>* partitions_;
   bool hasPlayer_ = false;
   sf::FloatRect partitionSpace_;
-  ImageManager* imageManager_;
+  ImageManager* imageManager_ = nullptr;
   SoundManager* pSoundManager_;
-  std::vector<std::vector<Tile>>* pVTiles_;
+  std::vector<std::vector<Tile>>* pVTiles_ = nullptr;
   
   //Shake from rockets/zombies
   float shake_ = 0.0f;

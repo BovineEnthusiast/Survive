@@ -23,7 +23,7 @@ Particle::Particle(const sf::Vector2f& position,
 	particle_.setRotation(direction);
 	particle_.setFillColor(startingColor_);
 	sizeDifference_ = endingSize_ - startingSize_;
-	colorDifference_ = sf::Vector3f(endingColor_.r - startingColor_.r, endingColor_.g - startingColor_.g, endingColor_.b - startingColor_.b);
+	colorDifference_ = sf::Vector3f((float)(endingColor_.r - startingColor_.r), (float)(endingColor_.g - startingColor_.g), (float)(endingColor_.b - startingColor_.b));
 	directionVector_ = sf::Vector2f(cos(direction * 3.14f / 180.0f), sin(direction * 3.14f / 180.0f));
 }
 
@@ -40,9 +40,9 @@ void Particle::update(const sf::Time& dT)
 
 	//Color
 	sf::Vector3f currentColor = colorDifference_ * timePercent;
-	sf::Color newColor(startingColor_ + sf::Color(currentColor.x, currentColor.y, currentColor.z, 0));
+	sf::Color newColor(startingColor_ + sf::Color((int)currentColor.x, (int)currentColor.y, (int)currentColor.z, 0));
 	float newAlpha = 255.0f - (255.0f * timePercent);
-	newColor.a = newAlpha;
+	newColor.a = (int)newAlpha;
 
 	//Checks if dead
 	if (newAlpha <= 0)

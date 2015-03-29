@@ -45,9 +45,9 @@ void Camera::resizeView(const sf::Vector2u& size)
 {
     //Sets the smaller side to a viewport of _size and the other one to _size time the ratio of the two sides
     if(size.x >= size.y)
-        viewSize_ = sf::Vector2f(_size *  size.x / size.y, _size);
+		viewSize_ = sf::Vector2f((float)_size *  (float)size.x / (float)size.y, (float)_size);
     else
-        viewSize_ = sf::Vector2f(_size, _size * size.y / size .x); 
+		viewSize_ = sf::Vector2f((float)_size, (float)_size * (float)size.y / (float)size.x);
     posView_.setSize(viewSize_);
 }
 void Camera::changeSize(const int change) 

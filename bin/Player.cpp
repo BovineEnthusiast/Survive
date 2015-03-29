@@ -31,7 +31,7 @@ void Player::update(const sf::Time& dT)
     else
 	vGuns_.at(currentGun_).setInStore(false);
 
-    for (int i = 0; i < vGuns_.size(); ++i)
+    for (size_t i = 0; i < vGuns_.size(); ++i)
 	if (i != currentGun_)
 	    vGuns_.at(i).setReloading(false);
 
@@ -39,7 +39,7 @@ void Player::update(const sf::Time& dT)
 	downSwapLeft_ = false;
     else if (downSwapRight_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 	downSwapRight_ = false;
-
+	
     if (health_ > 0)
     {
 
@@ -124,26 +124,26 @@ void Player::update(const sf::Time& dT)
 	    pSoundManager_->playSound("grass", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	}
 	//float ratio = window->getView().getSize().y /  window->getSize().y;
-	headSprite_.setRotation(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358);
+	headSprite_.setRotation((float)(atan2((sf::Mouse::getPosition(*window).y + (((float)window->getView().getCenter().y) - ((float)window->getSize().y / 2.0f))) - positionGlobal_.y, (sf::Mouse::getPosition(*window).x + (((float)window->getView().getCenter().x) - ((float)window->getSize().x / 2.0f))) - positionGlobal_.x) * 180 / 3.14159265358));
 
 
 
 	//Updates current gun
-	vGuns_[currentGun_].setPlayerHeadRotation(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358);
+	vGuns_[currentGun_].setPlayerHeadRotation((float)(atan2(sf::Mouse::getPosition(*window).y - (float)window->getSize().y / 2.0f, sf::Mouse::getPosition(*window).x - (float)window->getSize().x / 2.0f) * 180 / 3.14159265358));
 	vGuns_[currentGun_].setPlayerPosition(positionGlobal_);
 	vGuns_[currentGun_].setPlayerVelocity(velocity_);
 	vGuns_[currentGun_].update(dT);
 	shake_ = vGuns_[currentGun_].getShake();
 
-	float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358 / 180;
+	float rotationRadians = (headSprite_.getRotation() + 90) * 3.14159265358f / 180;
 	sf::Vector2f perpVec = sf::Vector2f(cos(rotationRadians), sin(rotationRadians));
 
 	sf::Vector2f armRotationVecLeft = (positionGlobal_ - sf::Vector2f(perpVec * 11.5f)) - armLeftSprite_.getPosition();
 	sf::Vector2f armRotationVecRight = (positionGlobal_ + sf::Vector2f(perpVec * 11.5f)) - armRightSprite_.getPosition();
 	armLeftSprite_.setPosition(vGuns_[currentGun_].getArmLeftPos() + vGuns_[currentGun_].getPositionGlobal());
 	armRightSprite_.setPosition(vGuns_[currentGun_].getArmRightPos() + vGuns_[currentGun_].getPositionGlobal());
-	armLeftSprite_.setRotation(atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358 * 180 + 180.0f);
-	armRightSprite_.setRotation(atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358 * 180 + 180.0f);
+	armLeftSprite_.setRotation((float)atan2(armRotationVecLeft.y, armRotationVecLeft.x) / 3.14159265358f * 180 + 180.0f);
+	armRightSprite_.setRotation((float)atan2(armRotationVecRight.y, armRotationVecRight.x) / 3.14159265358f * 180 + 180.0f);
 
 	
     }
@@ -234,3 +234,4 @@ void Player::swapGun(const bool left)
     else if (recurse && !left)
 	swapGun(false);
 }
+void Player::reset() { for (auto& gun : vGuns_) { gun.reset(); sprint_ = 3.0f; } }

@@ -13,7 +13,7 @@ public:
 	Humanoid();
     void animate(const sf::Time&);
     void injure();
-    std::vector<std::vector<Tile>>* pTiles;
+    std::vector<std::vector<Tile>>* pTiles = nullptr;
  
     //Getters
     sf::Sprite getLegLeftSprite();
@@ -51,7 +51,7 @@ protected:
     sf::Vector2f armLeftTarget_;
     sf::Vector2f armRightTarget_;
     sf::Clock legAnimClock_;
-    float legAnimLength_;
+    float legAnimLength_ = 0;
 	bool injured_ = false;
 
     
