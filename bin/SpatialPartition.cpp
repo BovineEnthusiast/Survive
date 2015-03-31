@@ -608,7 +608,6 @@ void SpatialPartition::update(const sf::Time& dT)
 
 			if (!bullet.isHit() && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock")
 			{
-				std::cout << "This happendedD";
 				bullet.setHit(true);
 
 				if (bullet.isRocket())

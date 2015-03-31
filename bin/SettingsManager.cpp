@@ -18,7 +18,6 @@ SettingsManager::SettingsManager()
 	else
 		std::cout << "Failed to open \"Settings.txt\"" << std::endl;
 
-	std::cout << "Length: " << length << std::endl;
 
 	//If it is not 0 (aka exists), load data. Else create one from default data
 	if (length != 0)

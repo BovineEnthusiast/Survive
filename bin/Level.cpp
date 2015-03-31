@@ -10,9 +10,6 @@
 Level::Level(sf::RenderWindow* pWindow, SoundManager* pSoundManager)
 	:pWindow_(pWindow), pSoundManager_(pSoundManager), GUIManager_(pSoundManager_, &imageManager_, pWindow_, &player_, &wave_, &zombiesAlive_)
 {
-	//Loads the tile sheet then assigns their locations to a map
-	if (!tileSpriteSheet_.loadFromFile("tiles.jpg"))
-		std::cout << "failed to load from file" << std::endl;
 	tileSprites_["deepWater"] = sf::IntRect(0, 0, 32, 32);
 	tileSprites_["shallowWater"] = sf::IntRect(448, 32, 32, 32);
 	tileSprites_["sand"] = sf::IntRect(0, 64, 32, 32);
@@ -77,7 +74,7 @@ void Level::generateLevel(const int width, const int height)
 {
 	//Resets the level in case of replay
 	player_.setHealth(100);
-	player_.setPoints(1000000);
+	player_.setPoints(0);
 	player_.reset();
 	player_.setHasMagnum(false);
 	player_.setHasShotgun(false);
