@@ -30,7 +30,7 @@ class Mine : public GameObject
   bool needLight_ = false;
   bool dead_ = false;
   int damage_ = 300;
-  int radius_  = 300;
+  int radius_  = 150;
 
 };
 #endif

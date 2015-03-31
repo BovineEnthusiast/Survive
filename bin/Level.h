@@ -52,7 +52,7 @@ public:
     int zombiesToSpawn_ = 10;
     int zombiesAlive_ = 0;
     
-    GUIManager GUIManager_ = GUIManager(&imageManager_, pWindow_, &player_, &wave_, &zombiesAlive_);
+	GUIManager GUIManager_;
     
     Camera camera_;    
     	

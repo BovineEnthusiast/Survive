@@ -203,9 +203,6 @@ void Engine::draw()
 							window_.draw(visualNode);
 						}
 					}
-					else if (iZombie->getType() == "boom")
-						for (auto& particle : iZombie->getExplosionEmitter().getParticles())
-							window_.draw(particle.getParticle());
 					else
 						window_.draw(iZombie->getCorpseSprite());
 				}
@@ -251,14 +248,14 @@ void Engine::draw()
 						for (auto& particle : rocketEmitter.getParticles())
 							window_.draw(particle.getParticle());
 
-						if (iBullet->isHit())						
-						    for (auto& particle : iBullet->getExplosionEmitter().getParticles())
-							window_.draw(particle.getParticle());
-						
+						if (iBullet->isHit())
+							for (auto& particle : iBullet->getExplosionEmitter().getParticles())
+								window_.draw(particle.getParticle());
+
 					}
 				}
-				std::vector<Mine> vMines = iPartition->getMines();
-				for (auto& mine : vMines)
+
+				for (auto& mine : iPartition->getMines())
 				{
 					Emitter emitter = mine.getEmitter();
 
@@ -267,6 +264,10 @@ void Engine::draw()
 						window_.draw(particle.getParticle());
 					}
 				}
+				for (auto& zombie : iPartition->getZombies())
+					if (zombie.getType() == "boom")
+						for (auto& particle : zombie.getExplosionEmitter().getParticles())
+							window_.draw(particle.getParticle());
 
 				//Draws trees
 				std::vector<Tree> vTrees = iPartition->getTrees();
@@ -357,8 +358,8 @@ int Engine::run()
 			{
 				escapeClickable_ = false;
 				inMenu_ = false;
-				
-				if(!paused_)
+
+				if (!paused_)
 					level_.generateLevel(257, 257);
 				else
 					paused_ = false;
@@ -367,7 +368,7 @@ int Engine::run()
 		}
 		else
 		{
-			if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && !level_.getGUIManager().isOpen() && escapeClickable_)
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && !level_.getGUIManager().isOpen() && escapeClickable_)
 			{
 				escapeClickable_ = false;
 				paused_ = true;
@@ -427,7 +428,7 @@ int Engine::run()
 
 		window_.clear(sf::Color(40, 42, 43));
 		draw();
-		window_.display();			
+		window_.display();
 	}
 	return 0;
 }

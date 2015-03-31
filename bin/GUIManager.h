@@ -4,10 +4,11 @@
 #include <SFML/Graphics.hpp>
 #include "Player.h"
 #include "ImageManager.h"
+#include "SoundManager.h"
 class GUIManager
 {
  public:
-  GUIManager(ImageManager*, sf::RenderWindow*, Player*, int*, int*);
+  GUIManager(SoundManager*, ImageManager*, sf::RenderWindow*, Player*, int*, int*);
   void update(const sf::Time&);
   void reset();
     
@@ -70,6 +71,7 @@ class GUIManager
 
   bool hover(const sf::Text&);
   sf::RenderWindow* pWindow_;
+  SoundManager* pSoundManager_ = nullptr;
   Player* pPlayer_;
   sf::Font font_;
   int* pWave_;
@@ -152,12 +154,12 @@ class GUIManager
   float titleTextSize_ = 0.1f;
   //Gun/Item prices
   int priceMagnum_ = 1750;
-  int priceShotgun_ = 3250;
-  int priceRifle_ = 5000;
-  int priceRocket_ = 7500;
+  int priceShotgun_ = 2550;
+  int priceRifle_ = 4000;
+  int priceRocket_ = 5500;
   int priceBarricade_ = 100;
-  int priceTurret_ = 3000;
-  int priceMine_ = 150;
+  int priceTurret_ = 2250;
+  int priceMine_ = 100;
   int priceAmmoPistol_ = 25;
   int priceAmmoMagnum_ = 75;
   int priceAmmoShotgun_ = 150;

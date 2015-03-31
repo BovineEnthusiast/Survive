@@ -47,6 +47,9 @@ SoundManager::SoundManager()
 	if (!bufferExplosion_.loadFromFile("assets/sounds/gun/explosion/explosion.ogg"))
 		std::cout << "Failed to load: assets/sounds/gun/explosion/explosion.ogg" << std::endl;
 
+	if (!bufferRocketLaunch_.loadFromFile("assets/sounds/gun/explosion/launch.ogg"))
+		std::cout << "Failed to load: assets/sounds/gun/explosion/launch.ogg" << std::endl;
+
 	//Zombies
 
 	if (!bufferZombieOne_.loadFromFile("assets/sounds/zombie/moan_1.ogg"))
@@ -107,11 +110,35 @@ SoundManager::SoundManager()
 	if (!bufferCrunchySplat_.loadFromFile("assets/sounds/hit/crunchy_splat.ogg"))
 		std::cout << "Failed to load: assets/sounds/hit/crunchy_splat.ogg" << std::endl;
 
+	//Punches
+	if (!bufferPunchOne_.loadFromFile("assets/sounds/punch/hit/hit_1.ogg"))
+		std::cout << "Failed to load: assets/sounds/punch/hit/hit_1.ogg";
+
+	if (!bufferPunchTwo_.loadFromFile("assets/sounds/punch/hit/hit_2.ogg"))
+		std::cout << "Failed to load: assets/sounds/punch/hit/hit_2.ogg";
+
+	//Cracks
+	if (!bufferCrackOne_.loadFromFile("assets/sounds/punch/crack/crack_1.ogg"))
+		std::cout << "Failed to load: assets/sounds/punch/crack/crack_1.ogg";
+
+	if (!bufferCrackTwo_.loadFromFile("assets/sounds/punch/crack/crack_2.ogg"))
+		std::cout << "Failed to load: assets/sounds/punch/crack/crack_2.ogg";
+
+	//Flesh
+	if (!bufferFleshOne_.loadFromFile("assets/sounds/punch/flesh/flesh_1.ogg"))
+		std::cout << "Failed to load: assets/sounds/punch/flesh/flesh_1.ogg";
+
+	if (!bufferFleshTwo_.loadFromFile("assets/sounds/punch/flesh/flesh_2.ogg"))
+		std::cout << "Failed to load: assets/sounds/punch/flesh/flesh_2.ogg";
+
+
 	//UI
 	if (!bufferHover_.loadFromFile("assets/sounds/ui/hover.wav"))
 		std::cout << "Failed to load: assets/sounds/ui/hover.wav";
 	if (!bufferClick_.loadFromFile("assets/sounds/ui/click.wav"))
 		std::cout << "Failed to load: assets/sounds/ui/click.wav";
+	if (!bufferBuy_.loadFromFile("assets/sounds/ui/buy.ogg"))
+		std::cout << "Failed to load: assets/sounds/ui/buy.ogg";
 
 	//--------------Music--------------
 	if (!musicBackgroundNature_.openFromFile("assets/sounds/background/nature.ogg"))
@@ -208,6 +235,9 @@ void SoundManager::playSound(const std::string& type, const sf::Vector2f& positi
 				sf::Sound sound = sf::Sound(bufferExplosion_);
 				lSounds_.push_back(sound);
 			}
+			else if (type == "rocket")
+				lSounds_.push_back(sf::Sound(bufferRocketLaunch_));
+
 			else if (type == "zombie")
 			{
 				sf::Sound sound;
@@ -269,6 +299,30 @@ void SoundManager::playSound(const std::string& type, const sf::Vector2f& positi
 
 				lSounds_.push_back(sound);
 			}
+			else if (type == "punch")
+			{
+				int random = std::rand() % 2;
+				if (random == 0)
+					lSounds_.push_back(sf::Sound(bufferPunchOne_));
+				else
+					lSounds_.push_back(sf::Sound(bufferPunchTwo_));
+			}
+			else if (type == "crack")
+			{
+				int random = std::rand() % 2;
+				if (random == 0)
+					lSounds_.push_back(sf::Sound(bufferCrackOne_));
+				else
+					lSounds_.push_back(sf::Sound(bufferCrackTwo_));
+			}
+			else if (type == "flesh")
+			{
+				int random = std::rand() % 2;
+				if (random == 0)
+					lSounds_.push_back(sf::Sound(bufferFleshOne_));
+				else
+					lSounds_.push_back(sf::Sound(bufferFleshTwo_));
+			}
 			else if (type == "zombie_death")
 			{
 				sf::Sound sound = sf::Sound(bufferCrunchySplat_);
@@ -282,6 +336,9 @@ void SoundManager::playSound(const std::string& type, const sf::Vector2f& positi
 			{
 				lSounds_.push_back(sf::Sound(bufferClick_));
 			}
+			else if (type == "buy")
+				lSounds_.push_back(sf::Sound(bufferBuy_));
+
 			lSounds_.back().setVolume((1.0f - (distance / 800.0f)) * 200.0f);
 			lSounds_.back().play();
 		}

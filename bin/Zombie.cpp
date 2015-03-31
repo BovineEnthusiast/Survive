@@ -128,7 +128,10 @@ void Zombie::update(const sf::Time& dT)
 			velocity_ = sf::Vector2f(0.0f, 0.0f);
 
 			if (type_ == "boom")
+			{
+				pSoundManager_->playSound("explosion", positionGlobal_, pPlayer_->getPositionGlobal());
 				dead_ = true;
+			}
 		}
 		if (closerDistance <= 43.5f && !attacking_)
 		{
@@ -207,12 +210,16 @@ void Zombie::update(const sf::Time& dT)
 				else
 					directionVector = pPlayer_->getPositionGlobal() - positionGlobal_;
 				directionVector /= (float)sqrt(directionVector.x * directionVector.x + directionVector.y * directionVector.y);
-				firerateClock_.restart();
-				pLBullets_->push_back(Bullet(false, positionGlobal_, directionVector * 300.0f, 10));
-				pLBullets_->back().setColor(sf::Color(255, 0, 255, 255));
-				pLBullets_->back().setSize(sf::Vector2f(7.5f, 7.5f));
-				shake_ += 0.25f;
-				pSoundManager_->playSound("zombie_ranged", positionGlobal_, pPlayer_->getPositionGlobal());
+
+				if (closerDistance == playerDistance)
+				{
+					firerateClock_.restart();
+					pLBullets_->push_back(Bullet(false, positionGlobal_, directionVector * 300.0f, 10));
+					pLBullets_->back().setColor(sf::Color(255, 0, 255, 255));
+					pLBullets_->back().setSize(sf::Vector2f(7.5f, 7.5f));
+					shake_ += 0.25f;
+					pSoundManager_->playSound("zombie_ranged", positionGlobal_, pPlayer_->getPositionGlobal());
+				}
 
 			}
 		}
@@ -224,7 +231,11 @@ void Zombie::update(const sf::Time& dT)
 			//Hasn't blown up yet
 			if (!exploded_)
 			{
-				shake_ = 30.0f;
+				float playerDistance = sqrt(pow(positionGlobal_.y - pPlayer_->getPositionGlobal().y, 2) + pow(positionGlobal_.x - pPlayer_->getPositionGlobal().x, 2));
+
+				if (playerDistance < 800.0f)
+					shake_ = 30.0f;
+
 				exploded_ = true;
 				corpseSprite_.setColor(sf::Color::Transparent);
 				explosionEmitter_ = Emitter(true,

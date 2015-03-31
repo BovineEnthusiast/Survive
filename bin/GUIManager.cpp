@@ -3,8 +3,8 @@
 #include "Humanoid.h"
 #include "Player.h"
 
-GUIManager::GUIManager(ImageManager* pImageManager, sf::RenderWindow* pWindow, Player* pPlayer, int* pWave, int* pZombiesAlive)
-	:pImageManager_(pImageManager), pWindow_(pWindow), pPlayer_(pPlayer), pWave_(pWave), pZombiesAlive_(pZombiesAlive)
+GUIManager::GUIManager(SoundManager* pSoundManager, ImageManager* pImageManager, sf::RenderWindow* pWindow, Player* pPlayer, int* pWave, int* pZombiesAlive)
+	:pSoundManager_(pSoundManager), pImageManager_(pImageManager), pWindow_(pWindow), pPlayer_(pPlayer), pWave_(pWave), pZombiesAlive_(pZombiesAlive)
 {
 	if (!font_.loadFromFile("assets/fonts/font.otf"))
 		std::cout << "Failed to load font." << std::endl;
@@ -137,6 +137,7 @@ void GUIManager::update(const sf::Time& dT)
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceMagnum_);
 				buyMagnumText_.setString("Bought");
 				buyMagnumText_.setOrigin(buyMagnumText_.getLocalBounds().width / 2.0f, buyMagnumText_.getLocalBounds().height / 2.0f);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
 			    }
 			}
 			else if (hover(buyShotgunText_))
@@ -147,6 +148,8 @@ void GUIManager::update(const sf::Time& dT)
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceShotgun_);
 				buyShotgunText_.setString("Bought");
 				buyShotgunText_.setOrigin(buyShotgunText_.getLocalBounds().width / 2.0f, buyShotgunText_.getLocalBounds().height / 2.0f);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if (hover(buyRifleText_))
@@ -157,6 +160,8 @@ void GUIManager::update(const sf::Time& dT)
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceRifle_);
 				buyRifleText_.setString("Bought");
 				buyRifleText_.setOrigin(buyRifleText_.getLocalBounds().width / 2.0f, buyRifleText_.getLocalBounds().height / 2.0f);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if (hover(buyRocketText_))
@@ -167,6 +172,8 @@ void GUIManager::update(const sf::Time& dT)
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceRocket_);
 				buyRocketText_.setString("Bought");
 				buyRocketText_.setOrigin(buyRocketText_.getLocalBounds().width / 2.0f, buyRocketText_.getLocalBounds().height / 2.0f);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if (hover(buyBarricadeText_))
@@ -175,6 +182,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->setBarricades(pPlayer_->getBarricades() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceBarricade_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if (hover(buyTurretText_))
@@ -183,6 +192,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->setTurrets(pPlayer_->getTurrets() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceTurret_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if (hover(buyMineText_))
@@ -191,6 +202,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->setMines(pPlayer_->getMines() + 1);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceMine_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if(hover(buyPistolAmmoText_))
@@ -199,6 +212,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->increaseAmmo(0, pistolAmmoIncrease_);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoPistol_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if(hover(buyMagnumAmmoText_))
@@ -207,6 +222,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->increaseAmmo(1, magnumAmmoIncrease_);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoMagnum_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if(hover(buyShotgunAmmoText_))
@@ -215,6 +232,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->increaseAmmo(2, shotgunAmmoIncrease_);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoShotgun_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if(hover(buyRifleAmmoText_))
@@ -223,6 +242,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->increaseAmmo(3, rifleAmmoIncrease_);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoRifle_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else if(hover(buyRocketAmmoText_))
@@ -231,6 +252,8 @@ void GUIManager::update(const sf::Time& dT)
 			    {
 				pPlayer_->increaseAmmo(4, rocketAmmoIncrease_);
 				pPlayer_->setPoints(pPlayer_->getPoints() - priceAmmoRocket_);
+				pSoundManager_->playSound("buy", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
+
 			    }
 			}
 			else

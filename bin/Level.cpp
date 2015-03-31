@@ -8,7 +8,7 @@
 #include "Collision.h"
 #include "Tree.h"
 Level::Level(sf::RenderWindow* pWindow, SoundManager* pSoundManager)
-	:pWindow_(pWindow), pSoundManager_(pSoundManager)
+	:pWindow_(pWindow), pSoundManager_(pSoundManager), GUIManager_(pSoundManager_, &imageManager_, pWindow_, &player_, &wave_, &zombiesAlive_)
 {
 	//Loads the tile sheet then assigns their locations to a map
 	if (!tileSpriteSheet_.loadFromFile("tiles.jpg"))

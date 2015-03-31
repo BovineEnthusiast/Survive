@@ -34,6 +34,7 @@ private:
     
 	//Explosion
 	sf::SoundBuffer bufferExplosion_;
+	sf::SoundBuffer bufferRocketLaunch_;
 
 	//Zombie
 	sf::SoundBuffer bufferZombieOne_;
@@ -44,6 +45,7 @@ private:
 
 	//Ranged zombie gun
 	sf::SoundBuffer bufferRangedZombie_;
+
     //Grass footsteps
     sf::SoundBuffer bufferGrassOne_;
     sf::SoundBuffer bufferGrassTwo_;
@@ -59,10 +61,23 @@ private:
 	sf::SoundBuffer bufferHitThree_;
 	sf::SoundBuffer bufferHitFour_;
     sf::SoundBuffer bufferCrunchySplat_;
-    
+	
+	//Punches
+	sf::SoundBuffer bufferPunchOne_;
+	sf::SoundBuffer bufferPunchTwo_;
+
+	//Cracks
+	sf::SoundBuffer bufferCrackOne_;
+	sf::SoundBuffer bufferCrackTwo_;
+
+	//Flesh
+	sf::SoundBuffer bufferFleshOne_;
+	sf::SoundBuffer bufferFleshTwo_;
+
 	//UI
 	sf::SoundBuffer bufferHover_;
 	sf::SoundBuffer bufferClick_;
+	sf::SoundBuffer bufferBuy_;
 
     std::list<sf::Sound> lSounds_;
     
