@@ -133,12 +133,12 @@ SoundManager::SoundManager()
 
 
 	//UI
-	if (!bufferHover_.loadFromFile("assets/sounds/ui/hover.wav"))
-		std::cout << "Failed to load: assets/sounds/ui/hover.wav";
-	if (!bufferClick_.loadFromFile("assets/sounds/ui/click.wav"))
-		std::cout << "Failed to load: assets/sounds/ui/click.wav";
-	if (!bufferBuy_.loadFromFile("assets/sounds/ui/buy.ogg"))
-		std::cout << "Failed to load: assets/sounds/ui/buy.ogg";
+	if (!bufferHover_.loadFromFile("assets/sounds/UI/hover.wav"))
+		std::cout << "Failed to load: assets/sounds/UI/hover.wav";
+	if (!bufferClick_.loadFromFile("assets/sounds/UI/click.wav"))
+		std::cout << "Failed to load: assets/sounds/UI/click.wav";
+	if (!bufferBuy_.loadFromFile("assets/sounds/UI/buy.ogg"))
+		std::cout << "Failed to load: assets/sounds/UI/buy.ogg";
 
 	//Misc
 	if (!bufferHealth_.loadFromFile("assets/sounds/misc/health.ogg"))
