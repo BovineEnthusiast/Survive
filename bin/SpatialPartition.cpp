@@ -394,7 +394,6 @@ void SpatialPartition::update(const sf::Time& dT)
 		//If hit or dead, remove, else increments iterater
 		if ((iBullet->isHit() && !iBullet->isRocket())
 			|| (iBullet->isHit() && iBullet->isRocket() && iBullet->getRocketEmitter().isDead() && iBullet->getExplosionEmitter().isDead())
-			|| ((bulletTilePos.x >= 0 && bulletTilePos.y >= 0 && bulletTilePos.x < 255 && bulletTilePos.y < 255) && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock" && !iBullet->isRocket())
 			|| (bulletTilePos.x >= 255 || bulletTilePos.x < 0 || bulletTilePos.y >= 255 || bulletTilePos.y < 0))
 			iBullet = lBullets_.erase(iBullet);
 		else
@@ -471,7 +470,7 @@ void SpatialPartition::update(const sf::Time& dT)
 
 
 	//Turret Addition
-	if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num6) && player_->getTurrets() > 0)
+	if (hasPlayer_ && !clickTurretDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Z) && player_->getTurrets() > 0)
 	{
 		clickTurretDown_ = true;
 		if (!selecting_)
@@ -489,7 +488,7 @@ void SpatialPartition::update(const sf::Time& dT)
 	}
 
 	//Barricade Addition
-	if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num7) && player_->getBarricades() > 0)
+	if (hasPlayer_ && !clickBarricadeDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::X) && player_->getBarricades() > 0)
 	{
 		clickBarricadeDown_ = true;
 		if (!selecting_)
@@ -508,7 +507,7 @@ void SpatialPartition::update(const sf::Time& dT)
 		}
 	}
 	//Mine Addition
-	if (hasPlayer_ && !clickMineDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Num8) && player_->getMines() > 0)
+	if (hasPlayer_ && !clickMineDown_ && sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && player_->getMines() > 0)
 	{
 		clickMineDown_ = true;
 		Mine mine(&imageManager_->mineTexture);
@@ -608,6 +607,25 @@ void SpatialPartition::update(const sf::Time& dT)
 
 			if (!bullet.isHit() && pVTiles_->at(bulletTilePos.x).at(bulletTilePos.y).getType() == "rock")
 			{
+				pSoundManager_->playSound("impact", player_->getPositionGlobal(), bulletPos);
+
+				vEmitters_.push_back(Emitter(true,
+					bulletPos,
+					true,
+					5,
+					1000,
+					sf::Vector2f(5.0f, 5.0f),
+					sf::Vector2f(3.0f, 3.0f),
+					rotation - 25.0f,
+					rotation + 25.0f,
+					150.0f,
+					250.0f,
+					0.0f,
+					0.1f,
+					0.2f,
+					sf::Color(75, 75, 75, 255),
+					sf::Color(10, 10, 10, 255)));
+
 				bullet.setHit(true);
 
 				if (bullet.isRocket())
@@ -829,6 +847,9 @@ void SpatialPartition::update(const sf::Time& dT)
 		{
 			if ((!bullet.isHit() && isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 			{
+				pSoundManager_->playSound("impact", player_->getPositionGlobal(), bullet.getPositionGlobal());
+
+
 				if (bullet.isRocket())
 					pSoundManager_->playSound("explosion", bullet.getPositionGlobal(), player_->getPositionGlobal());
 
@@ -860,6 +881,8 @@ void SpatialPartition::update(const sf::Time& dT)
 				{
 					if ((!bullet.isHit() && isColliding(tree.getTrunk(), bullet.getSprite(), bullet.getLastPosition())) == true)
 					{
+						pSoundManager_->playSound("impact", player_->getPositionGlobal(), bullet.getPositionGlobal());
+
 						if (bullet.isRocket())
 							pSoundManager_->playSound("explosion", bullet.getPositionGlobal(), player_->getPositionGlobal());
 
@@ -1099,6 +1122,7 @@ void SpatialPartition::update(const sf::Time& dT)
 				if (player_->getHealth() > 100)
 					player_->setHealth(100);
 
+				pSoundManager_->playSound("health", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
 				kit.setCollected(true);
 			}
 		for (auto& partition : pSpatialPartitions_)
@@ -1109,6 +1133,7 @@ void SpatialPartition::update(const sf::Time& dT)
 					if (player_->getHealth() > 100)
 						player_->setHealth(100);
 
+					pSoundManager_->playSound("health", sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f));
 					kit.setCollected(true);
 				}
 
@@ -1157,15 +1182,15 @@ void SpatialPartition::update(const sf::Time& dT)
 	else
 		selectionRect_.setFillColor(sf::Color::Transparent);
 
-	if (clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num6))
+	if (clickTurretDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 	{
 		clickTurretDown_ = false;
 	}
-	if (clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num7))
+	if (clickBarricadeDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::X))
 	{
 		clickBarricadeDown_ = false;
 	}
-	if (clickMineDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Num8))
+	if (clickMineDown_ && !sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 	{
 		clickMineDown_ = false;
 	}

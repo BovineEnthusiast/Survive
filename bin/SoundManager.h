@@ -79,6 +79,10 @@ private:
 	sf::SoundBuffer bufferClick_;
 	sf::SoundBuffer bufferBuy_;
 
+	//Misc
+	sf::SoundBuffer bufferHealth_;
+	sf::SoundBuffer bufferImpact_;
+
     std::list<sf::Sound> lSounds_;
     
     //---------------Music----------------------------

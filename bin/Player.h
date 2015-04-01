@@ -64,6 +64,13 @@ public:
 	bool hasRocket_ = false;
     bool muzzleFlash_ = false;
 
+	//Prevent mass weapon switch
+	bool oneDown_ = false;
+	bool twoDown_ = false;
+	bool threeDown_ = false;
+	bool fourDown_ = false;
+	bool fiveDown_ = false;
+
     int turrets_ = 0;
     int barricades_ = 0;
     int mines_ = 0;

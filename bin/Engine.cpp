@@ -16,8 +16,7 @@ Engine::Engine()
 bool Engine::initialize()
 {
 	shaderGlow_.loadFromFile("shaders/frag/glow.frag", sf::Shader::Fragment);
-	//shaderLighting_.loadFromFile("shaders/frag/lighting.frag", sf::Shader::Fragment);
-	window_.create(sf::VideoMode(1440, 720), "Survive");
+	window_.create(sf::VideoMode(853, 480), "Survive");
 	return true;
 }
 

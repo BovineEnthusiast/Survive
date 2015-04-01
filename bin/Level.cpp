@@ -463,8 +463,6 @@ void Level::generateLevel(const int width, const int height)
 
 			int saddle = ((topLeft & 1) + (topRight & 1) + (bottomLeft & 1) + (bottomRight & 1) + 1) >> 2;
 
-			int shape = (hTL & 1) | (hTR & 1) << 1 | (hBL & 1) << 2 | (hBR & 1) << 3;
-
 			int ring = (hTL + hTR + hBL + hBR) >> 2;
 
 			int row = ((ring << 1) | saddle) >> 1;
@@ -511,7 +509,7 @@ void Level::generateLevel(const int width, const int height)
 				&& (tileSeven != "tree" && tileSeven != "den" && tileSeven != "rock")
 				&& (tileEight != "tree" && tileEight != "den" && tileEight != "rock");
 
-			//Places trees and dens
+			//Places trees
 			if (placeable && row == 4 && std::rand() % 100 <= 1)
 			{
 				Tree tree(&imageManager_.treeUpperLeafTexture, &imageManager_.treeLowerLeafTexture, &imageManager_.treeTrunkTexture);
@@ -536,8 +534,6 @@ void Level::generateLevel(const int width, const int height)
 				int hBR = bottomRight >> 1;
 
 				int saddle = ((topLeft & 1) + (topRight & 1) + (bottomLeft & 1) + (bottomRight & 1) + 1) >> 2;
-
-				int shape = (hTL & 1) | (hTR & 1) << 1 | (hBL & 1) << 2 | (hBR & 1) << 3;
 
 				int ring = (hTL + hTR + hBL + hBR) >> 2;
 

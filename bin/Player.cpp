@@ -19,6 +19,17 @@ Player::Player(sf::Texture* texture, ImageManager* pImageManager, SoundManager* 
 
 void Player::update(const sf::Time& dT)
 {
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+		oneDown_ = false;
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
+		twoDown_ = false;
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
+		threeDown_ = false;
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Num4))
+		fourDown_ = false;
+	if (!sf::Keyboard::isKeyPressed(sf::Keyboard::Num5))
+		fiveDown_ = false;
+
     if (injured_)
     {
 	shake_ += 2.0f;
@@ -57,28 +68,33 @@ void Player::update(const sf::Time& dT)
 	if ((currentGun_ == 1 && !hasMagnum_) || (currentGun_ == 2 && !hasShotgun_) || (currentGun_ == 3 && !hasRifle_) || (currentGun_ == 4 && !hasRocket_))
 	    currentGun_ = 0;
 	//Switches out the gun if number is pressed
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && currentGun_ != 0)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1) && currentGun_ != 0 && !oneDown_)
 	{
+		oneDown_ = true;
 	    pSoundManager_->playSound("pistol_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	    currentGun_ = 0;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && hasMagnum_ && currentGun_ != 1)
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2) && hasMagnum_ && currentGun_ != 1 && !twoDown_)
 	{
+		twoDown_ = true;
 	    pSoundManager_->playSound("magnum_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	    currentGun_ = 1;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && hasShotgun_ && currentGun_ != 2)
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3) && hasShotgun_ && currentGun_ != 2 && !threeDown_)
 	{
+		threeDown_ = true;
 	    pSoundManager_->playSound("shotgun_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	    currentGun_ = 2;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) && hasRifle_ && currentGun_ != 3)
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4) && hasRifle_ && currentGun_ != 3 && !fourDown_)
 	{
+		fourDown_ = true;
 	    pSoundManager_->playSound("rifle_select", sf::Vector2f(1.0f, 1.0f), sf::Vector2f(1.0f, 1.0f));
 	    currentGun_ = 3;
 	}
-	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) && hasRocket_ && currentGun_ != 4)
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5) && hasRocket_ && currentGun_ != 4 && !fiveDown_)
 	{
+		fiveDown_ = true;
 	    currentGun_ = 4;
 	}
 

@@ -140,6 +140,14 @@ SoundManager::SoundManager()
 	if (!bufferBuy_.loadFromFile("assets/sounds/ui/buy.ogg"))
 		std::cout << "Failed to load: assets/sounds/ui/buy.ogg";
 
+	//Misc
+	if (!bufferHealth_.loadFromFile("assets/sounds/misc/health.ogg"))
+		std::cout << "Failed to load: assets/sounds/misc/health.ogg";
+
+	if (!bufferImpact_.loadFromFile("assets/sounds/misc/impact.ogg"))
+		std::cout << "Failed to load: assets/sounds/misc/impact.ogg";
+
+
 	//--------------Music--------------
 	if (!musicBackgroundNature_.openFromFile("assets/sounds/background/nature.ogg"))
 		std::cout << "Failed to load: assets/sounds/background/nature.ogg" << std::endl;
@@ -338,6 +346,10 @@ void SoundManager::playSound(const std::string& type, const sf::Vector2f& positi
 			}
 			else if (type == "buy")
 				lSounds_.push_back(sf::Sound(bufferBuy_));
+			else if (type == "health")
+				lSounds_.push_back(sf::Sound(bufferHealth_));
+			else if (type == "impact")
+				lSounds_.push_back(sf::Sound(bufferImpact_));
 
 			lSounds_.back().setVolume((1.0f - (distance / 800.0f)) * 200.0f);
 			lSounds_.back().play();
